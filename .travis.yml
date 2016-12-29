@@ -1,0 +1,18 @@
+language: go
+go:
+  - 1.7
+install:
+  - mkdir -p $GOPATH/bin
+  - curl https://glide.sh/get | sh
+deploy:
+  provider: releases
+  api_key:
+    secure: NXLGPPmTO8r4TQJTpyPcPaFoL2YwwEhksoBNjqhAAehOezCMkqhYwOaKEVnyVEzwnxZDpf8GBCBqe9LeaLUrpgusHtUsQfjcpLMSYo4gyXriKKDsb1i2RzKfKn5kbe5Yq0hlkL7WY0zmYYNOTyqElpxN/IBvQrxLw8o3zrta4yuM+HlEEFff6/jfcf372ZwvYutKux8nZJvZC/9DbAsnJqeFp8UrJMajW4WjKfJcebObHP1Hz+RS4ORRzLWOXudX1nFnXjLZs0NJQwsf7Kin/ltCX1iQv4k7x9l55DkVM8aCPl/ndNvf/iqtfHsv9llhndx53Zau77VWBw1lChL+g8nXg7o5d7PjZeYFgrjizdQDqKrOeqMiVEynTBZLxdbvggw5HGZe8slkw+YOvdKZSoUVQQWieh8KpCYq5IMQIPv6I47ENkNq2kAHP8PUb2d3VuOdkFuwGT3ZU86EvF4MMInsrtN4zvtC2v+q+u7jNlLMEEP2wycqrnkqLCBCZTRBt83tpjELrB5dbmaabCqnGkFBQ6IIL+q7c7B6xWBlaAGGr2YX/84Uon7FHpLxQiv5JY4nSXpo8NFvDPfDA6t3sVy9Doe17Ki6hYUg2LCdAKEIplHGK4dU3mB1Hi3sDvZWRsw3WUG28SFcFQ54NvvLpHXsu9OlcCLraveFp440rzQ=
+  file:
+    - build/dist/ironman.darwin-amd64.tar.gz
+    - build/dist/ironman.linux-amd64.tar.gz
+  skip_cleanup: true
+
+  on:
+    tags: true
+    go: '1.7'
