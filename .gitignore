@@ -22,3 +22,16 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+.glide
+ironman-*
+ironman
+ironman.tgz
+.test_repository_*
+.DS_Store
+.idea
+build/dist
+.vscode
+debug
+coverage.html
+vendor
