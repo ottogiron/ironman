@@ -2,7 +2,7 @@ package field
 
 //Text represents a text field
 type Text struct {
-	field Field
+	Field
 }
 
 //NewText returns a new text field

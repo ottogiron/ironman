@@ -46,8 +46,21 @@ func (f Field) stringValue(fieldName string) string {
 
 //ValidateMandatoryFieldAttributes validates if all the mandatory attributes of a field are present
 func ValidateMandatoryFieldAttributes(f Field) error {
-	if f["id"] == nil || f["type"] == nil || f["label"] == nil {
-		return errors.Errorf("%s, %s, and %s are mandatory", fieldIDKey, fieldTypeKey, fieldLabelKey)
+	if err := validateMandatoryFieldProperty(f, fieldIDKey); err != nil {
+		return err
+	}
+	if err := validateMandatoryFieldProperty(f, fieldTypeKey); err != nil {
+		return err
+	}
+	if err := validateMandatoryFieldProperty(f, fieldLabelKey); err != nil {
+		return err
+	}
+	return nil
+}
+
+func validateMandatoryFieldProperty(f Field, property string) error {
+	if f[property] == nil {
+		return errors.Errorf("%s is mandatory", property)
 	}
 	return nil
 }
@@ -77,7 +90,7 @@ func MapUnstructuredToField(unstructuredField interface{}) (interface{}, error) 
 		//default: some default
 
 		mappedField = NewText(f)
-	case TypeFixedArray:
+	case TypeArray:
 
 		//Example
 		// id: myListOfThings
@@ -107,11 +120,14 @@ func MapUnstructuredToField(unstructuredField interface{}) (interface{}, error) 
 		if fieldDefinitionMap, ok = f[fieldDefinitionKey].(map[string]interface{}); !ok {
 			return nil, errors.Errorf("Could not map mandatory %s from array field %v", fieldDefinitionKey, f)
 		}
+
+		//This placeholder makes this fieldDefinitionMap to pass the ValidateMandatoryFieldAttributes validation
+		fieldDefinitionMap[fieldIDKey] = "placeholder"
 		arrField, err := MapUnstructuredToField(fieldDefinitionMap)
 		if err != nil {
-			return nil, errors.Errorf("Failed to map field definition for Array Field %v", f)
+			return nil, errors.Wrapf(err, "Failed to map %s for Array Field %v", fieldDefinitionKey, f)
 		}
-		fieldArr := NewFixedArray(f, size, arrField)
+		fieldArr := NewArray(f, size, arrField)
 
 		mappedField = fieldArr
 	case TypeFixedList:
@@ -141,7 +157,7 @@ func MapUnstructuredToField(unstructuredField interface{}) (interface{}, error) 
 		for i, fieldToMap := range list {
 			mapped, err := MapUnstructuredToField(fieldToMap)
 			if err != nil {
-				return nil, errors.Errorf("Could not map field for field list %v %v", f, fieldToMap)
+				return nil, errors.Wrapf(err, "Could not map field for field list %v %v", f, fieldToMap)
 			}
 			mappedFieldList[i] = mapped
 		}

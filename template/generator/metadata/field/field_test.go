@@ -89,7 +89,9 @@ func TestValidateMandatoryFieldAttributes(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"Validation error", args{f: Field{"something": "to something"}}, true},
+		{"Validation error id", args{f: Field{}}, true},
+		{"Validation error type", args{f: Field{"id": "something"}}, true},
+		{"Validation error label", args{f: Field{"id": "something", "type": "sometype"}}, true},
 		{"Valid field", args{f: Field{"id": "anId", "type": "thetype", "label": "this is a random label"}}, false},
 	}
 	for _, tt := range tests {
@@ -119,29 +121,49 @@ func TestMapUnstructuredToField(t *testing.T) {
 				"type":  string(TypeText),
 				"label": "My text field",
 			}},
-			&Text{
-				field: Field{
+			NewText(
+				Field{
 					"id":    "myTextField",
 					"type":  string(TypeText),
 					"label": "My text field",
 				},
-			},
+			),
 			false,
 		},
 		{
-			"Text field",
-			args{map[string]interface{}{
-				"id":    "myTextField",
-				"type":  string(TypeText),
-				"label": "My text field",
-			}},
-			&Text{
-				field: Field{
-					"id":    "myTextField",
-					"type":  string(TypeText),
-					"label": "My text field",
-				},
-			},
+			"Fixed Array",
+			args{
+				map[string]interface{}{
+					"id":    "myFixedArray",
+					"type":  string(TypeArray),
+					"label": "My fixed array",
+					"size":  3,
+					"field_definition": map[string]interface{}{
+						"type":  "text",
+						"label": "enter a value",
+					},
+				}},
+			NewArray(
+				Field(map[string]interface{}{
+					"id":    "myFixedArray",
+					"type":  string(TypeArray),
+					"label": "My fixed array",
+					"size":  3,
+					"field_definition": map[string]interface{}{
+						"id":    "placeholder",
+						"type":  "text",
+						"label": "enter a value",
+					},
+				}),
+				3,
+				NewText(
+					Field{
+						"id":    "placeholder",
+						"type":  string(TypeText),
+						"label": "enter a value",
+					},
+				),
+			),
 			false,
 		},
 	}
@@ -153,7 +175,7 @@ func TestMapUnstructuredToField(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("%q. MapUnstructuredToField() = %v, want %v", tt.name, got, tt.want)
+				t.Errorf("%q. MapUnstructuredToField() = \n%v, \nwant \n%v", tt.name, got, tt.want)
 			}
 		})
 
