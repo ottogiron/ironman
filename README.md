@@ -1,4 +1,3 @@
-# Ironman
-Bootstrap your projects using language agnostic templates. Ironman allows you to define project templates using simple golang templating and yaml files. Share them with your friends using git.
+# Ironman [![Build Status](https://travis-ci.org/ottogiron/ironman.svg?branch=master)](https://travis-ci.org/ottogiron/ironman)
 
-[![Build Status](https://travis-ci.org/ottogiron/ironman.svg?branch=master)](https://travis-ci.org/ottogiron/ironman)
+Bootstrap your projects using language agnostic templates. Ironman allows you to define project templates using simple golang templating and yaml files. Share them with your friends using git.
