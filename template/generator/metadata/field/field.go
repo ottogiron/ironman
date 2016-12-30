@@ -1,4 +1,4 @@
-package metadata
+package field
 
 const (
 	fieldIDKey    = "id"
