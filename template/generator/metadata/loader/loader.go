@@ -9,7 +9,6 @@ import (
 //Loader loads metadata from a  file
 type Loader struct {
 	fileUnmarshaller template.Unmarshaller
-	path             string
 }
 
 //New creates a new instance Loaders
@@ -23,10 +22,9 @@ func New(options ...Option) *Loader {
 }
 
 //Load loads metadata from a  file
-func (l *Loader) Load() (*metadata.Metadata, error) {
-
+func (l *Loader) Load(bytes []byte) (*metadata.Metadata, error) {
 	m := &metadata.Metadata{}
-	err := l.fileUnmarshaller.Unmarshall(l.path, m)
+	err := l.fileUnmarshaller.Unmarshall(bytes, m)
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to load generator file metadata")
 	}

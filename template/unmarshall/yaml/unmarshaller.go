@@ -1,8 +1,6 @@
 package yaml
 
 import (
-	"io/ioutil"
-
 	"github.com/ottogiron/ironman/template/generator/metadata"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
@@ -18,19 +16,14 @@ type Unmarshaller struct {
 }
 
 //Unmarshall unmarshall a yaml file from a file
-func (u *Unmarshaller) Unmarshall(path string, out interface{}) error {
-	b, err := ioutil.ReadFile(path)
-
-	if err != nil {
-		return errors.Wrapf(err, "Failed to load yaml file %s", path)
-	}
+func (u *Unmarshaller) Unmarshall(bytes []byte, out interface{}) error {
 
 	m := &metadata.Metadata{}
 
-	err = yaml.Unmarshal(b, m)
+	err := yaml.Unmarshal(bytes, m)
 
 	if err != nil {
-		return errors.Wrapf(err, "Failed to unmarshall yaml file %s", path)
+		return errors.Wrap(err, "Failed to unmarshall yaml  metadata")
 	}
 
 	return nil
