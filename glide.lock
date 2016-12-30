@@ -1,5 +1,5 @@
 hash: ebc6a67c70f2ab71d55e8b8e0bdd660121253377e68e6c22540e1cc48dfd2cdf
-updated: 2016-12-29T14:16:08.765536261-06:00
+updated: 2016-12-30T10:55:25.89661662-06:00
 imports:
 - name: github.com/fsnotify/fsnotify
   version: fd9ec7deca8bf46ecd2a795baaacf2b3a9be1197
@@ -24,6 +24,8 @@ imports:
   version: df1e16fde7fc330a0ca68167c23bf7ed6ac31d6d
 - name: github.com/pelletier/go-toml
   version: 7cb988051d5045890cb91402a0b5fddc76c627bc
+- name: github.com/pkg/errors
+  version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/spf13/afero
   version: 06b7e5f50606ecd49148a01a6008942d9b669217
   subpackages:
