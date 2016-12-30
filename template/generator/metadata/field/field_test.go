@@ -1,6 +1,9 @@
 package field
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestField_ID(t *testing.T) {
 	tests := []struct {
@@ -74,5 +77,85 @@ func TestField_stringValue(t *testing.T) {
 		if got := tt.f.stringValue(tt.args.fieldName); got != tt.want {
 			t.Errorf("%q. Field.stringValue() = %v, want %v", tt.name, got, tt.want)
 		}
+	}
+}
+
+func TestValidateMandatoryFieldAttributes(t *testing.T) {
+	type args struct {
+		f Field
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{"Validation error", args{f: Field{"something": "to something"}}, true},
+		{"Valid field", args{f: Field{"id": "anId", "type": "thetype", "label": "this is a random label"}}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := ValidateMandatoryFieldAttributes(tt.args.f); (err != nil) != tt.wantErr {
+				t.Errorf("%q. ValidateMandatoryFieldAttributes() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			}
+		})
+
+	}
+}
+
+func TestMapUnstructuredToField(t *testing.T) {
+	type args struct {
+		unstructuredField interface{}
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    interface{}
+		wantErr bool
+	}{
+		{
+			"Text field",
+			args{map[string]interface{}{
+				"id":    "myTextField",
+				"type":  string(TypeText),
+				"label": "My text field",
+			}},
+			&Text{
+				field: Field{
+					"id":    "myTextField",
+					"type":  string(TypeText),
+					"label": "My text field",
+				},
+			},
+			false,
+		},
+		{
+			"Text field",
+			args{map[string]interface{}{
+				"id":    "myTextField",
+				"type":  string(TypeText),
+				"label": "My text field",
+			}},
+			&Text{
+				field: Field{
+					"id":    "myTextField",
+					"type":  string(TypeText),
+					"label": "My text field",
+				},
+			},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := MapUnstructuredToField(tt.args.unstructuredField)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("%q. MapUnstructuredToField() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("%q. MapUnstructuredToField() = %v, want %v", tt.name, got, tt.want)
+			}
+		})
+
 	}
 }

@@ -4,10 +4,10 @@ package field
 type Type string
 
 const (
-	//TypeFieldArray represents the type of a field array
-	TypeFieldArray Type = "fieldarray"
-	//TypeFieldList represents the type of a field list
-	TypeFieldList Type = "fieldlist"
+	//TypeFixedArray represents a fixed field type array
+	TypeFixedArray Type = "fixedarray"
+	//TypeFixedList represents a fixed list of fields
+	TypeFixedList Type = "fixedlist"
 	//TypeText represents a text input field
 	TypeText Type = "text"
 )
