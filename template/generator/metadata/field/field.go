@@ -32,6 +32,12 @@ func (f Field) Type() string {
 	return f.stringValue(fieldTypeKey)
 }
 
+// func (f Field) String() string {
+// 	b, _ := yaml.Marshal(f)
+
+// 	return string(b)
+// }
+
 func (f Field) stringValue(fieldName string) string {
 	if f[fieldName] == nil {
 		return ""
@@ -70,7 +76,7 @@ func MapUnstructuredToField(unstructuredField interface{}) (interface{}, error) 
 	var ma map[string]interface{}
 	var ok bool
 	if ma, ok = unstructuredField.(map[string]interface{}); !ok {
-		return nil, errors.Errorf("Can't map the defined field to an internal field definition %v", unstructuredField)
+		return nil, errors.Errorf("Can't map the defined field to an internal field definition \n%v", unstructuredField)
 	}
 
 	f := Field(ma)
@@ -106,26 +112,26 @@ func MapUnstructuredToField(unstructuredField interface{}) (interface{}, error) 
 		var ok bool
 
 		if f[sizeDefinitionKey] == nil {
-			return nil, errors.Errorf("%s is mandatory for %v", sizeDefinitionKey, f)
+			return nil, errors.Errorf("%s is mandatory for \n%v", sizeDefinitionKey, f)
 		}
 
 		var size int
 		if size, ok = f[sizeDefinitionKey].(int); !ok {
-			return nil, errors.Errorf("Could not map mandatory %s from array field %v ", sizeDefinitionKey, f)
+			return nil, errors.Errorf("%s should be type int for \n%v ", sizeDefinitionKey, f)
 		}
 
 		if f[fieldDefinitionKey] == nil {
-			return nil, errors.Errorf("%s is mandatory for %v", fieldDefinitionKey, f)
+			return nil, errors.Errorf("%s is mandatory for \n%v", fieldDefinitionKey, f)
 		}
 		if fieldDefinitionMap, ok = f[fieldDefinitionKey].(map[string]interface{}); !ok {
-			return nil, errors.Errorf("Could not map mandatory %s from array field %v", fieldDefinitionKey, f)
+			return nil, errors.Errorf("%s should be and object for \n%v", fieldDefinitionKey, f)
 		}
 
 		//This placeholder makes this fieldDefinitionMap to pass the ValidateMandatoryFieldAttributes validation
 		fieldDefinitionMap[fieldIDKey] = "placeholder"
 		arrField, err := MapUnstructuredToField(fieldDefinitionMap)
 		if err != nil {
-			return nil, errors.Wrapf(err, "Failed to map %s for Array Field %v", fieldDefinitionKey, f)
+			return nil, errors.Wrapf(err, "failed to map %s form \n%v", fieldDefinitionKey, f)
 		}
 		fieldArr := NewArray(f, size, arrField)
 
@@ -149,24 +155,28 @@ func MapUnstructuredToField(unstructuredField interface{}) (interface{}, error) 
 		var list []interface{}
 		var ok bool
 
-		if list, ok = f[fieldsKey].([]interface{}); !ok {
-			return nil, errors.Errorf("Could not map mandatory fields definition for %v", f)
+		if f[fieldsKey] == nil {
+			return nil, errors.Errorf("%s is mandatory for \n%v", fieldsKey, f)
 		}
+
+		if list, ok = f[fieldsKey].([]interface{}); !ok {
+			return nil, errors.Errorf("%s should be a list for \n%v", fieldsKey, f)
+		}
+
 		mappedFieldList := make([]interface{}, len(list))
 
 		for i, fieldToMap := range list {
 			mapped, err := MapUnstructuredToField(fieldToMap)
 			if err != nil {
-				return nil, errors.Wrapf(err, "Could not map field for field list %v %v", f, fieldToMap)
+				return nil, errors.Wrapf(err, "Failed to map %s item \n%v for \n%v", TypeFixedList, fieldToMap, f)
 			}
 			mappedFieldList[i] = mapped
 		}
-
 		fieldList := NewFixedList(f, mappedFieldList)
 		mappedField = fieldList
 
 	default:
-		return nil, errors.Errorf("Could not find right type mapping for %v", f)
+		return nil, errors.Errorf("Could not find right type mapping for \n%v", f)
 	}
 
 	return mappedField, nil

@@ -116,11 +116,13 @@ func TestMapUnstructuredToField(t *testing.T) {
 	}{
 		{
 			"Text field",
-			args{map[string]interface{}{
-				"id":    "myTextField",
-				"type":  string(TypeText),
-				"label": "My text field",
-			}},
+			args{
+				map[string]interface{}{
+					"id":    "myTextField",
+					"type":  string(TypeText),
+					"label": "My text field",
+				},
+			},
 			NewText(
 				Field{
 					"id":    "myTextField",
@@ -131,7 +133,7 @@ func TestMapUnstructuredToField(t *testing.T) {
 			false,
 		},
 		{
-			"Fixed Array",
+			"Array",
 			args{
 				map[string]interface{}{
 					"id":    "myFixedArray",
@@ -163,6 +165,82 @@ func TestMapUnstructuredToField(t *testing.T) {
 						"label": "enter a value",
 					},
 				),
+			),
+			false,
+		},
+		{
+			"Fixed list",
+			args{
+				map[string]interface{}{
+					"id":    "myFixedList",
+					"type":  string(TypeFixedList),
+					"label": "My fixed list",
+					"fields": []interface{}{
+						map[string]interface{}{
+							"id":    "myTextField1",
+							"type":  string(TypeText),
+							"label": "My text field1",
+						},
+						map[string]interface{}{
+							"id":    "myTextField2",
+							"type":  string(TypeText),
+							"label": "My text field2",
+						},
+						map[string]interface{}{
+							"id":    "myTextField3",
+							"type":  string(TypeText),
+							"label": "My text field3",
+						},
+					},
+				},
+			},
+			NewFixedList(
+				Field(
+					map[string]interface{}{
+						"id":    "myFixedList",
+						"type":  string(TypeFixedList),
+						"label": "My fixed list",
+						"fields": []interface{}{
+							map[string]interface{}{
+								"id":    "myTextField1",
+								"type":  string(TypeText),
+								"label": "My text field1",
+							},
+							map[string]interface{}{
+								"id":    "myTextField2",
+								"type":  string(TypeText),
+								"label": "My text field2",
+							},
+							map[string]interface{}{
+								"id":    "myTextField3",
+								"type":  string(TypeText),
+								"label": "My text field3",
+							},
+						},
+					}),
+				[]interface{}{
+					NewText(
+						Field{
+							"id":    "myTextField1",
+							"type":  string(TypeText),
+							"label": "My text field1",
+						},
+					),
+					NewText(
+						Field{
+							"id":    "myTextField2",
+							"type":  string(TypeText),
+							"label": "My text field2",
+						},
+					),
+					NewText(
+						Field{
+							"id":    "myTextField3",
+							"type":  string(TypeText),
+							"label": "My text field3",
+						},
+					),
+				},
 			),
 			false,
 		},

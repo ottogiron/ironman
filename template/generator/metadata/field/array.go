@@ -4,7 +4,7 @@ package field
 type Array struct {
 	Field
 	size            int
-	fieldDefinition interface{}
+	fieldDefinition interface{} `json:"field_definition" yaml:"field_definition"`
 }
 
 //NewArray returns a new initialized array field
