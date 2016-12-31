@@ -49,6 +49,18 @@ func TestMapUnstructuredToField(t *testing.T) {
 		wantErr bool
 	}{
 		{
+			"Text field",
+			args{
+				map[string]interface{}{
+					"id":    "myTextField",
+					"type":  string("wutype"),
+					"label": "My text field",
+				},
+			},
+			nil,
+			true,
+		},
+		{
 			"Invalid unstructured field",
 			args{
 				nil,
