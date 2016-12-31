@@ -12,17 +12,19 @@ const (
 )
 
 //Mapper defines a mapper from and unstructured field to a internal field definition
-type Mapper func(field field.Field) (interface{}, error)
+type Mapper interface {
+	Map(f field.Field) (interface{}, error)
+}
 
 //New returns a nes Mapper based on a field type
 func New(fieldType field.Type) (Mapper, error) {
 	switch fieldType {
 	case field.TypeText:
-		return TextMapper, nil
+		return &TextMapper{}, nil
 	case field.TypeArray:
-		return ArrayMapper, nil
+		return &ArrayMapper{}, nil
 	case field.TypeFixedList:
-		return FixedListMapper, nil
+		return &FixedListMapper{}, nil
 	default:
 		return nil, errors.Errorf("mapper for %s is not implemented", fieldType)
 	}
@@ -48,5 +50,5 @@ func MapUnstructuredToField(unstructuredField interface{}) (interface{}, error) 
 		return nil, errors.Wrapf(err, "Failed to create mapper for field type %s", f.Type())
 	}
 
-	return mapper(f)
+	return mapper.Map(f)
 }

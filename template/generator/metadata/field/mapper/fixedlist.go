@@ -5,8 +5,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-//FixedListMapper maps an unstructured fixedlist to an internal representation
-func FixedListMapper(f field.Field) (interface{}, error) {
+//FixedListMapper a FixedListMapper
+type FixedListMapper struct {
+}
+
+//Map maps an unstructured fixedlist to an internal representation
+func (fm *FixedListMapper) Map(f field.Field) (interface{}, error) {
 	//Example
 	//id: myListWithDifferntThings
 	//type: fieldlist

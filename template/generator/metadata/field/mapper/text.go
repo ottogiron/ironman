@@ -4,8 +4,12 @@ import (
 	"github.com/ottogiron/ironman/template/generator/metadata/field"
 )
 
-//TextMapper maps an unstructerd text  to an internal text representation
-func TextMapper(f field.Field) (interface{}, error) {
+//TextMapper a text field mapper
+type TextMapper struct {
+}
+
+//Map maps an unstructerd text  to an internal text representation
+func (t *TextMapper) Map(f field.Field) (interface{}, error) {
 
 	//Example
 	//id: myText

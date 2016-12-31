@@ -96,7 +96,8 @@ func TestFixedListMapper(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := FixedListMapper(tt.args.f)
+			m := FixedListMapper{}
+			got, err := m.Map(tt.args.f)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("%q. FixedListMapper() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 				return

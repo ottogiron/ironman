@@ -4,7 +4,11 @@ import "github.com/pkg/errors"
 import "github.com/ottogiron/ironman/template/generator/metadata/field"
 
 //ArrayMapper maps unstructured array to an internal representation
-func ArrayMapper(f field.Field) (interface{}, error) {
+type ArrayMapper struct {
+}
+
+//Map maps a field to an array field
+func (a *ArrayMapper) Map(f field.Field) (interface{}, error) {
 	//Example
 	// id: myListOfThings
 	// type: fieldarray

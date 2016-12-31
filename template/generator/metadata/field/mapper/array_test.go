@@ -125,7 +125,8 @@ func TestArrayMapper(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ArrayMapper(tt.args.f)
+			m := ArrayMapper{}
+			got, err := m.Map(tt.args.f)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("%q. ArrayMapper() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 				return
