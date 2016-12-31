@@ -18,7 +18,7 @@ func TestArrayMapper(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			"Array",
+			"Array created",
 			args{
 				map[string]interface{}{
 					"id":    "myFixedArray",
@@ -52,6 +52,75 @@ func TestArrayMapper(t *testing.T) {
 				),
 			),
 			false,
+		},
+		{
+			"Array size missing",
+			args{
+				map[string]interface{}{
+					"id":    "myFixedArray",
+					"type":  string(field.TypeArray),
+					"label": "My fixed array",
+					"field_definition": map[string]interface{}{
+						"type":  "text",
+						"label": "enter a value",
+					},
+				}},
+			nil,
+			true,
+		},
+		{
+			"Array field_definition missing",
+			args{
+				map[string]interface{}{
+					"id":    "myFixedArray",
+					"type":  string(field.TypeArray),
+					"label": "My fixed array",
+					"size":  3,
+				}},
+			nil,
+			true,
+		},
+		{
+			"Array size should be int",
+			args{
+				map[string]interface{}{
+					"id":    "myFixedArray",
+					"type":  string(field.TypeArray),
+					"label": "My fixed array",
+					"size":  "3",
+					"field_definition": map[string]interface{}{
+						"type":  "text",
+						"label": "enter a value",
+					},
+				}},
+			nil,
+			true,
+		},
+		{
+			"Array field_definition should be a map[string]interface{}",
+			args{
+				map[string]interface{}{
+					"id":               "myFixedArray",
+					"type":             string(field.TypeArray),
+					"label":            "My fixed array",
+					"size":             3,
+					"field_definition": []interface{}{},
+				}},
+			nil,
+			true,
+		},
+		{
+			"Array field_definition mapping should fail",
+			args{
+				map[string]interface{}{
+					"id":               "myFixedArray",
+					"type":             string(field.TypeArray),
+					"label":            "My fixed array",
+					"size":             3,
+					"field_definition": map[string]interface{}{},
+				}},
+			nil,
+			true,
 		},
 	}
 	for _, tt := range tests {
