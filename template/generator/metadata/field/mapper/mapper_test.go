@@ -1,0 +1,53 @@
+package mapper
+
+import (
+	"reflect"
+	"testing"
+
+	"github.com/ottogiron/ironman/template/generator/metadata/field"
+)
+
+func TestMapUnstructuredToField(t *testing.T) {
+	type args struct {
+		unstructuredField interface{}
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    interface{}
+		wantErr bool
+	}{
+		{
+			"Invalid unstructured field",
+			args{
+				nil,
+			},
+			nil,
+			true,
+		},
+		{
+			"Mising mandatory fields",
+			args{
+				map[string]interface{}{
+					"type":  string(field.TypeText),
+					"label": "My text field",
+				},
+			},
+			nil,
+			true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := MapUnstructuredToField(tt.args.unstructuredField)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("%q. MapUnstructuredToField() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("%q. MapUnstructuredToField() = \n%v, \nwant \n%v", tt.name, got, tt.want)
+			}
+		})
+
+	}
+}
