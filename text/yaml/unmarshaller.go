@@ -6,8 +6,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-//New returns a new yaml unmarshaller
-func New() *Unmarshaller {
+//NewUnmarshaller returns a new yaml unmarshaller
+func NewUnmarshaller() *Unmarshaller {
 	return &Unmarshaller{}
 }
 

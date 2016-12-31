@@ -1,4 +1,4 @@
-package template
+package text
 
 //Unmarshaller unmarshalls from a file
 type Unmarshaller interface {

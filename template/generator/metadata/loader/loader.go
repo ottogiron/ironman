@@ -2,13 +2,13 @@ package loader
 
 import (
 	"github.com/ottogiron/ironman/template/generator/metadata"
-	"github.com/ottogiron/ironman/template/unmarshall"
+	"github.com/ottogiron/ironman/text"
 	"github.com/pkg/errors"
 )
 
 //Loader loads metadata from a  file
 type Loader struct {
-	fileUnmarshaller template.Unmarshaller
+	fileUnmarshaller text.Unmarshaller
 }
 
 //New creates a new instance Loaders

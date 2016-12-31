@@ -1,6 +1,8 @@
 package field
 
-import "github.com/pkg/errors"
+import (
+	"github.com/pkg/errors"
+)
 
 const (
 	fieldIDKey    = "id"
@@ -31,12 +33,6 @@ func (f Field) Label() string {
 func (f Field) Type() string {
 	return f.stringValue(fieldTypeKey)
 }
-
-// func (f Field) String() string {
-// 	b, _ := yaml.Marshal(f)
-
-// 	return string(b)
-// }
 
 func (f Field) stringValue(fieldName string) string {
 	if f[fieldName] == nil {
