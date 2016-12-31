@@ -7,6 +7,37 @@ import (
 	"github.com/ottogiron/ironman/template/generator/metadata/field"
 )
 
+func TestNew(t *testing.T) {
+	type args struct {
+		fieldType field.Type
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    Mapper
+		wantErr bool
+	}{
+		{"New Text Mapper", args{field.TypeText}, TextMapper, false},
+		{"New Array Mapper", args{field.TypeArray}, ArrayMapper, false},
+		{"New Fixed List Mapper", args{field.TypeFixedList}, FixedListMapper, false},
+		{"New Mapper error", args{field.Type("")}, nil, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := New(tt.args.fieldType)
+
+			if (err != nil) != tt.wantErr {
+				t.Errorf("%q. New() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+				return
+			}
+			if got == nil && !tt.wantErr {
+				t.Errorf("%q. New() = %v, want %v", tt.name, got, tt.want)
+			}
+		})
+
+	}
+}
+
 func TestMapUnstructuredToField(t *testing.T) {
 	type args struct {
 		unstructuredField interface{}

@@ -45,7 +45,7 @@ func TestField_Type(t *testing.T) {
 	tests := []struct {
 		name string
 		f    Field
-		want string
+		want Type
 	}{
 		{"Get right Label", Field{"type": "thetype"}, "thetype"},
 		{"Get empty  if field type is nil", Field{}, ""},
