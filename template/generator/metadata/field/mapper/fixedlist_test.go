@@ -93,6 +93,46 @@ func TestFixedListMapper(t *testing.T) {
 			),
 			false,
 		},
+		{
+			"Fixed list field keys mandatory fails",
+			args{
+				map[string]interface{}{
+					"id":    "myFixedList",
+					"type":  string(field.TypeFixedList),
+					"label": "My fixed list",
+				},
+			},
+			nil,
+			true,
+		},
+		{
+			"Fixed list fields should be a []interface{} fails",
+			args{
+				map[string]interface{}{
+					"id":     "myFixedList",
+					"type":   string(field.TypeFixedList),
+					"label":  "My fixed list",
+					"fields": "some invalid fields value",
+				},
+			},
+			nil,
+			true,
+		},
+		{
+			"Fixed list fields should field mapping fails",
+			args{
+				map[string]interface{}{
+					"id":    "myFixedList",
+					"type":  string(field.TypeFixedList),
+					"label": "My fixed list",
+					"fields": []interface{}{
+						map[string]interface{}{},
+					},
+				},
+			},
+			nil,
+			true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
