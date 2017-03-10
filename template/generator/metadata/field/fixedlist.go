@@ -1,6 +1,6 @@
 package field
 
-import "github.com/ottogiron/ironman/text/yaml"
+import "github.com/ironman-project/ironman/text/yaml"
 
 //FixedList defines a list with arbitrary text fields
 type FixedList struct {

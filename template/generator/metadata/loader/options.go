@@ -1,6 +1,6 @@
 package loader
 
-import "github.com/ottogiron/ironman/text"
+import "github.com/ironman-project/ironman/text"
 
 //Option a loader option
 type Option func(*Loader)

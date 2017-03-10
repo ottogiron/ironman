@@ -1,7 +1,7 @@
 package mapper
 
 import "github.com/pkg/errors"
-import "github.com/ottogiron/ironman/template/generator/metadata/field"
+import "github.com/ironman-project/ironman/template/generator/metadata/field"
 
 //ArrayMapper maps unstructured array to an internal representation
 type ArrayMapper struct {
