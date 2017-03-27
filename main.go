@@ -14,7 +14,7 @@
 
 package main
 
-import "github.com/ottogiron/ironman/cmd"
+import "github.com/ironman-project/ironman/cmd"
 
 func main() {
 	cmd.Execute()
