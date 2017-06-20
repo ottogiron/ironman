@@ -13,5 +13,5 @@ func NewText(field Field) *Text {
 }
 
 func (t *Text) String() string {
-	return yaml.PrettyPrint(t)
+	return yaml.Print(t)
 }

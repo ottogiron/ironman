@@ -81,7 +81,7 @@ func TestArrayMapper(t *testing.T) {
 			true,
 		},
 		{
-			"Array size should be int fails",
+			"Array size should be int",
 			args{
 				map[string]interface{}{
 					"id":    "myFixedArray",
@@ -97,7 +97,7 @@ func TestArrayMapper(t *testing.T) {
 			true,
 		},
 		{
-			"Array field_definition should be a map[string]interface{} fails",
+			"Array field_definition should be a map[string]interface{}",
 			args{
 				map[string]interface{}{
 					"id":               "myFixedArray",
@@ -110,7 +110,7 @@ func TestArrayMapper(t *testing.T) {
 			true,
 		},
 		{
-			"Array field_definition mapping should fails",
+			"Array field_definition mapping should fail",
 			args{
 				map[string]interface{}{
 					"id":               "myFixedArray",

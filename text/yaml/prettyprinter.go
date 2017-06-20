@@ -23,7 +23,7 @@ func (p *PrettyPrinter) Print(in interface{}) string {
 	return string(b)
 }
 
-//PrettyPrint uses a default implementation of PrettyPrinter to pretty print in yaml
-func PrettyPrint(in interface{}) string {
+//Print uses a default implementation of PrettyPrinter to pretty print in yaml
+func Print(in interface{}) string {
 	return prettyPrinter.Print(in)
 }
