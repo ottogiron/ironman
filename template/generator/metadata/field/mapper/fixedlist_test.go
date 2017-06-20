@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/ottogiron/ironman/template/generator/metadata/field"
+	"github.com/ironman-project/ironman/template/generator/metadata/field"
 )
 
 func TestFixedListMapper(t *testing.T) {

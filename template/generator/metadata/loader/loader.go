@@ -1,8 +1,8 @@
 package loader
 
 import (
-	"github.com/ottogiron/ironman/template/generator/metadata"
-	"github.com/ottogiron/ironman/text"
+	"github.com/ironman-project/ironman/template/generator/metadata"
+	"github.com/ironman-project/ironman/text"
 	"github.com/pkg/errors"
 )
 

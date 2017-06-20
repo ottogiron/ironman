@@ -1,7 +1,7 @@
 package yaml
 
 import (
-	"github.com/ottogiron/ironman/template/generator/metadata"
+	"github.com/ironman-project/ironman/template/generator/metadata"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 )

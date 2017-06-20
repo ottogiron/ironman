@@ -2,14 +2,14 @@
 NAME := ironman
 VERSION := 0.1.0
 MAINTAINER := "Otto Giron <ottog2486@gmail.com"
-SOURCE_URL := https://github.com/ottogiron/ironman.git
+SOURCE_URL := https://github.com/ironman-project/ironman.git
 DATE := $(shell date -u +%Y%m%d.%H%M%S)
 COMMIT_ID := $(shell git rev-parse --short HEAD)
 GIT_REPO := $(shell git config --get remote.origin.url)
 # Go tools flags
-LD_FLAGS := -X github.com/ottogiron/ironman/cmd.buildVersion=$(VERSION)
-LD_FLAGS += -X github.com/ottogiron/ironman/cmd.buildCommit=$(COMMIT_ID)
-LD_FLAGS += -X github.com/ottogiron/ironman/cmd.buildDate=$(DATE)
+LD_FLAGS := -X github.com/ironman-project/ironman/cmd.buildVersion=$(VERSION)
+LD_FLAGS += -X github.com/ironman-project/ironman/cmd.buildCommit=$(COMMIT_ID)
+LD_FLAGS += -X github.com/ironman-project/ironman/cmd.buildDate=$(DATE)
 EXTRA_BUILD_VARS := CGO_ENABLED=0 GOARCH=amd64
 SOURCE_DIRS := $(shell go list ./... | grep -v /vendor/)
 

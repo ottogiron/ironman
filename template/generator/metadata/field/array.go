@@ -1,6 +1,6 @@
 package field
 
-import "github.com/ottogiron/ironman/text/yaml"
+import "github.com/ironman-project/ironman/text/yaml"
 
 //Array a fixed size array of  fields
 type Array struct {
