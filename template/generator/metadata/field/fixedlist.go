@@ -14,5 +14,5 @@ func NewFixedList(f Field, fields []interface{}) *FixedList {
 }
 
 func (l *FixedList) String() string {
-	return yaml.Print(l)
+	return yaml.PrettyPrint(l)
 }
