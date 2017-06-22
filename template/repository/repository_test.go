@@ -105,16 +105,17 @@ func TestBaseRepository_IsInstalled(t *testing.T) {
 
 func TestBaseRepository_Installed(t *testing.T) {
 	tests := []struct {
-		name    string
-		b       *BaseRepository
-		want    []string
-		wantErr bool
+		name           string
+		repositoryPath string
+		want           []string
+		wantErr        bool
 	}{
-	// TODO: Add test cases.
+		{"All the installed templates", testRepositoryPath, []string{"valid"}, false},
+		{"Non existing repository path", "unexistingPath", nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			b := &BaseRepository{}
+			b := NewBaseRepository(tt.repositoryPath)
 			got, err := b.Installed()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("BaseRepository.Installed() error = %v, wantErr %v", err, tt.wantErr)

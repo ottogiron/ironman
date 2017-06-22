@@ -4,6 +4,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"io/ioutil"
+
 	"github.com/pkg/errors"
 )
 
@@ -25,12 +27,14 @@ const (
 
 //BaseRepository implements basic generic repository operations
 type BaseRepository struct {
-	path string
+	path          string
+	templatesPath string
 }
 
 //NewBaseRepository returns a new instance of a base repository
 func NewBaseRepository(path string) Repository {
-	return &BaseRepository{path}
+	templatesPath := filepath.Join(path, repositoryTemplatesDirectory)
+	return &BaseRepository{path, templatesPath}
 }
 
 //Uninstall uninstalls a template
@@ -67,13 +71,23 @@ func validateTemplateID(templateID string) error {
 }
 
 func (b *BaseRepository) templatePath(templateID string) string {
-
 	return filepath.Join(b.path, repositoryTemplatesDirectory, templateID)
 }
 
 //Installed returns a lists of installed templates
 func (b *BaseRepository) Installed() ([]string, error) {
-	panic("not implemented")
+
+	files, err := ioutil.ReadDir(b.templatesPath)
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to list al the available templates")
+	}
+
+	var templatesList []string
+	for _, f := range files {
+		templatesList = append(templatesList, f.Name())
+	}
+
+	return templatesList, nil
 }
 
 //Link links a template on a path to the repository
