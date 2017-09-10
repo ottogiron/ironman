@@ -1,13 +1,40 @@
 package repository
 
 import (
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
+
+	"github.com/ironman-project/ironman/testutils"
 )
 
 const (
 	testRepositoryPath = "testing/repository"
 )
+
+func createTestTemplate(t *testing.T, names ...string) (string, func()) {
+	tempRepository, err := ioutil.TempDir("", "ironman-test-repository")
+	if err != nil {
+		t.Fatalf("Failed to create test repository %s", err)
+	}
+	sourcePath := filepath.Join(testRepositoryPath, "templates", "base")
+	for _, name := range names {
+		destPath := filepath.Join(tempRepository, name)
+		err = testutils.CopyDir(sourcePath, destPath)
+		if err != nil {
+			t.Fatalf("Failed to create test template %s", err)
+		}
+	}
+
+	return tempRepository, func() {
+		err := os.RemoveAll(tempRepository)
+		if err != nil {
+			t.Fatalf("Failed to clean test repository %s", err)
+		}
+	}
+}
 
 func TestNewBaseRepository(t *testing.T) {
 	type args struct {
@@ -35,15 +62,16 @@ func TestBaseRepository_Uninstall(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		b       *BaseRepository
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		{"Uninstall template", args{"valid_removable"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			b := &BaseRepository{}
+			repositoryPath, clean := createTestTemplate(t, tt.args.templateID)
+			defer clean()
+			b := NewBaseRepository(repositoryPath)
 			if err := b.Uninstall(tt.args.templateID); (err != nil) != tt.wantErr {
 				t.Errorf("BaseRepository.Uninstall() error = %v, wantErr %v", err, tt.wantErr)
 			}

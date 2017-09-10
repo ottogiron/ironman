@@ -39,7 +39,15 @@ func NewBaseRepository(path string) Repository {
 
 //Uninstall uninstalls a template
 func (b *BaseRepository) Uninstall(templateID string) error {
-	panic("not implemented")
+	if err := validateTemplateID(templateID); err != nil {
+		return err
+	}
+	templatePath := b.templatePath(templateID)
+	err := os.RemoveAll(templatePath)
+	if err != nil {
+		return errors.Wrapf(err, "Failed to remove template %s", templateID)
+	}
+	return nil
 }
 
 //Find finds a template in the repository
