@@ -26,7 +26,7 @@ test: install_dependencies lint
 	 @go test -v $(SOURCE_DIRS) -cover -bench . -race 
 
 install_dependencies: 
-	glide install
+	dep ensure
 
 cover: 
 	gocov test $(SOURCE_DIRS) | gocov-html > coverage.html && open coverage.html

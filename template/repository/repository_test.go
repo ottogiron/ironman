@@ -138,7 +138,7 @@ func TestBaseRepository_Installed(t *testing.T) {
 		want           []string
 		wantErr        bool
 	}{
-		{"All the installed templates", testRepositoryPath, []string{"valid"}, false},
+		{"All the installed templates", testRepositoryPath, []string{"base", "valid"}, false},
 		{"Non existing repository path", "unexistingPath", nil, true},
 	}
 	for _, tt := range tests {
