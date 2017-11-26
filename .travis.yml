@@ -1,6 +1,9 @@
 language: go
 go:
   - 1.9
+before_install:
+  - go get -u github.com/golang/dep/cmd/dep
+
 deploy:
   provider: releases
   api_key:
