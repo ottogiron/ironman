@@ -19,6 +19,7 @@ type Repository interface {
 	Installed() ([]string, error)
 	Link(templatePath string, templateName string) error
 	Unlink(templateName string) error
+	TemplatePath(templateID string) string
 }
 
 const (
@@ -32,7 +33,7 @@ type BaseRepository struct {
 }
 
 //NewBaseRepository returns a new instance of a base repository
-func NewBaseRepository(path string) Repository {
+func NewBaseRepository(path string) *BaseRepository {
 	templatesPath := filepath.Join(path, repositoryTemplatesDirectory)
 	return &BaseRepository{path, templatesPath}
 }
@@ -42,7 +43,7 @@ func (b *BaseRepository) Uninstall(templateID string) error {
 	if err := validateTemplateID(templateID); err != nil {
 		return err
 	}
-	templatePath := b.templatePath(templateID)
+	templatePath := b.TemplatePath(templateID)
 	err := os.RemoveAll(templatePath)
 	if err != nil {
 		return errors.Wrapf(err, "Failed to remove template %s", templateID)
@@ -60,7 +61,7 @@ func (b *BaseRepository) IsInstalled(templateID string) (bool, error) {
 	if err := validateTemplateID(templateID); err != nil {
 		return false, err
 	}
-	templatePath := b.templatePath(templateID)
+	templatePath := b.TemplatePath(templateID)
 	_, err := os.Stat(templatePath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -78,7 +79,8 @@ func validateTemplateID(templateID string) error {
 	return nil
 }
 
-func (b *BaseRepository) templatePath(templateID string) string {
+//TemplatePath returns the file system path of a template based on the ID
+func (b *BaseRepository) TemplatePath(templateID string) string {
 	return filepath.Join(b.path, repositoryTemplatesDirectory, templateID)
 }
 
