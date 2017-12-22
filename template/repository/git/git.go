@@ -40,20 +40,19 @@ func (r *Repository) Install(location string) error {
 }
 
 //Update updates a template from a git repository
-func (r *Repository) Update(location string) error {
-	templatePath := r.templatePathFromLocation(location)
+func (r *Repository) Update(id string) error {
+	templatePath := r.templatePathFromLocation(id)
 	gitRepo, err := gogit.NewFilesystemRepository(templatePath)
 
 	if err != nil {
-		return errors.Wrapf(err, "Failed to get template repository %s", location)
+		return errors.Wrapf(err, "Failed to get template repository %s", id)
 	}
 
 	err = gitRepo.Pull(&gogit.PullOptions{})
 
-	if err != nil {
-		return errors.Wrapf(err, "Failed to update template  %s", location)
+	if gogit.NoErrAlreadyUpToDate != err && err != nil {
+		return errors.Wrapf(err, "Failed to update template  %s", id)
 	}
-
 	return nil
 }
 

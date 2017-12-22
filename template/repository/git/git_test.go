@@ -56,26 +56,37 @@ func TestRepository_Install(t *testing.T) {
 }
 
 func TestRepository_Update(t *testing.T) {
-	type fields struct {
-		BaseRepository *repository.BaseRepository
-	}
+
 	type args struct {
-		name string
+		id       string
+		location string
 	}
 	tests := []struct {
 		name    string
-		fields  fields
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		{
+			"Update template",
+			args{"wizard-hello-world", "https://github.com/ottogiron/wizard-hello-world.git"},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &Repository{
-				BaseRepository: tt.fields.BaseRepository,
+			r := newTestGitRepository()
+
+			err := r.Install(tt.args.location)
+
+			defer func() {
+				r.Uninstall(tt.args.id)
+			}()
+
+			if err != nil {
+				t.Errorf("Repository.Update() error = %v", err)
 			}
-			if err := r.Update(tt.args.name); (err != nil) != tt.wantErr {
+
+			if err := r.Update(tt.args.id); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.Update() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

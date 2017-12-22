@@ -2,6 +2,7 @@
 	bare = true
 	bare = true
 	bare = true
+	bare = true
 [remote "origin"]
 	url = https://github.com/ottogiron/unexisting-template
 	fetch = +refs/heads/*:refs/remotes/origin/*
