@@ -7,7 +7,7 @@ import (
 
 	"github.com/ironman-project/ironman/template/repository"
 	"github.com/pkg/errors"
-	git "gopkg.in/src-d/go-git.v4"
+	gogit "gopkg.in/src-d/go-git.v4"
 )
 
 var _ *repository.Repository = (*repository.Repository)(nil)
@@ -26,7 +26,7 @@ func New(baseRepository *repository.BaseRepository) repository.Repository {
 func (r *Repository) Install(location string) error {
 	templateID := path.Base(strings.TrimSuffix(location, ".git"))
 	templatePath := r.TemplatePath(templateID)
-	_, err := git.PlainClone(templatePath, false, &git.CloneOptions{
+	_, err := gogit.PlainClone(templatePath, false, &gogit.CloneOptions{
 		URL:      location,
 		Progress: os.Stdout,
 	})
