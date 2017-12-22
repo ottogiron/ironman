@@ -29,6 +29,12 @@ func TestRepository_Install(t *testing.T) {
 			"wizard-hello-world",
 			false,
 		},
+		{
+			"Install template",
+			args{"https://github.com/ottogiron/unexisting-template"},
+			"",
+			true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
