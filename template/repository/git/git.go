@@ -1,7 +1,6 @@
 package git
 
 import (
-	"os"
 	"path"
 	"strings"
 
@@ -26,9 +25,13 @@ func New(baseRepository *repository.BaseRepository) repository.Repository {
 func (r *Repository) Install(location string) error {
 	templateID := path.Base(strings.TrimSuffix(location, ".git"))
 	templatePath := r.TemplatePath(templateID)
-	_, err := gogit.PlainClone(templatePath, false, &gogit.CloneOptions{
-		URL:      location,
-		Progress: os.Stdout,
+	gitRepo, err := gogit.NewFilesystemRepository(templatePath)
+
+	if err != nil {
+		return errors.Wrapf(err, "Failed to clone template repository %s", location)
+	}
+	err = gitRepo.Clone(&gogit.CloneOptions{
+		URL: location,
 	})
 
 	if err != nil {
