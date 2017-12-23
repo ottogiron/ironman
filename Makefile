@@ -26,7 +26,7 @@ test: install_dependencies lint
 	 @go test -v $(SOURCE_DIRS) -cover -bench . -race
 
 test_acceptance: 
-	command -v godog >/dev/null 2>&1 || go get github.com/DATA-DOG/godog/cmd/godog
+	@command -v godog >/dev/null 2>&1 || go get github.com/DATA-DOG/godog/cmd/godog
 	godog
 
 
