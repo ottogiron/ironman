@@ -27,7 +27,7 @@ test: install_dependencies lint
 
 acceptance_test: 
 	command -v godog >/dev/null 2>&1 || go get github.com/DATA-DOG/godog/cmd/godog
-	godog acceptance
+	godog
 
 
 install_dependencies: 

@@ -12,4 +12,4 @@ Feature: Install a template
   Scenario: Incorectly install a template 2
     Given I run install command with incorrect parameters
     When It runs with incorrect parameters
-    Then An error message shoudl be shown
+    Then An error message should be shown
