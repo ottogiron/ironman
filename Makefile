@@ -23,7 +23,12 @@ lint:
 	@go vet $(SOURCE_DIRS)
 
 test: install_dependencies lint
-	 @go test -v $(SOURCE_DIRS) -cover -bench . -race 
+	 @go test -v $(SOURCE_DIRS) -cover -bench . -race
+
+acceptance_test: 
+	command -v godog >/dev/null 2>&1 || go get github.com/DATA-DOG/godog/cmd/godog
+	godog acceptance
+
 
 install_dependencies: 
 	dep ensure
