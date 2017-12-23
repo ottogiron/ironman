@@ -24,6 +24,7 @@ func aTemplateShouldBeInstalled() error {
 }
 
 func aSucessMessageShouldBeShown() error {
+
 	return godog.ErrPending
 }
 
