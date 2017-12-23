@@ -14,7 +14,7 @@ EXTRA_BUILD_VARS := CGO_ENABLED=0 GOARCH=amd64
 SOURCE_DIRS := $(shell go list ./... | grep -v /vendor/)
 
 
-all: test package-linux package-darwin
+all: test package-linux package-darwin acceptance_test
 
 build-release: container
 
