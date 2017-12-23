@@ -1,16 +1,29 @@
 package main
 
-import "github.com/DATA-DOG/godog"
+import (
+	"fmt"
+	"os/exec"
 
-func iRunInstallCommand() error {
-	return godog.ErrPending
-}
+	"github.com/DATA-DOG/godog"
+	"github.com/ironman-project/ironman/testutils"
+	"github.com/rendon/testcli"
+)
+
+var installCommand *exec.Cmd
 
 func itRunsWithCorrectURL() error {
-	return godog.ErrPending
+	testcli.Run(testutils.ExecutablePath(), "install")
+	if !testcli.Success() {
+		return fmt.Errorf("Failed to run install command %s", testcli.Error())
+	}
+	return nil
 }
 
 func aTemplateShouldBeInstalled() error {
+	return godog.ErrPending
+}
+
+func aSucessMessageShouldBeShown() error {
 	return godog.ErrPending
 }
 
@@ -18,11 +31,7 @@ func theExitOutputShouldBe(arg1 int) error {
 	return godog.ErrPending
 }
 
-func iRunInstallCommandWithIncorrectURL() error {
-	return godog.ErrPending
-}
-
-func itRunsWithIncorrectIncorrectURL() error {
+func itRunsWithIncorrectURL() error {
 	return godog.ErrPending
 }
 
@@ -35,12 +44,12 @@ func theErrorOutputShouldBeNot(arg1 int) error {
 }
 
 func FeatureContext(s *godog.Suite) {
-	s.Step(`^I run install command$`, iRunInstallCommand)
+
 	s.Step(`^It runs with correct URL$`, itRunsWithCorrectURL)
 	s.Step(`^A template should be installed$`, aTemplateShouldBeInstalled)
+	s.Step(`^A sucess message should be shown$`, aSucessMessageShouldBeShown)
 	s.Step(`^The exit output should be (\d+)$`, theExitOutputShouldBe)
-	s.Step(`^I run install command with incorrect URL$`, iRunInstallCommandWithIncorrectURL)
-	s.Step(`^It runs with incorrect incorrect URL$`, itRunsWithIncorrectIncorrectURL)
+	s.Step(`^It runs with incorrect URL$`, itRunsWithIncorrectURL)
 	s.Step(`^An error message should be shown$`, anErrorMessageShouldBeShown)
 	s.Step(`^The error output should be not (\d+)$`, theErrorOutputShouldBeNot)
 }
