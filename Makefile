@@ -14,7 +14,7 @@ EXTRA_BUILD_VARS := CGO_ENABLED=0 GOARCH=amd64
 SOURCE_DIRS := $(shell go list ./... | grep -v /vendor/)
 
 
-all: test package-linux package-darwin acceptance_test
+all: test package-linux package-darwin test_acceptance
 
 build-release: container
 
@@ -25,7 +25,7 @@ lint:
 test: install_dependencies lint
 	 @go test -v $(SOURCE_DIRS) -cover -bench . -race
 
-acceptance_test: 
+test_acceptance: 
 	command -v godog >/dev/null 2>&1 || go get github.com/DATA-DOG/godog/cmd/godog
 	godog
 
