@@ -10,7 +10,7 @@ Feature: Install a template
     And The output should contain "Installing template" and "done"
     And A template should be installed with ID "wizard-hello-world"
    
-  Scenario: Install a template with incorrect URL 
-    When It runs with incorrect URL "http://hola"
+  Scenario: Install a template with unreachable URL 
+    When It runs with unreachable URL "http://hola"
     Then The process state should be failure
     And The output should cointain "Failed to install template"

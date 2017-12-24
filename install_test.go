@@ -52,7 +52,7 @@ func theOutputShouldContainAnd(out1, out2 string) error {
 	return nil
 }
 
-func itRunsWithIncorrectURL(URL string) error {
+func itRunsWithUnreachableURL(URL string) error {
 	testcli.Run(testutils.ExecutablePath(), "install", "--ironman-home="+ironmanTestDir, URL)
 	return nil
 }
@@ -76,7 +76,7 @@ func FeatureContext(s *godog.Suite) {
 	s.Step(`^The process state should be success$`, theProcessStateShouldBeSuccess)
 	s.Step(`^A template should be installed with ID "([^"]*)"$`, aTemplateShouldBeInstalledWithID)
 	s.Step(`^The output should contain "([^"]*)" and "([^"]*)"$`, theOutputShouldContainAnd)
-	s.Step(`^It runs with incorrect URL "([^"]*)"$`, itRunsWithIncorrectURL)
+	s.Step(`^It runs with unreachable URL "([^"]*)"$`, itRunsWithUnreachableURL)
 	s.Step(`^The process state should be failure$`, theProcessStateShouldBeFailure)
 	s.Step(`^The output should cointain "([^"]*)"$`, theOutputShouldCointain)
 	s.BeforeScenario(func(i interface{}) {
