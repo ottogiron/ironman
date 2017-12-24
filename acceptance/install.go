@@ -1,4 +1,4 @@
-package main
+package acceptance
 
 import (
 	"fmt"
@@ -6,10 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/mitchellh/go-homedir"
-
 	"github.com/DATA-DOG/godog"
 	"github.com/ironman-project/ironman/testutils"
+	homedir "github.com/mitchellh/go-homedir"
 	"github.com/rendon/testcli"
 )
 
@@ -71,7 +70,8 @@ func theOutputShouldCointain(expectedOutput string) error {
 	return nil
 }
 
-func FeatureContext(s *godog.Suite) {
+//InstallContext context for install command
+func InstallContext(s *godog.Suite) {
 	s.Step(`^It runs with correct URL "([^"]*)"$`, itRunsWithCorrectURL)
 	s.Step(`^The process state should be success$`, theProcessStateShouldBeSuccess)
 	s.Step(`^A template should be installed with ID "([^"]*)"$`, aTemplateShouldBeInstalledWithID)
