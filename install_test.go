@@ -26,7 +26,7 @@ func init() {
 }
 
 func itRunsWithCorrectURL(URL string) error {
-	testcli.Run(testutils.ExecutablePath(), "install", URL, "--ironman-home="+ironmanTestDir)
+	testcli.Run(testutils.ExecutablePath(), "install", "--ironman-home="+ironmanTestDir, URL)
 	return nil
 }
 
@@ -37,15 +37,19 @@ func theProcessStateShouldBeSuccess() error {
 	return nil
 }
 
-func aTemplateShouldBeInstalledInPath(arg1 string) error {
-	return godog.ErrPending
+func aTemplateShouldBeInstalledWithID(id string) error {
+	path := filepath.Join(ironmanTestDir, "templates", id)
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return fmt.Errorf("%s does not exists", path)
+	}
+	return nil
 }
 
 func theOutputShouldContainAnd(out1, out2 string) error {
 	if !strings.Contains(testcli.Stdout(), out1) && !strings.Contains(testcli.Stdout(), out2) {
 		return fmt.Errorf("output => %s", testcli.Stdout())
 	}
-	return godog.ErrPending
+	return nil
 }
 
 func itRunsWithIncorrectURL(URL string) error {
@@ -63,7 +67,7 @@ func theOutputShouldCointain(arg1 string) error {
 func FeatureContext(s *godog.Suite) {
 	s.Step(`^It runs with correct URL "([^"]*)"$`, itRunsWithCorrectURL)
 	s.Step(`^The process state should be success$`, theProcessStateShouldBeSuccess)
-	s.Step(`^A template should be installed in path "([^"]*)"$`, aTemplateShouldBeInstalledInPath)
+	s.Step(`^A template should be installed with ID "([^"]*)"$`, aTemplateShouldBeInstalledWithID)
 	s.Step(`^The output should contain "([^"]*)" and "([^"]*)"$`, theOutputShouldContainAnd)
 	s.Step(`^It runs with incorrect URL "([^"]*)"$`, itRunsWithIncorrectURL)
 	s.Step(`^The process state should be failure$`, theProcessStateShouldBeFailure)

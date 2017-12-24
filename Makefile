@@ -12,9 +12,9 @@ LD_FLAGS += -X github.com/ironman-project/ironman/cmd.buildCommit=$(COMMIT_ID)
 LD_FLAGS += -X github.com/ironman-project/ironman/cmd.buildDate=$(DATE)
 EXTRA_BUILD_VARS := CGO_ENABLED=0 GOARCH=amd64
 SOURCE_DIRS := $(shell go list ./... | grep -v /vendor/)
+SUBDIRS = acceptance
 
-
-all: test package-linux package-darwin test_acceptance
+all: test package-linux package-darwin acceptance
 
 build-release: container
 
@@ -25,7 +25,7 @@ lint:
 test: install_dependencies lint
 	 @go test -v $(SOURCE_DIRS) -cover -bench . -race
 
-test_acceptance: binaries 
+acceptance: binaries 
 	@command -v godog >/dev/null 2>&1 || go get github.com/DATA-DOG/godog/cmd/godog
 	godog
 
@@ -55,3 +55,5 @@ package-darwin: binary-darwin
 
 package-linux: binary-linux
 	@tar -czf build/dist/ironman.linux-amd64.tar.gz -C build/dist/linux ironman
+
+.PHONY: $(SUBDIRS)

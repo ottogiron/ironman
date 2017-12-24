@@ -8,7 +8,7 @@ Feature: Install a template
     When It runs with correct URL "https://github.com/ottogiron/wizard-hello-world.git"
     Then The process state should be success 
     And The output should contain "Installing template" and "done"
-    And A template should be installed in path "$HOME/.ironman/templates/wizard-hello-world"
+    And A template should be installed with ID "wizard-hello-world"
    
   Scenario: Install a template with incorrect URL 
     When It runs with incorrect URL "http://hola"
