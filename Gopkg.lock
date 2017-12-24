@@ -10,12 +10,14 @@
 [[projects]]
   name = "github.com/fsnotify/fsnotify"
   packages = ["."]
-  revision = "fd9ec7deca8bf46ecd2a795baaacf2b3a9be1197"
+  revision = "629574ca2a5df945712d3079857300b5e4da0236"
+  version = "v1.4.2"
 
 [[projects]]
+  branch = "master"
   name = "github.com/hashicorp/hcl"
   packages = [".","hcl/ast","hcl/parser","hcl/scanner","hcl/strconv","hcl/token","json/parser","json/scanner","json/token"]
-  revision = "7cb7455c285ca3bf3362aa4ba6a06a6d6f5c3ba0"
+  revision = "23c074d0eceb2b8a5bfdbb271ab780cde70f05a8"
 
 [[projects]]
   name = "github.com/inconshreveable/mousetrap"
@@ -26,29 +28,38 @@
 [[projects]]
   name = "github.com/magiconair/properties"
   packages = ["."]
-  revision = "9c47895dc1ce54302908ab8a43385d1f5df2c11c"
+  revision = "d419a98cdbed11a922bf76f257b7c4be79b50e73"
+  version = "v1.7.4"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/mitchellh/go-homedir"
+  packages = ["."]
+  revision = "b8bc1bf767474819792c23f32d8286a45736f1c6"
+
+[[projects]]
+  branch = "master"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
-  revision = "f3009df150dadf309fdee4a54ed65c124afad715"
-
-[[projects]]
-  name = "github.com/pelletier/go-buffruneio"
-  packages = ["."]
-  revision = "df1e16fde7fc330a0ca68167c23bf7ed6ac31d6d"
-  version = "v0.1.0"
+  revision = "06020f85339e21b2478f756a78e295255ffa4d6a"
 
 [[projects]]
   name = "github.com/pelletier/go-toml"
   packages = ["."]
-  revision = "7cb988051d5045890cb91402a0b5fddc76c627bc"
+  revision = "16398bac157da96aa88f98a2df640c7f32af1da2"
+  version = "v1.0.1"
 
 [[projects]]
   name = "github.com/pkg/errors"
   packages = ["."]
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
   version = "v0.8.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/rendon/testcli"
+  packages = ["."]
+  revision = "6283090d169f51a2410b4e260341a01c9a4c0ca7"
 
 [[projects]]
   branch = "master"
@@ -59,32 +70,38 @@
 [[projects]]
   name = "github.com/spf13/afero"
   packages = [".","mem"]
-  revision = "06b7e5f50606ecd49148a01a6008942d9b669217"
+  revision = "8d919cbe7e2627e417f3e45c3c0e489a5b7e2536"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/spf13/cast"
   packages = ["."]
-  revision = "24b6558033ffe202bf42f0f3b870dcc798dd2ba8"
+  revision = "acbeb36b902d72a7a4c18e8f3241075e7ab763e4"
+  version = "v1.1.0"
 
 [[projects]]
   name = "github.com/spf13/cobra"
   packages = ["."]
-  revision = "6e91dded25d73176bf7f60b40dd7aa1f0bf9be8d"
+  revision = "7b2c5ac9fc04fc5efafb60700713d4fa609b777b"
+  version = "v0.0.1"
 
 [[projects]]
+  branch = "master"
   name = "github.com/spf13/jwalterweatherman"
   packages = ["."]
-  revision = "33c24e77fb80341fe7130ee7c594256ff08ccc46"
+  revision = "12bd96e66386c1960ab0f74ced1362f66f552f7b"
 
 [[projects]]
   name = "github.com/spf13/pflag"
   packages = ["."]
-  revision = "5ccb023bc27df288a957c5e994cd44fd19619465"
+  revision = "e57e3eeb33f795204c1ca35f56c44f83227c6e66"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/spf13/viper"
   packages = ["."]
-  revision = "651d9d916abc3c3d6a91a12549495caba5edffd2"
+  revision = "25b30aa063fc18e48662b86996252eabdcf2f0c7"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/src-d/gcfg"
@@ -99,14 +116,16 @@
   revision = "d585fd2cc9195196078f516b69daff6744ef5e84"
 
 [[projects]]
+  branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "d5645953809d8b4752afb2c3224b1f1ad73dfa70"
+  revision = "83801418e1b59fb1880e363299581ee543af32ca"
 
 [[projects]]
+  branch = "master"
   name = "golang.org/x/text"
   packages = ["internal/gen","internal/triegen","internal/ucd","transform","unicode/cldr","unicode/norm"]
-  revision = "4ea6c073aae78d08c7e95e95aa7f55b888287d6f"
+  revision = "eb22672bea55af56d225d4e35405f4d2e9f062a0"
 
 [[projects]]
   name = "gopkg.in/src-d/go-git.v4"
@@ -121,13 +140,14 @@
   version = "v0.1.2"
 
 [[projects]]
+  branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "a5b47d31c556af34a302ce5d659e6fea44d90de0"
+  revision = "287cf08546ab5e7e37d55a84f7ed3fd1db036de5"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "24a96ac8d094a4de97ffdeaf692c3665b6b3ddc97bafafa78f5ab16d25f54cd5"
+  inputs-digest = "c429ee2aa65568017f35a2661a80dc5216c0629c397b8025fbcb57b9d66e7891"
   solver-name = "gps-cdcl"
   solver-version = 1

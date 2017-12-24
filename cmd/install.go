@@ -2,22 +2,44 @@ package cmd
 
 import (
 	"fmt"
+	"net/url"
 
+	"github.com/ironman-project/ironman/template/repository"
+	"github.com/ironman-project/ironman/template/repository/git"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 // installCmd represents the install command
 var installCmd = &cobra.Command{
-	Use:   "install",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Use: "install <url>",
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("url arg is required")
+		}
+		templateURL := args[0]
+		if _, err := url.Parse(args[0]); err != nil {
+			return errors.Wrapf(err, "Invalid URL %s", templateURL)
+		}
+		return nil
+	},
+	Short: "Installs a template using a git URL",
+	Long: `Installs a template using a git URL:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("install called")
+Example:
+iroman install https://github.com/ottogiron/wizard-hello-world.git
+`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		templateURL := args[0]
+		b := repository.NewBaseRepository(ironmanHome)
+		repository := git.New(b)
+		fmt.Println("Installing template", templateURL, "...")
+		err := repository.Install(templateURL)
+		if err != nil {
+			return err
+		}
+		fmt.Println("Done")
+		return nil
 	},
 }
 

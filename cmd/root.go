@@ -3,12 +3,16 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+
+	"github.com/mitchellh/go-homedir"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var cfgFile string
+var ironmanHome string
 
 // RootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -17,17 +21,27 @@ var rootCmd = &cobra.Command{
 	Long:          `Template manager and engine`,
 	SilenceUsage:  true,
 	SilenceErrors: true,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
+
+	createIromanHomeDirectory()
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println("There was an error", err)
 		os.Exit(-1)
+	}
+}
+
+func createIromanHomeDirectory() {
+	if _, err := os.Stat(ironmanHome); os.IsNotExist(err) {
+		err := os.Mkdir(ironmanHome, os.ModePerm)
+		fmt.Println("Did dthis")
+		if err != nil {
+			fmt.Printf("Failed to create ironman home directory %s %s", ironmanHome, err)
+			os.Exit(-1)
+		}
 	}
 }
 
@@ -39,9 +53,14 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ironman.yaml)")
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	defaultHomeDir, err := homedir.Dir()
+	if err != nil {
+		fmt.Printf("Failed to get the current user home dir %s ", err)
+		os.Exit(-1)
+	}
+	defaultIronmanHomeDir := filepath.Join(defaultHomeDir, ".ironman")
+	rootCmd.PersistentFlags().StringVar(&ironmanHome, "ironman-home", defaultIronmanHomeDir, "ironman home directory")
+
 }
 
 // initConfig reads in config file and ENV variables if set.

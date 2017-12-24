@@ -2,55 +2,73 @@ package main
 
 import (
 	"fmt"
-	"os/exec"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/mitchellh/go-homedir"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/ironman-project/ironman/testutils"
 	"github.com/rendon/testcli"
 )
 
-var installCommand *exec.Cmd
+var ironmanTestDir string
 
-func itRunsWithCorrectURL() error {
-	testcli.Run(testutils.ExecutablePath(), "install")
+func init() {
+	var err error
+	ironmanTestDir, err = homedir.Dir()
+
+	if err != nil {
+		os.Exit(-1)
+	}
+	ironmanTestDir = filepath.Join(ironmanTestDir, ".ironman_test")
+}
+
+func itRunsWithCorrectURL(URL string) error {
+	testcli.Run(testutils.ExecutablePath(), "install", URL, "--ironman-home="+ironmanTestDir)
+	return nil
+}
+
+func theProcessStateShouldBeSuccess() error {
 	if !testcli.Success() {
-		return fmt.Errorf("Failed to run install command %s", testcli.Error())
+		return fmt.Errorf("Install command did not succeded %s", testcli.Error())
 	}
 	return nil
 }
 
-func aTemplateShouldBeInstalled() error {
+func aTemplateShouldBeInstalledInPath(arg1 string) error {
 	return godog.ErrPending
 }
 
-func aSucessMessageShouldBeShown() error {
-
+func theOutputShouldContainAnd(out1, out2 string) error {
+	if !strings.Contains(testcli.Stdout(), out1) && !strings.Contains(testcli.Stdout(), out2) {
+		return fmt.Errorf("output => %s", testcli.Stdout())
+	}
 	return godog.ErrPending
 }
 
-func theExitOutputShouldBe(arg1 int) error {
+func itRunsWithIncorrectURL(URL string) error {
 	return godog.ErrPending
 }
 
-func itRunsWithIncorrectURL() error {
+func theProcessStateShouldBeFailure() error {
 	return godog.ErrPending
 }
 
-func anErrorMessageShouldBeShown() error {
-	return godog.ErrPending
-}
-
-func theErrorOutputShouldBeNot(arg1 int) error {
+func theOutputShouldCointain(arg1 string) error {
 	return godog.ErrPending
 }
 
 func FeatureContext(s *godog.Suite) {
-
-	s.Step(`^It runs with correct URL$`, itRunsWithCorrectURL)
-	s.Step(`^A template should be installed$`, aTemplateShouldBeInstalled)
-	s.Step(`^A sucess message should be shown$`, aSucessMessageShouldBeShown)
-	s.Step(`^The exit output should be (\d+)$`, theExitOutputShouldBe)
-	s.Step(`^It runs with incorrect URL$`, itRunsWithIncorrectURL)
-	s.Step(`^An error message should be shown$`, anErrorMessageShouldBeShown)
-	s.Step(`^The error output should be not (\d+)$`, theErrorOutputShouldBeNot)
+	s.Step(`^It runs with correct URL "([^"]*)"$`, itRunsWithCorrectURL)
+	s.Step(`^The process state should be success$`, theProcessStateShouldBeSuccess)
+	s.Step(`^A template should be installed in path "([^"]*)"$`, aTemplateShouldBeInstalledInPath)
+	s.Step(`^The output should contain "([^"]*)" and "([^"]*)"$`, theOutputShouldContainAnd)
+	s.Step(`^It runs with incorrect URL "([^"]*)"$`, itRunsWithIncorrectURL)
+	s.Step(`^The process state should be failure$`, theProcessStateShouldBeFailure)
+	s.Step(`^The output should cointain "([^"]*)"$`, theOutputShouldCointain)
+	s.BeforeScenario(func(i interface{}) {
+		_ = os.RemoveAll(ironmanTestDir)
+	})
 }
