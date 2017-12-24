@@ -29,7 +29,7 @@ func Execute() {
 
 	createIromanHomeDirectory()
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println("There was an error", err)
+		fmt.Fprintln(os.Stderr, "There was an error", err)
 		os.Exit(-1)
 	}
 }

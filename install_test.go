@@ -53,15 +53,22 @@ func theOutputShouldContainAnd(out1, out2 string) error {
 }
 
 func itRunsWithIncorrectURL(URL string) error {
-	return godog.ErrPending
+	testcli.Run(testutils.ExecutablePath(), "install", "--ironman-home="+ironmanTestDir, URL)
+	return nil
 }
 
 func theProcessStateShouldBeFailure() error {
-	return godog.ErrPending
+	if !testcli.Failure() {
+		return fmt.Errorf("Install command did not failed %s", testcli.Stdout())
+	}
+	return nil
 }
 
-func theOutputShouldCointain(arg1 string) error {
-	return godog.ErrPending
+func theOutputShouldCointain(expectedOutput string) error {
+	if !strings.Contains(testcli.Stderr(), expectedOutput) {
+		return fmt.Errorf("output => %s", testcli.Stderr())
+	}
+	return nil
 }
 
 func FeatureContext(s *godog.Suite) {
