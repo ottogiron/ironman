@@ -9,13 +9,14 @@ import (
 // linkCmd represents the link command
 var linkCmd = &cobra.Command{
 	Use:   "link",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Creates a symlink of a ironman template to the ironman repository",
+	Long: `Creates a symlink of a ironman template to the ironman repository:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Example:
+ironman link /path/to/template dev-template
+
+If you run "ironman list" you should see the symlink of your template created.
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("link called")
 	},
