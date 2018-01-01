@@ -12,7 +12,7 @@ import (
 //Repository represents a local ironman repository
 type Repository interface {
 	Install(templateLocator string) error
-	Update(templateID string) error
+	Upgrade(templateID string) error
 	Uninstall(templateID string) error
 	Find(templateID string) error
 	IsInstalled(templateID string) (bool, error)
