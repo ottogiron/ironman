@@ -13,6 +13,7 @@ import (
 )
 
 var ironmanTestDir string
+var ironmanTemplatesDir string
 
 func init() {
 	var err error
@@ -22,6 +23,7 @@ func init() {
 		os.Exit(-1)
 	}
 	ironmanTestDir = filepath.Join(ironmanTestDir, ".ironman_test")
+	ironmanTemplatesDir = filepath.Join(ironmanTestDir, "templates")
 }
 
 func itRunsWithCorrectURL(URL string) error {

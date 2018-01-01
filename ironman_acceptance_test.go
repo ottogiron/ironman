@@ -7,4 +7,5 @@ import (
 
 func FeatureContext(s *godog.Suite) {
 	acceptance.InstallContext(s)
+	acceptance.LinkContext(s)
 }
