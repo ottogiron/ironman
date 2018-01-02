@@ -14,7 +14,7 @@ EXTRA_BUILD_VARS := CGO_ENABLED=0 GOARCH=amd64
 SOURCE_DIRS := ./...
 SUBDIRS = acceptance
 
-all: test package-linux package-darwin acceptance
+all: test package-linux package-darwin package-windows acceptance
 
 build-release: container
 

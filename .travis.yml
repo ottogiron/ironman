@@ -11,6 +11,7 @@ deploy:
   file:
     - build/dist/ironman.darwin-amd64.tar.gz
     - build/dist/ironman.linux-amd64.tar.gz
+    - build/dist/ironman.windows-amd64.tar.gz
   skip_cleanup: true
 
   on:
