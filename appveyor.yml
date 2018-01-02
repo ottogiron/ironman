@@ -9,7 +9,9 @@ environment:
   GOOS: windows 
   CGO_ENABLED: 0 
   GOARCH: amd64
-  
+
+init:
+  - git config --global core.autocrlf input  
 
 platform:
   - x64
