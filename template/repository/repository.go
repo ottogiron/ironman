@@ -101,12 +101,29 @@ func (b *BaseRepository) Installed() ([]string, error) {
 }
 
 //Link links a template on a path to the repository
-func (b *BaseRepository) Link(templatePath string, templateName string) error {
-	panic("not implemented")
+func (b *BaseRepository) Link(templatePath string, templateID string) error {
+	linkPath := b.TemplatePath(templateID)
+
+	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
+		return errors.Wrapf(err, "Failed to create symlink to iroman repository path should %s exists ", templatePath)
+	}
+
+	absTemplatePath, err := filepath.Abs(templatePath)
+
+	if err != nil {
+		return errors.Wrapf(err, "Failed to create symlink to iroman repository for %s with ID %s", templatePath, templateID)
+	}
+
+	err = os.Symlink(absTemplatePath, linkPath)
+	if err != nil {
+		return errors.Wrapf(err, "Failed to create symlink to iroman repository for %s with ID %s", templatePath, templateID)
+	}
+
+	return nil
 }
 
 //Unlink unlinks a linked template
-func (b *BaseRepository) Unlink(templateName string) error {
+func (b *BaseRepository) Unlink(templateID string) error {
 	panic("not implemented")
 }
 

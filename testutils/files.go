@@ -124,3 +124,11 @@ func CopyFile(source string, dest string) (err error) {
 
 	return
 }
+
+//FileExists verifies if file exists
+func FileExists(path string) bool {
+	if _, err := os.Stat(path); err == nil {
+		return true
+	}
+	return false
+}

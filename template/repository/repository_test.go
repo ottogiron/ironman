@@ -10,8 +10,9 @@ import (
 	"github.com/ironman-project/ironman/testutils"
 )
 
-const (
+var (
 	testRepositoryPath = "testing/repository"
+	testTemplatesPath  = filepath.Join(testRepositoryPath, repositoryTemplatesDirectory)
 )
 
 func createTestTemplate(t *testing.T, names ...string) (string, func()) {
@@ -159,21 +160,48 @@ func TestBaseRepository_Installed(t *testing.T) {
 func TestBaseRepository_Link(t *testing.T) {
 	type args struct {
 		templatePath string
-		templateName string
+		templateID   string
 	}
 	tests := []struct {
 		name    string
-		b       *BaseRepository
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		{
+			"Link a template",
+			args{"testing/repository/templates/valid", "dev-valid"},
+			false,
+		},
+		{
+			"Link a template with non existing path",
+			args{"nonexisting/repository/templates/valid", "dev-nonexisting"},
+			true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			b := &BaseRepository{}
-			if err := b.Link(tt.args.templatePath, tt.args.templateName); (err != nil) != tt.wantErr {
+
+			b := NewBaseRepository(testRepositoryPath)
+			createdLinkPath := filepath.Join(testTemplatesPath, tt.args.templateID)
+			defer func() {
+				_ = os.Remove(createdLinkPath)
+			}()
+
+			if err := b.Link(tt.args.templatePath, tt.args.templateID); (err != nil) != tt.wantErr {
 				t.Errorf("BaseRepository.Link() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			} else if tt.wantErr {
+				return
+			}
+
+			if !testutils.FileExists(createdLinkPath) {
+				t.Errorf("BaseRepository.Link() %s file should exists", createdLinkPath)
+				return
+			}
+
+			ymlFilePath := filepath.Join(createdLinkPath, ".ironman.yml")
+			if !testutils.FileExists(ymlFilePath) {
+				t.Errorf("BaseRepository.Link() %s file should exists", ymlFilePath)
 			}
 		})
 	}
@@ -181,7 +209,7 @@ func TestBaseRepository_Link(t *testing.T) {
 
 func TestBaseRepository_Unlink(t *testing.T) {
 	type args struct {
-		templateName string
+		templateID string
 	}
 	tests := []struct {
 		name    string
@@ -194,7 +222,7 @@ func TestBaseRepository_Unlink(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			b := &BaseRepository{}
-			if err := b.Unlink(tt.args.templateName); (err != nil) != tt.wantErr {
+			if err := b.Unlink(tt.args.templateID); (err != nil) != tt.wantErr {
 				t.Errorf("BaseRepository.Unlink() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
