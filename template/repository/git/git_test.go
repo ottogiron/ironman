@@ -55,7 +55,7 @@ func TestRepository_Install(t *testing.T) {
 	}
 }
 
-func TestRepository_Upgrade(t *testing.T) {
+func TestRepository_Update(t *testing.T) {
 
 	type args struct {
 		id       string
@@ -67,7 +67,7 @@ func TestRepository_Upgrade(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			"Upgrade template",
+			"Update template",
 			args{"wizard-hello-world", "https://github.com/ottogiron/wizard-hello-world.git"},
 			false,
 		},
@@ -83,11 +83,11 @@ func TestRepository_Upgrade(t *testing.T) {
 			}()
 
 			if err != nil {
-				t.Errorf("Repository.Upgrade() error = %v", err)
+				t.Errorf("Repository.Update() error = %v", err)
 			}
 
-			if err := r.Upgrade(tt.args.id); (err != nil) != tt.wantErr {
-				t.Errorf("Repository.Upgrade() error = %v, wantErr %v", err, tt.wantErr)
+			if err := r.Update(tt.args.id); (err != nil) != tt.wantErr {
+				t.Errorf("Repository.Update() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
