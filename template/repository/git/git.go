@@ -17,7 +17,8 @@ type Repository struct {
 }
 
 //New returns a new instance of the git repository
-func New(baseRepository *repository.BaseRepository) repository.Repository {
+func New(path string) repository.Repository {
+	baseRepository := repository.NewBaseRepository(path)
 	return &Repository{baseRepository}
 }
 

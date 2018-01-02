@@ -17,8 +17,8 @@ type Repository interface {
 	Find(templateID string) error
 	IsInstalled(templateID string) (bool, error)
 	Installed() ([]string, error)
-	Link(templatePath string, templateName string) error
-	Unlink(templateName string) error
+	Link(templatePath string, templateID string) error
+	Unlink(templateID string) error
 	TemplatePath(templateID string) string
 }
 

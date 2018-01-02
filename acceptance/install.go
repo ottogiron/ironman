@@ -8,23 +8,8 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/ironman-project/ironman/testutils"
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/rendon/testcli"
 )
-
-var ironmanTestDir string
-var ironmanTemplatesDir string
-
-func init() {
-	var err error
-	ironmanTestDir, err = homedir.Dir()
-
-	if err != nil {
-		os.Exit(-1)
-	}
-	ironmanTestDir = filepath.Join(ironmanTestDir, ".ironman_test")
-	ironmanTemplatesDir = filepath.Join(ironmanTestDir, "templates")
-}
 
 func itRunsWithCorrectURL(URL string) error {
 	testcli.Run(testutils.ExecutablePath(), "install", "--ironman-home="+ironmanTestDir, URL)

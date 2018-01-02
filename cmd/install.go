@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/ironman-project/ironman/template/repository"
 	"github.com/ironman-project/ironman/template/repository/git"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -31,8 +30,7 @@ iroman install https://github.com/ottogiron/wizard-hello-world.git
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		templateURL := args[0]
-		b := repository.NewBaseRepository(ironmanHome)
-		repository := git.New(b)
+		repository := git.New(ironmanHome)
 		fmt.Println("Installing template", templateURL, "...")
 		err := repository.Install(templateURL)
 		if err != nil {

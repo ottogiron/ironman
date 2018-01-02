@@ -8,8 +8,8 @@ import (
 )
 
 func newTestGitRepository() repository.Repository {
-	baseRepository := repository.NewBaseRepository("testing")
-	return New(baseRepository)
+
+	return New("testing")
 }
 
 func TestRepository_Install(t *testing.T) {
