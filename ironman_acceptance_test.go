@@ -9,4 +9,5 @@ func FeatureContext(s *godog.Suite) {
 	acceptance.VarsContext(s)
 	acceptance.InstallContext(s)
 	acceptance.LinkContext(s)
+	acceptance.UnlinkContext(s)
 }
