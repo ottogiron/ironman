@@ -48,6 +48,11 @@ binary-linux:
 	@-mkdir -p build/dist/linux
 	GOOS=linux $(EXTRA_BUILD_VARS) go build -ldflags "$(LD_FLAGS)" -o build/dist/linux/$(NAME)
 
+binary-windows:
+	@-rm -rf build/dist/windows
+	@-mkdir -p build/dist/windows
+	GOOS=windows $(EXTRA_BUILD_VARS) go build -ldflags "$(LD_FLAGS)" -o build/dist/windows/$(NAME)
+
 
 package-darwin: binary-darwin
 	@tar -czf build/dist/ironman.darwin-amd64.tar.gz -C build/dist/darwin ironman
@@ -55,5 +60,8 @@ package-darwin: binary-darwin
 
 package-linux: binary-linux
 	@tar -czf build/dist/ironman.linux-amd64.tar.gz -C build/dist/linux ironman
+
+package-windows:
+	@tar -czf build/dist/ironman.windows-amd64.tar.gz -C build/dist/windows ironman.exe 
 
 .PHONY: $(SUBDIRS)

@@ -24,8 +24,9 @@ install:
 
 test_script:
   - set PATH=C:\gopath\bin;%PATH%
-  - dep ensure
-  - go test -v ./...
+  - make test
+build_script:
+  - make binary-windows
 
 #artifacts:
 #  - path: '%GOPATH%\bin\*.exe'
