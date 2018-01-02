@@ -169,12 +169,12 @@ func TestBaseRepository_Link(t *testing.T) {
 	}{
 		{
 			"Link a template",
-			args{"testing/repository/templates/valid", "dev-valid"},
+			args{filepath.Join("testing", "repository", "templates", "valid"), "dev-valid"},
 			false,
 		},
 		{
 			"Link a template with non existing path",
-			args{"nonexisting/repository/templates/valid", "dev-nonexisting"},
+			args{filepath.Join("nonexisting", "repository", "templates", "valid"), "dev-nonexisting"},
 			true,
 		},
 	}
