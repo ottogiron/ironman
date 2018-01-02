@@ -19,11 +19,11 @@ all: test package-linux package-darwin acceptance
 build-release: container
 
 lint:
-	@go fmt $(SOURCE_DIRS)
-	@go vet $(SOURCE_DIRS)
+	go fmt $(SOURCE_DIRS)
+	go vet $(SOURCE_DIRS)
 
 test: install_dependencies lint
-	 @go test -v $(SOURCE_DIRS) -cover -bench . -race
+	 go test -v $(SOURCE_DIRS) -cover -bench . -race
 
 acceptance: binaries 
 	@command -v godog >/dev/null 2>&1 || go get github.com/DATA-DOG/godog/cmd/godog
@@ -51,7 +51,7 @@ binary-linux:
 binary-windows:
 	@-rm -rf build/dist/windows
 	@-mkdir -p build/dist/windows
-	GOOS=windows $(EXTRA_BUILD_VARS) go build -ldflags "$(LD_FLAGS)" -o build/dist/windows/$(NAME)
+	GOOS=windows $(EXTRA_BUILD_VARS) go build -ldflags "$(LD_FLAGS)" -o build/dist/windows/$(NAME).exe
 
 
 package-darwin: binary-darwin

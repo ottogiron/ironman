@@ -24,9 +24,12 @@ install:
 
 test_script:
   - set PATH=C:\gopath\bin;%PATH%
-  - make test
+  - dep ensure
+  - go fmt ./...
+  - go vet ./...
+  - go test -v ./... -cover -bench . -race
 build_script:
-  - make binary-windows
+  - GOOS=windows CGO_ENABLED=0 GOARCH=amd64 go build -ldflags "-X github.com/ironman-project/ironman/cmd.buildVersion=0.1.0 -X github.com/ironman-project/ironman/cmd.buildCommit=3f48780 -X github.com/ironman-project/ironman/cmd.buildDate=20180102.044021" -o build/dist/windows/ironman.exe
 
 #artifacts:
 #  - path: '%GOPATH%\bin\*.exe'
