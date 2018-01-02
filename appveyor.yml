@@ -5,6 +5,7 @@ shallow_clone: true # for startup speed
 
 environment:
   GOPATH: C:\gopath
+  GOVERSION: 1.9
   GOOS: windows 
   CGO_ENABLED: 0 
   GOARCH: amd64
@@ -13,17 +14,15 @@ environment:
 platform:
   - x64
 
-# http://www.appveyor.com/docs/installed-software
 install:
-  # some helpful output for debugging builds
+  # Install the specific Go version.
+  - rmdir c:\go /s /q
+  - appveyor DownloadFile https://storage.googleapis.com/golang/go%GOVERSION%.windows-amd64.msi
+  - msiexec /i go%GOVERSION%.windows-amd64.msi /q
+  - set Path=c:\go\bin;c:\gopath\bin
+  - go get -u github.com/golang/dep/cmd/dep
   - go version
   - go env
-  # pre-installed MinGW at C:\MinGW is 32bit only
-  # but MSYS2 at C:\msys64 has mingw64
-  - set PATH=C:\msys64\mingw64\bin;%PATH%
-  - gcc --version
-  - g++ --version
-  - go get -u github.com/golang/dep/cmd/dep
 
 
 test_script:
@@ -37,6 +36,5 @@ build_script:
   - dep ensure
   - go build -o build/dist/windows/ironman.exe
 
-#artifacts:
-#  - path: '%GOPATH%\bin\*.exe'
-deploy: off
+deploy: false
+
