@@ -1,6 +1,6 @@
 version: build-{build}.{branch}
 
-clone_folder: C:\gopath\src\github.com\pkg\errors
+clone_folder: C:\gopath\src\github.com\ironman-project\ironman
 shallow_clone: true # for startup speed
 
 environment:
@@ -34,7 +34,7 @@ test_script:
   - go test -v ./... -cover -bench . -race
   
 build_script:
-  - go build -ldflags "-X github.com/ironman-project/ironman/cmd.buildVersion=0.1.0 -X github.com/ironman-project/ironman/cmd.buildCommit=3f48780 -X github.com/ironman-project/ironman/cmd.buildDate=20180102.044021" -o build/dist/windows/ironman.exe
+  - go build -o build/dist/windows/ironman.exe
 
 #artifacts:
 #  - path: '%GOPATH%\bin\*.exe'
