@@ -5,7 +5,7 @@ Feature: Link a template
   I need to run the Link command 
 
   Scenario: Link a template to the ironman repository
-    When It runs with correct a template path to link "testing/templates/linkable-template" with ID "dev-linkable-template"
+    When It runs with correct a template path to link "acceptance/testing/templates/linkable-template" with ID "dev-linkable-template"
     Then The Link process state should be success 
     And The Link output should contain "Linking template to repository with ID dev-linkable-template" and "done"
     And A template link should exists be installed with ID "dev-linkable-template"

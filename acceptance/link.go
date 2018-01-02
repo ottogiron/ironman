@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/ironman-project/ironman/testutils"
@@ -12,19 +11,20 @@ import (
 )
 
 func itRunsWithCorrectATemplatePathToLinkWithID(templatePath, ID string) error {
+
 	testcli.Run(testutils.ExecutablePath(), "link", "--ironman-home="+ironmanTestDir, templatePath, ID)
 	return nil
 }
 
 func theLinkProcessStateShouldBeSuccess() error {
 	if !testcli.Success() {
-		return fmt.Errorf("Link command did not succeded %s", testcli.Error())
+		return fmt.Errorf("Link command did not succeded %s %s", testcli.Error(), testcli.Stderr())
 	}
 	return nil
 }
 
 func theLinkOutputShouldContainAnd(out1, out2 string) error {
-	if !strings.Contains(testcli.Stdout(), out1) && !strings.Contains(testcli.Stdout(), out2) {
+	if !testcli.StdoutContains(out1) && !testcli.StdoutContains(out2) {
 		return fmt.Errorf("output => %s", testcli.Stdout())
 	}
 	return nil

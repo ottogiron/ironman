@@ -7,6 +7,7 @@ import (
 
 	"github.com/mitchellh/go-homedir"
 
+	"github.com/ironman-project/ironman/template/repository"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -26,23 +27,24 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
+	if !repository.IsIronmanHomeInitialized() {
+		initializeIronmanHome()
+	}
 
-	createIromanHomeDirectory()
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, "There was an error", err)
 		os.Exit(-1)
 	}
 }
 
-func createIromanHomeDirectory() {
-	if _, err := os.Stat(ironmanHome); os.IsNotExist(err) {
-		err := os.Mkdir(ironmanHome, os.ModePerm)
-		fmt.Println("Did dthis")
-		if err != nil {
-			fmt.Printf("Failed to create ironman home directory %s %s", ironmanHome, err)
-			os.Exit(-1)
-		}
+func initializeIronmanHome() {
+	err := repository.InitIronmanHome(ironmanHome)
+	if err != nil {
+
+		fmt.Printf("Failed to create ironman home directory %s %s", ironmanHome, err)
+		os.Exit(-1)
 	}
+
 }
 
 func init() {

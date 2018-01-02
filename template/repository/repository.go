@@ -9,6 +9,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+var ironmanHomeInitialized = false
+
 //Repository represents a local ironman repository
 type Repository interface {
 	Install(templateLocator string) error
@@ -135,4 +137,27 @@ func (b *BaseRepository) Install(templateLocator string) error {
 //Update not implemented for base repository since it depend on specific provider
 func (b *BaseRepository) Update(templateID string) error {
 	panic("not implemented")
+}
+
+//InitIronmanHome inits the ironman home directory
+func InitIronmanHome(ironmanHome string) error {
+	if _, err := os.Stat(ironmanHome); os.IsNotExist(err) {
+		err := os.Mkdir(ironmanHome, os.ModePerm)
+		if err != nil {
+			return errors.Wrap(err, "Failed to initialize ironman home")
+		}
+
+		err = os.Mkdir(filepath.Join(ironmanHome, repositoryTemplatesDirectory), os.ModePerm)
+
+		if err != nil {
+			return errors.Wrap(err, "Failed to initialize ironman home")
+		}
+		ironmanHomeInitialized = true
+	}
+	return nil
+}
+
+//IsIronmanHomeInitialized checks if ironman home has been already initialized
+func IsIronmanHomeInitialized() bool {
+	return ironmanHomeInitialized
 }

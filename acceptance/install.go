@@ -18,7 +18,7 @@ func itRunsWithCorrectURL(URL string) error {
 
 func theProcessStateShouldBeSuccess() error {
 	if !testcli.Success() {
-		return fmt.Errorf("Install command did not succeded %s", testcli.Error())
+		return fmt.Errorf("Install command did not succeded %s %s", testcli.Error(), testcli.Stderr())
 	}
 	return nil
 }
@@ -32,7 +32,7 @@ func aTemplateShouldBeInstalledWithID(id string) error {
 }
 
 func theOutputShouldContainAnd(out1, out2 string) error {
-	if !strings.Contains(testcli.Stdout(), out1) && !strings.Contains(testcli.Stdout(), out2) {
+	if !testcli.StdoutContains(out1) && !testcli.StdoutContains(out2) {
 		return fmt.Errorf("output => %s", testcli.Stdout())
 	}
 	return nil
@@ -66,7 +66,5 @@ func InstallContext(s *godog.Suite) {
 	s.Step(`^It runs with unreachable URL "([^"]*)"$`, itRunsWithUnreachableURL)
 	s.Step(`^The process state should be failure$`, theProcessStateShouldBeFailure)
 	s.Step(`^The output should cointain "([^"]*)"$`, theOutputShouldCointain)
-	s.BeforeScenario(func(i interface{}) {
-		_ = os.RemoveAll(ironmanTestDir)
-	})
+
 }
