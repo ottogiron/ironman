@@ -124,7 +124,15 @@ func (b *BaseRepository) Link(templatePath string, templateID string) error {
 
 //Unlink unlinks a linked template
 func (b *BaseRepository) Unlink(templateID string) error {
-	panic("not implemented")
+	templatePath := b.TemplatePath(templateID)
+	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
+		return errors.Wrapf(err, "Failed to remove symlink for template ID %s", err)
+	}
+	err := os.Remove(templatePath)
+	if err != nil {
+		return errors.Wrapf(err, "Failed to remove symlink for template ID %s", templateID)
+	}
+	return nil
 }
 
 //Install not implemented for base repository since it depends on specific provider

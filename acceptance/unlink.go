@@ -2,7 +2,6 @@ package acceptance
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 
 	"github.com/DATA-DOG/godog"
@@ -10,10 +9,10 @@ import (
 	"github.com/rendon/testcli"
 )
 
-func thereIsATemplateInstalledWithURL(templateURL string) error {
-	testcli.Run(testutils.ExecutablePath(), "install", "--ironman-home="+ironmanTestDir, templateURL)
+func theresALinkToWithID(templatePath, ID string) error {
+	testcli.Run(testutils.ExecutablePath(), "link", "--ironman-home="+ironmanTestDir, templatePath, ID)
 	if !testcli.Success() {
-		return fmt.Errorf("Failed to install test template %s %s", templateURL, testcli.Stderr())
+		return fmt.Errorf("Failed to link test template %s %s", templatePath, testcli.Stderr())
 	}
 	return nil
 }
@@ -39,7 +38,7 @@ func theUnlinkOutputShouldContainAnd(out1, out2 string) error {
 
 func aTemplateLinkWithIDShouldNotExists(templateLinkID string) error {
 	linkPath := filepath.Join(ironmanTemplatesDir, templateLinkID)
-	if _, err := os.Stat(linkPath); err != nil {
+	if testutils.FileExists(linkPath) {
 		return fmt.Errorf("Link should not exists for template ID %s", templateLinkID)
 	}
 	return nil
@@ -47,7 +46,7 @@ func aTemplateLinkWithIDShouldNotExists(templateLinkID string) error {
 
 //UnlinkContext context for unlink command
 func UnlinkContext(s *godog.Suite) {
-	s.Step(`^There is a template installed with URL "([^"]*)"$`, thereIsATemplateInstalledWithURL)
+	s.Step(`^Theres a  link to "([^"]*)" with ID "([^"]*)"$`, theresALinkToWithID)
 	s.Step(`^Unlink runs with correct ID "([^"]*)"$`, unlinkRunsWithCorrectID)
 	s.Step(`^The Unlink process state should be success$`, theUnlinkProcessStateShouldBeSuccess)
 	s.Step(`^The Unlink output should contain "([^"]*)" and "([^"]*)"$`, theUnlinkOutputShouldContainAnd)
