@@ -1,4 +1,8 @@
-# Ironman [![Build Status](https://travis-ci.org/ironman-project/ironman.svg?branch=master)](https://travis-ci.org/ironman-project/ironman)
+# Ironman 
+[![Build Status](https://travis-ci.org/ironman-project/ironman.svg?branch=master)](https://travis-ci.org/ironman-project/ironman)
+[![Build status](https://ci.appveyor.com/api/projects/status/yi1e02dy65nv96uy/branch/master?svg=true)](https://ci.appveyor.com/project/ottogiron/ironman/branch/master)
+[![GoDoc](https://godoc.org/github.com/ironman-project/ironman?status.svg)](https://godoc.org/github.com/ironman-project/ironman)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ironman-project/ironman)](https://goreportcard.com/report/github.com/ironman-project/ironman)
 
 **Ironman** is a CLI tool that provides an easy way to create and share project templates hosted in git repositories, for any programming language or document based project. Install and generate a new project based on an **Ironman Template** in seconds.  
 

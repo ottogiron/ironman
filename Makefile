@@ -11,7 +11,7 @@ LD_FLAGS := -X github.com/ironman-project/ironman/cmd.buildVersion=$(VERSION)
 LD_FLAGS += -X github.com/ironman-project/ironman/cmd.buildCommit=$(COMMIT_ID)
 LD_FLAGS += -X github.com/ironman-project/ironman/cmd.buildDate=$(DATE)
 EXTRA_BUILD_VARS := CGO_ENABLED=0 GOARCH=amd64
-SOURCE_DIRS := $(shell go list ./... | grep -v /vendor/)
+SOURCE_DIRS := ./...
 SUBDIRS = acceptance
 
 all: test package-linux package-darwin acceptance
