@@ -29,7 +29,7 @@ func init() {
 //VarsContext context for vars file
 func VarsContext(s *godog.Suite) {
 
-	s.AfterSuite(func() {
+	s.BeforeScenario(func(i interface{}) {
 		_ = os.RemoveAll(ironmanTestDir)
 	})
 }

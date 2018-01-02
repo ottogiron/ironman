@@ -13,7 +13,7 @@ import (
 func thereIsATemplateInstalledWithURL(templateURL string) error {
 	testcli.Run(testutils.ExecutablePath(), "install", "--ironman-home="+ironmanTestDir, templateURL)
 	if !testcli.Success() {
-		return fmt.Errorf("Failed to install test template %s", templateURL)
+		return fmt.Errorf("Failed to install test template %s %s", templateURL, testcli.Stderr())
 	}
 	return nil
 }

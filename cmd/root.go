@@ -22,15 +22,14 @@ var rootCmd = &cobra.Command{
 	Long:          `Template manager and engine`,
 	SilenceUsage:  true,
 	SilenceErrors: true,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		initializeIronmanHome()
+	},
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	if !repository.IsIronmanHomeInitialized() {
-		initializeIronmanHome()
-	}
-
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, "There was an error", err)
 		os.Exit(-1)
@@ -40,7 +39,6 @@ func Execute() {
 func initializeIronmanHome() {
 	err := repository.InitIronmanHome(ironmanHome)
 	if err != nil {
-
 		fmt.Printf("Failed to create ironman home directory %s %s", ironmanHome, err)
 		os.Exit(-1)
 	}
