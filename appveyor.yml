@@ -34,6 +34,7 @@ test_script:
   - go test -v ./... -cover -bench . -race
   
 build_script:
+  - dep ensure
   - go build -o build/dist/windows/ironman.exe
 
 #artifacts:
