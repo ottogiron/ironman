@@ -61,7 +61,7 @@ package-darwin: binary-darwin
 package-linux: binary-linux
 	@tar -czf build/dist/ironman.linux-amd64.tar.gz -C build/dist/linux ironman
 
-package-windows:
+package-windows: binary-windows
 	@tar -czf build/dist/ironman.windows-amd64.tar.gz -C build/dist/windows ironman.exe 
 
 .PHONY: $(SUBDIRS)
