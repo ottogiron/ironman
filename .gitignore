@@ -35,3 +35,4 @@ build/dist
 debug
 coverage.html
 vendor
+template/repository/git/testing/templates

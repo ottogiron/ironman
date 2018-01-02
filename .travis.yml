@@ -1,10 +1,9 @@
 language: go
 go:
-  - 1.7
+  - 1.9
 before_install:
-  - sudo add-apt-repository ppa:masterminds/glide -y
-  - sudo apt-get update -q
-  - sudo apt-get install glide -y
+  - go get -u github.com/golang/dep/cmd/dep
+
 deploy:
   provider: releases
   api_key:
@@ -16,4 +15,4 @@ deploy:
 
   on:
     tags: true
-    go: '1.7'
+    go: '1.9'
