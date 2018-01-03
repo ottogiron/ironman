@@ -169,12 +169,26 @@ func TestBaseRepository_Link(t *testing.T) {
 	}{
 		{
 			"Link a template",
-			args{filepath.Join("testing", "repository", "templates", "valid"), "dev-valid"},
+			args{
+				templatePath: filepath.Join("testing", "repository", "templates", "valid"),
+				templateID:   "dev-valid",
+			},
 			false,
 		},
 		{
 			"Link a template with non existing path",
-			args{filepath.Join("nonexisting", "repository", "templates", "valid"), "dev-nonexisting"},
+			args{
+				templatePath: filepath.Join("nonexisting", "repository", "templates", "valid"),
+				templateID:   "dev-nonexisting",
+			},
+			true,
+		},
+		{
+			"Link a template with invalid ID",
+			args{
+				templatePath: filepath.Join("nonexisting", "repository", "templates", "valid"),
+				templateID:   "",
+			},
 			true,
 		},
 	}
@@ -209,20 +223,45 @@ func TestBaseRepository_Link(t *testing.T) {
 
 func TestBaseRepository_Unlink(t *testing.T) {
 	type args struct {
-		templateID string
+		templatePath     string
+		templateID       string
+		unlinkTemplateID string
 	}
 	tests := []struct {
 		name    string
-		b       *BaseRepository
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		{
+			"Unlink template",
+			args{
+				templatePath:     filepath.Join("testing", "repository", "templates", "valid"),
+				templateID:       "dev-valid",
+				unlinkTemplateID: "dev-valid",
+			},
+			false,
+		},
+		{
+			"Unlink template with non existing id",
+			args{
+				templatePath:     filepath.Join("testing", "repository", "templates", "valid"),
+				templateID:       "dev-valid",
+				unlinkTemplateID: "non-existing",
+			},
+			true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			b := &BaseRepository{}
-			if err := b.Unlink(tt.args.templateID); (err != nil) != tt.wantErr {
+
+			b := NewBaseRepository(testRepositoryPath)
+			createdLinkPath := filepath.Join(testTemplatesPath, tt.args.templateID)
+			defer func() {
+				_ = os.Remove(createdLinkPath)
+			}()
+			_ = b.Link(tt.args.templatePath, tt.args.templateID)
+
+			if err := b.Unlink(tt.args.unlinkTemplateID); (err != nil) != tt.wantErr {
 				t.Errorf("BaseRepository.Unlink() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -268,6 +307,26 @@ func TestBaseRepository_Update(t *testing.T) {
 			b := &BaseRepository{}
 			if err := b.Update(tt.args.templateID); (err != nil) != tt.wantErr {
 				t.Errorf("BaseRepository.Update() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestInitIronmanHome(t *testing.T) {
+	type args struct {
+		ironmanHome string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := InitIronmanHome(tt.args.ironmanHome); (err != nil) != tt.wantErr {
+				t.Errorf("InitIronmanHome() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

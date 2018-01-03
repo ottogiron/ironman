@@ -102,6 +102,10 @@ func (b *BaseRepository) Installed() ([]string, error) {
 
 //Link links a template on a path to the repository
 func (b *BaseRepository) Link(templatePath string, templateID string) error {
+	if err := validateTemplateID(templateID); err != nil {
+		return err
+	}
+
 	linkPath := b.TemplatePath(templateID)
 
 	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
@@ -124,10 +128,17 @@ func (b *BaseRepository) Link(templatePath string, templateID string) error {
 
 //Unlink unlinks a linked template
 func (b *BaseRepository) Unlink(templateID string) error {
+
+	if err := validateTemplateID(templateID); err != nil {
+		return err
+	}
+
 	templatePath := b.TemplatePath(templateID)
+
 	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
 		return errors.Wrapf(err, "Failed to remove symlink for template ID %s", err)
 	}
+
 	err := os.Remove(templatePath)
 	if err != nil {
 		return errors.Wrapf(err, "Failed to remove symlink for template ID %s", templateID)
@@ -160,12 +171,4 @@ func InitIronmanHome(ironmanHome string) error {
 		}
 	}
 	return nil
-}
-
-//IsIronmanHomeInitialized checks if ironman home has been already initialized
-func IsIronmanHomeInitialized(ironmanHome string) bool {
-	if _, err := os.Stat(ironmanHome); os.IsNotExist(err) {
-		return false
-	}
-	return true
 }
