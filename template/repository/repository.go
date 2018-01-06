@@ -6,6 +6,7 @@ import (
 
 	"io/ioutil"
 
+	"github.com/ironman-project/ironman/template"
 	"github.com/pkg/errors"
 )
 
@@ -16,7 +17,7 @@ type Repository interface {
 	Uninstall(templateID string) error
 	Find(templateID string) error
 	IsInstalled(templateID string) (bool, error)
-	Installed() ([]string, error)
+	Installed() ([]*template.Metadata, error)
 	Link(templatePath string, templateID string) error
 	Unlink(templateID string) error
 	TemplatePath(templateID string) string
@@ -85,16 +86,16 @@ func (b *BaseRepository) TemplatePath(templateID string) string {
 }
 
 //Installed returns a lists of installed templates
-func (b *BaseRepository) Installed() ([]string, error) {
+func (b *BaseRepository) Installed() ([]*template.Metadata, error) {
 
 	files, err := ioutil.ReadDir(b.templatesPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to list al the available templates")
 	}
 
-	var templatesList []string
+	var templatesList []*template.Metadata
 	for _, f := range files {
-		templatesList = append(templatesList, f.Name())
+		templatesList = append(templatesList, &template.Metadata{ID: f.Name()})
 	}
 
 	return templatesList, nil

@@ -2,7 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/ironman-project/ironman/template/repository/git"
+	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 )
 
@@ -14,19 +17,32 @@ var listCmd = &cobra.Command{
 
 Example:
 ironman list
-+------+-----------------------+--------+
-| ID   |      Description      | RATING |
-+------+-----------------------+--------+
-|  A   |       The Good        |    500 |
-|  B   | The Very very Bad Man |    288 |
-|  C   |       The Ugly        |    120 |
-|  D   |      The Gopher       |    800 |
-+------+-----------------------+--------+
-Output: 
++------+-----------------------+--------------+
+| ID   |      Name             |  Description |
++------+-----------------------+--------------+
+|  A   |       The Good        |    500 	  |
+|  B   | The Very very Bad Man |    288       |
+|  C   |       The Ugly        |    120       |
+|  D   |      The Gopher       |    800       |
++------+-----------------------+--------------+
 
 `,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
+	RunE: func(cmd *cobra.Command, args []string) error {
+
+		repository := git.New(ironmanHome)
+		fmt.Println("Installed templates")
+		installedList, err := repository.Installed()
+		if err != nil {
+			return err
+		}
+		table := tablewriter.NewWriter(os.Stdout)
+		table.SetHeader([]string{"ID", "Name", "Description"})
+
+		for _, installed := range installedList {
+			table.Append([]string{installed.ID, installed.ID, "TODO"})
+		}
+		table.Render() // Send output
+		return nil
 	},
 }
 
