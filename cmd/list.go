@@ -17,15 +17,12 @@ var listCmd = &cobra.Command{
 
 Example:
 ironman list
-+------+-----------------------+--------------+
-| ID   |      Name             |  Description |
-+------+-----------------------+--------------+
-|  A   |       The Good        |    500 	  |
-|  B   | The Very very Bad Man |    288       |
-|  C   |       The Ugly        |    120       |
-|  D   |      The Gopher       |    800       |
-+------+-----------------------+--------------+
 
++--------------------+--------------------+-------------+
+|         ID         |        NAME        | DESCRIPTION |
++--------------------+--------------------+-------------+
+| wizard-hello-world | wizard-hello-world | TODO        |
++--------------------+--------------------+-------------+
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
