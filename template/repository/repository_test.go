@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/ironman-project/ironman/template"
 	"github.com/ironman-project/ironman/testutils"
 )
 
@@ -136,10 +137,10 @@ func TestBaseRepository_Installed(t *testing.T) {
 	tests := []struct {
 		name           string
 		repositoryPath string
-		want           []string
+		want           []*template.Metadata
 		wantErr        bool
 	}{
-		{"All the installed templates", testRepositoryPath, []string{"base", "valid"}, false},
+		{"All the installed templates", testRepositoryPath, []*template.Metadata{&template.Metadata{ID: "base"}, &template.Metadata{ID: "valid"}}, false},
 		{"Non existing repository path", "unexistingPath", nil, true},
 	}
 	for _, tt := range tests {
