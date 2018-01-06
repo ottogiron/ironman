@@ -32,6 +32,10 @@ ironman list
 		if err != nil {
 			return err
 		}
+
+		if len(installedList) < 0 {
+			fmt.Println("None")
+		}
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"ID", "Name", "Description"})
 
