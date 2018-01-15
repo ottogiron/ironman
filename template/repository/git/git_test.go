@@ -1,8 +1,10 @@
 package git
 
 import (
-	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/ironman-project/ironman/testutils"
 
 	"github.com/ironman-project/ironman/template/repository"
 )
@@ -21,18 +23,21 @@ func TestRepository_Install(t *testing.T) {
 		name               string
 		args               args
 		expectedTemplateID string
+		expectedFilesPaths []string
 		wantErr            bool
 	}{
 		{
 			"Install template",
 			args{"https://github.com/ottogiron/wizard-hello-world.git"},
 			"wizard-hello-world",
+			[]string{".xwizard.yml"},
 			false,
 		},
 		{
-			"Install template",
+			"Install unexisting template",
 			args{"https://github.com/ottogiron/unexisting-template"},
 			"",
+			[]string{},
 			true,
 		},
 	}
@@ -48,8 +53,16 @@ func TestRepository_Install(t *testing.T) {
 			}
 
 			expectedTemplatePath := r.TemplatePath(tt.expectedTemplateID)
-			if _, err := os.Stat(expectedTemplatePath); os.IsNotExist(err) {
+
+			if !testutils.FileExists(expectedTemplatePath) {
 				t.Errorf("Repository.Install() template was not installed want path %v", expectedTemplatePath)
+			}
+
+			for _, fileRelativePath := range tt.expectedFilesPaths {
+				filePath := filepath.Join(expectedTemplatePath, fileRelativePath)
+				if !testutils.FileExists(filePath) {
+					t.Errorf("Repository.Install() expected file was not found, path %v", filePath)
+				}
 			}
 		})
 	}

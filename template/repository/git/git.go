@@ -1,6 +1,7 @@
 package git
 
 import (
+	"os"
 	"path"
 	"strings"
 
@@ -25,14 +26,13 @@ func New(path string) repository.Repository {
 //Install installs a template from a git url
 func (r *Repository) Install(location string) error {
 	templatePath := r.templatePathFromLocation(location)
-	gitRepo, err := gogit.NewFilesystemRepository(templatePath)
 
-	if err != nil {
-		return errors.Wrapf(err, "Failed to get template repository %s", location)
-	}
-	err = gitRepo.Clone(&gogit.CloneOptions{
-		URL: location,
-	})
+	_, err := gogit.PlainClone(templatePath, false,
+		&gogit.CloneOptions{
+			URL:      location,
+			Progress: os.Stdout,
+		},
+	)
 
 	if err != nil {
 		return errors.Wrapf(err, "Failed to install template  %s", location)
@@ -42,14 +42,25 @@ func (r *Repository) Install(location string) error {
 
 //Update updates a template from a git repository
 func (r *Repository) Update(id string) error {
+
 	templatePath := r.templatePathFromLocation(id)
-	gitRepo, err := gogit.NewFilesystemRepository(templatePath)
+
+	gitRepo, err := gogit.PlainOpen(templatePath)
 
 	if err != nil {
-		return errors.Wrapf(err, "Failed to get template repository %s", id)
+		return errors.Wrapf(err, "Failed to open template repository %s", id)
 	}
 
-	err = gitRepo.Pull(&gogit.PullOptions{})
+	// Get the working directory for the repository
+	w, err := gitRepo.Worktree()
+
+	if err != nil {
+		return errors.Wrapf(err, "Failed to get template working tree %s", id)
+	}
+
+	err = w.Pull(&gogit.PullOptions{
+		Progress: os.Stdout,
+	})
 
 	if gogit.NoErrAlreadyUpToDate != err && err != nil {
 		return errors.Wrapf(err, "Failed to Update template  %s", id)
