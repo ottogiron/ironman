@@ -6,7 +6,7 @@
 
 **Ironman** is a CLI tool that provides an easy way to create and share project templates hosted in git repositories, for any programming language or document based project. Install and generate a new project based on an **Ironman Template** in seconds.  
 
-## Why would I care ?
+## Why would I care?
 
 Let’s say you are about to start a new cool project, you need a common project directories structure, a few dozens of files,  every time you have to change README titles/subtitles, specific app identifiers, documentation URL’s and so on to get started.  What if you work with one or many teams and you want to provide an easy way to share common project templates and enforce common development good practices and standards.  How would you solve this repetitive task ? 
 

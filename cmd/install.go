@@ -26,7 +26,7 @@ var installCmd = &cobra.Command{
 	Long: `Installs a template using a git URL:
 
 Example:
-iroman install https://github.com/ottogiron/wizard-hello-world.git
+iroman install https://github.com/ironman-project/template-example.git
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		templateURL := args[0]

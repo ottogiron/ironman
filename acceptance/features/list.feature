@@ -5,7 +5,7 @@ Feature: List Available Templates
   I need to run the list command
 
   Scenario: List available templates
-    Given A template to list is installed with URL "https://github.com/ottogiron/wizard-hello-world.git"
+    Given A template to list is installed with URL "https://github.com/ironman-project/template-example.git"
     When List runs 
     Then The List process state should be success 
     And The List output should contain "Installed templates" and 
@@ -13,7 +13,7 @@ Feature: List Available Templates
 +--------------------+--------------------+-------------+
 |         ID         |        NAME        | DESCRIPTION |
 +--------------------+--------------------+-------------+
-| wizard-hello-world | wizard-hello-world | TODO        |
+| template-example   | template-example   | TODO        |
 +--------------------+--------------------+-------------+
 """
 

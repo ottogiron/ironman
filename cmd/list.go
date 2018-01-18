@@ -21,7 +21,7 @@ ironman list
 +--------------------+--------------------+-------------+
 |         ID         |        NAME        | DESCRIPTION |
 +--------------------+--------------------+-------------+
-| wizard-hello-world | wizard-hello-world | TODO        |
+| template-example   | template-example   | TODO        |
 +--------------------+--------------------+-------------+
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
