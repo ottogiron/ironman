@@ -28,14 +28,14 @@ func TestRepository_Install(t *testing.T) {
 	}{
 		{
 			"Install template",
-			args{"https://github.com/ottogiron/wizard-hello-world.git"},
-			"wizard-hello-world",
-			[]string{".xwizard.yml"},
+			args{"https://github.com/ironman-project/template-example.git"},
+			"template-example",
+			[]string{".ironman.yml"},
 			false,
 		},
 		{
 			"Install unexisting template",
-			args{"https://github.com/ottogiron/unexisting-template"},
+			args{"https://github.com/ironman-project/unexisting-template"},
 			"",
 			[]string{},
 			true,
@@ -81,7 +81,7 @@ func TestRepository_Update(t *testing.T) {
 	}{
 		{
 			"Update template",
-			args{"wizard-hello-world", "https://github.com/ottogiron/wizard-hello-world.git"},
+			args{"template-example", "https://github.com/ironman-project/template-example.git"},
 			false,
 		},
 	}
