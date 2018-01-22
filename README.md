@@ -1,3 +1,7 @@
+<p align="center">
+  <img style="float: right;" src="ironman.png" alt="Ironman logo"/>
+</p>
+
 # Ironman 
 [![Build Status](https://travis-ci.org/ironman-project/ironman.svg?branch=master)](https://travis-ci.org/ironman-project/ironman)
 [![Build status](https://ci.appveyor.com/api/projects/status/yi1e02dy65nv96uy/branch/master?svg=true)](https://ci.appveyor.com/project/ottogiron/ironman/branch/master)
