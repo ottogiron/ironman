@@ -9,16 +9,29 @@ import (
 
 // generateCmd represents the generate command
 var generateCmd = &cobra.Command{
-	Use:   "generate",
-	Short: "Generates a new project based on an installed template",
-	Long: `Generates a new project based on an installed template,
+	Use: "generate <template>:<generator>",
+	Short: `Generates a new project based on an installed template using a template generator.
+			If no generator was given, it will use 'app' by default.`,
+	Long: `Generates a new project based on an installed template using a template generator.
+If no generator was given, it will use 'app' by default.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Example:
+ironman generate template-example
+ironman generate template:example:controller
+`,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		//TODO: validate we can create the project folder and if exists it should be empty
+	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		//TODO: we need to run the "pre generate" commands
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		//TODO: Render the template
 		fmt.Println("generate called")
 		return errors.New("hola")
+	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		//TODO: we need to run the "post generate" commands
 	},
 }
 
