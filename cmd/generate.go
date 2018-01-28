@@ -9,11 +9,15 @@ import (
 
 // generateCmd represents the generate command
 var generateCmd = &cobra.Command{
-	Use: "generate <template>:<generator>",
+	Use: "generate <template>:<generator> <destination_path>",
 	Short: `Generates a new project based on an installed template using a template generator.
-			If no generator was given, it will use 'app' by default.`,
+			If no generator was given, it will use 'app' by default.
+			It will generate the project on the destination path received (it should not exists) and
+			if no destination path was given it will generate the project on the current directory (it should be empty).`,
 	Long: `Generates a new project based on an installed template using a template generator.
 If no generator was given, it will use 'app' by default.
+It will generate the project on the destination path received (it should not exists) and
+if no destination path was given it will generate the project on the current directory (it should be empty).
 
 Example:
 
