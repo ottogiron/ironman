@@ -16,11 +16,39 @@ var generateCmd = &cobra.Command{
 If no generator was given, it will use 'app' by default.
 
 Example:
+
+# This generates a project based on template-example template, based on the 'app' controller since it is the default 
+# and it will generate the files on the current directory (it should be empty).
 ironman generate template-example
+
+# This generates a project based on template-example template, based on the 'controller' controller
+# and it will generate the files on the current directory (it should be empty).
 ironman generate template:example:controller
+
+# This generates a project based on template-example template, based on the 'app' controller since it is the default 
+# and it will generate the files on the '~/mynewapp' directory (it should not exists since it will be created now).
+ironman generate template-example ~/mynewapp
+
+# This generates a project based on template-example template, based on the 'controller' controller
+# and it will generate the files on the '~/mynewapp' directory (it should not exists since it will be created now).
+ironman generate template:example:controller ~/mynewapp
 `,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		//TODO: validate we can create the project folder and if exists it should be empty
+
+		//We need a destination path variable (defaults to current folder)
+		//If we use current folder, then it should be empty
+
+		//If destination path was given:
+		//It should not exists or
+		//It can exists but it should be empty (?)
+
+		//Find template
+
+		//Load template
+
+		//Gatter user input
+
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		//TODO: we need to run the "pre generate" commands
