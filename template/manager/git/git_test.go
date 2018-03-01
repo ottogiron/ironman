@@ -6,15 +6,15 @@ import (
 
 	"github.com/ironman-project/ironman/testutils"
 
-	"github.com/ironman-project/ironman/template/repository"
+	"github.com/ironman-project/ironman/template/manager"
 )
 
-func newTestGitRepository() repository.Repository {
+func newTestGitManager() manager.Manager {
 
 	return New("testing")
 }
 
-func TestRepository_Install(t *testing.T) {
+func TestManager_Install(t *testing.T) {
 
 	type args struct {
 		location string
@@ -43,32 +43,32 @@ func TestRepository_Install(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := newTestGitRepository()
+			r := newTestGitManager()
 			defer func() {
 				_ = r.Uninstall(tt.expectedTemplateID)
 			}()
 			if err := r.Install(tt.args.location); (err != nil) != tt.wantErr {
-				t.Errorf("Repository.Install() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Manager.Install() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
 			expectedTemplatePath := r.TemplatePath(tt.expectedTemplateID)
 
 			if !testutils.FileExists(expectedTemplatePath) {
-				t.Errorf("Repository.Install() template was not installed want path %v", expectedTemplatePath)
+				t.Errorf("Manager.Install() template was not installed want path %v", expectedTemplatePath)
 			}
 
 			for _, fileRelativePath := range tt.expectedFilesPaths {
 				filePath := filepath.Join(expectedTemplatePath, fileRelativePath)
 				if !testutils.FileExists(filePath) {
-					t.Errorf("Repository.Install() expected file was not found, path %v", filePath)
+					t.Errorf("Manager.Install() expected file was not found, path %v", filePath)
 				}
 			}
 		})
 	}
 }
 
-func TestRepository_Update(t *testing.T) {
+func TestManager_Update(t *testing.T) {
 
 	type args struct {
 		id       string
@@ -87,7 +87,7 @@ func TestRepository_Update(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := newTestGitRepository()
+			r := newTestGitManager()
 
 			err := r.Install(tt.args.location)
 
@@ -96,11 +96,11 @@ func TestRepository_Update(t *testing.T) {
 			}()
 
 			if err != nil {
-				t.Errorf("Repository.Update() error = %v", err)
+				t.Errorf("Manager.Update() error = %v", err)
 			}
 
 			if err := r.Update(tt.args.id); (err != nil) != tt.wantErr {
-				t.Errorf("Repository.Update() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Manager.Update() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

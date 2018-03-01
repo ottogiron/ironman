@@ -1,4 +1,4 @@
-package repository
+package manager
 
 import (
 	"io/ioutil"
@@ -12,53 +12,53 @@ import (
 )
 
 var (
-	testRepositoryPath = "testing/repository"
-	testTemplatesPath  = filepath.Join(testRepositoryPath, repositoryTemplatesDirectory)
+	testManagerPath   = "testing/repository"
+	testTemplatesPath = filepath.Join(testManagerPath, managerTemplatesDirectory)
 )
 
 func createTestTemplate(t *testing.T, names ...string) (string, func()) {
-	tempRepository, err := ioutil.TempDir("", "ironman-test-repository")
+	tempManager, err := ioutil.TempDir("", "ironman-test-manager")
 	if err != nil {
-		t.Fatalf("Failed to create test repository %s", err)
+		t.Fatalf("Failed to create test manager %s", err)
 	}
-	sourcePath := filepath.Join(testRepositoryPath, "templates", "base")
+	sourcePath := filepath.Join(testManagerPath, "templates", "base")
 	for _, name := range names {
-		destPath := filepath.Join(tempRepository, name)
+		destPath := filepath.Join(tempManager, name)
 		err = testutils.CopyDir(sourcePath, destPath)
 		if err != nil {
 			t.Fatalf("Failed to create test template %s", err)
 		}
 	}
 
-	return tempRepository, func() {
-		err := os.RemoveAll(tempRepository)
+	return tempManager, func() {
+		err := os.RemoveAll(tempManager)
 		if err != nil {
-			t.Fatalf("Failed to clean test repository %s", err)
+			t.Fatalf("Failed to clean test manager %s", err)
 		}
 	}
 }
 
-func TestNewBaseRepository(t *testing.T) {
+func TestNewBaseManager(t *testing.T) {
 	type args struct {
 		path string
 	}
 	tests := []struct {
 		name string
 		args args
-		want Repository
+		want Manager
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewBaseRepository(tt.args.path); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewBaseRepository() = %v, want %v", got, tt.want)
+			if got := NewBaseManager(tt.args.path); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewBaseManager() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestBaseRepository_Uninstall(t *testing.T) {
+func TestBaseManager_Uninstall(t *testing.T) {
 	type args struct {
 		templateID string
 	}
@@ -71,23 +71,23 @@ func TestBaseRepository_Uninstall(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			repositoryPath, clean := createTestTemplate(t, tt.args.templateID)
+			managerPath, clean := createTestTemplate(t, tt.args.templateID)
 			defer clean()
-			b := NewBaseRepository(repositoryPath)
+			b := NewBaseManager(managerPath)
 			if err := b.Uninstall(tt.args.templateID); (err != nil) != tt.wantErr {
-				t.Errorf("BaseRepository.Uninstall() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("BaseManager.Uninstall() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func TestBaseRepository_Find(t *testing.T) {
+func TestBaseManager_Find(t *testing.T) {
 	type args struct {
 		templateID string
 	}
 	tests := []struct {
 		name    string
-		b       *BaseRepository
+		b       *BaseManager
 		args    args
 		wantErr bool
 	}{
@@ -95,70 +95,70 @@ func TestBaseRepository_Find(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			b := &BaseRepository{}
+			b := &BaseManager{}
 			if err := b.Find(tt.args.templateID); (err != nil) != tt.wantErr {
-				t.Errorf("BaseRepository.Find() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("BaseManager.Find() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func TestBaseRepository_IsInstalled(t *testing.T) {
+func TestBaseManager_IsInstalled(t *testing.T) {
 	type args struct {
 		templateID string
 	}
 	tests := []struct {
-		name           string
-		repositoryPath string
-		args           args
-		want           bool
-		wantErr        bool
+		name        string
+		managerPath string
+		args        args
+		want        bool
+		wantErr     bool
 	}{
-		{"Template is installed", testRepositoryPath, args{"valid"}, true, false},
-		{"Template is not installed", testRepositoryPath, args{"not_installed"}, false, false},
-		{"Template invalid empty name", testRepositoryPath, args{""}, false, true},
+		{"Template is installed", testManagerPath, args{"valid"}, true, false},
+		{"Template is not installed", testManagerPath, args{"not_installed"}, false, false},
+		{"Template invalid empty name", testManagerPath, args{""}, false, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			b := NewBaseRepository(tt.repositoryPath)
+			b := NewBaseManager(tt.managerPath)
 			got, err := b.IsInstalled(tt.args.templateID)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("BaseRepository.IsInstalled() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("BaseManager.IsInstalled() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("BaseRepository.IsInstalled() = %v, want %v", got, tt.want)
+				t.Errorf("BaseManager.IsInstalled() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestBaseRepository_Installed(t *testing.T) {
+func TestBaseManager_Installed(t *testing.T) {
 	tests := []struct {
-		name           string
-		repositoryPath string
-		want           []*template.Metadata
-		wantErr        bool
+		name        string
+		managerPath string
+		want        []*template.Metadata
+		wantErr     bool
 	}{
-		{"All the installed templates", testRepositoryPath, []*template.Metadata{&template.Metadata{ID: "base"}, &template.Metadata{ID: "valid"}}, false},
-		{"Non existing repository path", "unexistingPath", nil, true},
+		{"All the installed templates", testManagerPath, []*template.Metadata{&template.Metadata{ID: "base"}, &template.Metadata{ID: "valid"}}, false},
+		{"Non existing manager path", "unexistingPath", nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			b := NewBaseRepository(tt.repositoryPath)
+			b := NewBaseManager(tt.managerPath)
 			got, err := b.Installed()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("BaseRepository.Installed() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("BaseManager.Installed() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("BaseRepository.Installed() = %v, want %v", got, tt.want)
+				t.Errorf("BaseManager.Installed() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestBaseRepository_Link(t *testing.T) {
+func TestBaseManager_Link(t *testing.T) {
 	type args struct {
 		templatePath string
 		templateID   string
@@ -196,33 +196,33 @@ func TestBaseRepository_Link(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			b := NewBaseRepository(testRepositoryPath)
+			b := NewBaseManager(testManagerPath)
 			createdLinkPath := filepath.Join(testTemplatesPath, tt.args.templateID)
 			defer func() {
 				_ = os.Remove(createdLinkPath)
 			}()
 
 			if err := b.Link(tt.args.templatePath, tt.args.templateID); (err != nil) != tt.wantErr {
-				t.Errorf("BaseRepository.Link() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("BaseManager.Link() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			} else if tt.wantErr {
 				return
 			}
 
 			if !testutils.FileExists(createdLinkPath) {
-				t.Errorf("BaseRepository.Link() %s file should exists", createdLinkPath)
+				t.Errorf("BaseManager.Link() %s file should exists", createdLinkPath)
 				return
 			}
 
 			ymlFilePath := filepath.Join(createdLinkPath, ".ironman.yml")
 			if !testutils.FileExists(ymlFilePath) {
-				t.Errorf("BaseRepository.Link() %s file should exists", ymlFilePath)
+				t.Errorf("BaseManager.Link() %s file should exists", ymlFilePath)
 			}
 		})
 	}
 }
 
-func TestBaseRepository_Unlink(t *testing.T) {
+func TestBaseManager_Unlink(t *testing.T) {
 	type args struct {
 		templatePath     string
 		templateID       string
@@ -255,7 +255,7 @@ func TestBaseRepository_Unlink(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			b := NewBaseRepository(testRepositoryPath)
+			b := NewBaseManager(testManagerPath)
 			createdLinkPath := filepath.Join(testTemplatesPath, tt.args.templateID)
 			defer func() {
 				_ = os.Remove(createdLinkPath)
@@ -263,19 +263,19 @@ func TestBaseRepository_Unlink(t *testing.T) {
 			_ = b.Link(tt.args.templatePath, tt.args.templateID)
 
 			if err := b.Unlink(tt.args.unlinkTemplateID); (err != nil) != tt.wantErr {
-				t.Errorf("BaseRepository.Unlink() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("BaseManager.Unlink() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func TestBaseRepository_Install(t *testing.T) {
+func TestBaseManager_Install(t *testing.T) {
 	type args struct {
 		templateLocator string
 	}
 	tests := []struct {
 		name    string
-		b       *BaseRepository
+		b       *BaseManager
 		args    args
 		wantErr bool
 	}{
@@ -283,21 +283,21 @@ func TestBaseRepository_Install(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			b := &BaseRepository{}
+			b := &BaseManager{}
 			if err := b.Install(tt.args.templateLocator); (err != nil) != tt.wantErr {
-				t.Errorf("BaseRepository.Install() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("BaseManager.Install() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func TestBaseRepository_Update(t *testing.T) {
+func TestBaseManager_Update(t *testing.T) {
 	type args struct {
 		templateID string
 	}
 	tests := []struct {
 		name    string
-		b       *BaseRepository
+		b       *BaseManager
 		args    args
 		wantErr bool
 	}{
@@ -305,9 +305,9 @@ func TestBaseRepository_Update(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			b := &BaseRepository{}
+			b := &BaseManager{}
 			if err := b.Update(tt.args.templateID); (err != nil) != tt.wantErr {
-				t.Errorf("BaseRepository.Update() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("BaseManager.Update() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

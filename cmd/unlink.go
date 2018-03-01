@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ironman-project/ironman/template/repository/git"
+	"github.com/ironman-project/ironman/template/manager/git"
 	"github.com/spf13/cobra"
 )
 
@@ -26,9 +26,9 @@ ironman unlink my-template-id
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		templateID := args[0]
-		repository := git.New(ironmanHome)
+		manager := git.New(ironmanHome)
 
-		err := repository.Unlink(templateID)
+		err := manager.Unlink(templateID)
 		fmt.Printf("Unlinking template from repository with ID %s...", templateID)
 		if err != nil {
 			return err

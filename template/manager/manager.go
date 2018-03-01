@@ -1,4 +1,4 @@
-package repository
+package manager
 
 import (
 	"os"
@@ -10,8 +10,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-//Repository represents a local ironman repository
-type Repository interface {
+//Manager represents a local ironman manager
+type Manager interface {
 	Install(templateLocator string) error
 	Update(templateID string) error
 	Uninstall(templateID string) error
@@ -24,23 +24,23 @@ type Repository interface {
 }
 
 const (
-	repositoryTemplatesDirectory = "templates"
+	managerTemplatesDirectory = "templates"
 )
 
-//BaseRepository implements basic generic repository operations
-type BaseRepository struct {
+//BaseManager implements basic generic manager operations
+type BaseManager struct {
 	path          string
 	templatesPath string
 }
 
-//NewBaseRepository returns a new instance of a base repository
-func NewBaseRepository(path string) *BaseRepository {
-	templatesPath := filepath.Join(path, repositoryTemplatesDirectory)
-	return &BaseRepository{path, templatesPath}
+//NewBaseManager returns a new instance of a base manager
+func NewBaseManager(path string) *BaseManager {
+	templatesPath := filepath.Join(path, managerTemplatesDirectory)
+	return &BaseManager{path, templatesPath}
 }
 
 //Uninstall uninstalls a template
-func (b *BaseRepository) Uninstall(templateID string) error {
+func (b *BaseManager) Uninstall(templateID string) error {
 	if err := validateTemplateID(templateID); err != nil {
 		return err
 	}
@@ -52,13 +52,13 @@ func (b *BaseRepository) Uninstall(templateID string) error {
 	return nil
 }
 
-//Find finds a template in the repository
-func (b *BaseRepository) Find(templateID string) error {
+//Find finds a template in the manager
+func (b *BaseManager) Find(templateID string) error {
 	panic("not implemented")
 }
 
 //IsInstalled verifies if template is installed
-func (b *BaseRepository) IsInstalled(templateID string) (bool, error) {
+func (b *BaseManager) IsInstalled(templateID string) (bool, error) {
 	if err := validateTemplateID(templateID); err != nil {
 		return false, err
 	}
@@ -81,12 +81,12 @@ func validateTemplateID(templateID string) error {
 }
 
 //TemplatePath returns the file system path of a template based on the ID
-func (b *BaseRepository) TemplatePath(templateID string) string {
-	return filepath.Join(b.path, repositoryTemplatesDirectory, templateID)
+func (b *BaseManager) TemplatePath(templateID string) string {
+	return filepath.Join(b.path, managerTemplatesDirectory, templateID)
 }
 
 //Installed returns a lists of installed templates
-func (b *BaseRepository) Installed() ([]*template.Metadata, error) {
+func (b *BaseManager) Installed() ([]*template.Metadata, error) {
 
 	files, err := ioutil.ReadDir(b.templatesPath)
 	if err != nil {
@@ -101,8 +101,8 @@ func (b *BaseRepository) Installed() ([]*template.Metadata, error) {
 	return templatesList, nil
 }
 
-//Link links a template on a path to the repository
-func (b *BaseRepository) Link(templatePath string, templateID string) error {
+//Link links a template on a path to the manager
+func (b *BaseManager) Link(templatePath string, templateID string) error {
 	if err := validateTemplateID(templateID); err != nil {
 		return err
 	}
@@ -110,25 +110,25 @@ func (b *BaseRepository) Link(templatePath string, templateID string) error {
 	linkPath := b.TemplatePath(templateID)
 
 	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
-		return errors.Wrapf(err, "Failed to create symlink to iroman repository path should %s exists ", templatePath)
+		return errors.Wrapf(err, "Failed to create symlink to ironman manager path should %s exists ", templatePath)
 	}
 
 	absTemplatePath, err := filepath.Abs(templatePath)
 
 	if err != nil {
-		return errors.Wrapf(err, "Failed to create symlink to iroman repository for %s with ID %s", templatePath, templateID)
+		return errors.Wrapf(err, "Failed to create symlink to ironman manager for %s with ID %s", templatePath, templateID)
 	}
 
 	err = os.Symlink(absTemplatePath, linkPath)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to create symlink to iroman repository for %s with ID %s", templatePath, templateID)
+		return errors.Wrapf(err, "Failed to create symlink to ironman manager for %s with ID %s", templatePath, templateID)
 	}
 
 	return nil
 }
 
 //Unlink unlinks a linked template
-func (b *BaseRepository) Unlink(templateID string) error {
+func (b *BaseManager) Unlink(templateID string) error {
 
 	if err := validateTemplateID(templateID); err != nil {
 		return err
@@ -147,13 +147,13 @@ func (b *BaseRepository) Unlink(templateID string) error {
 	return nil
 }
 
-//Install not implemented for base repository since it depends on specific provider
-func (b *BaseRepository) Install(templateLocator string) error {
+//Install not implemented for base manager since it depends on specific provider
+func (b *BaseManager) Install(templateLocator string) error {
 	panic("not implemented")
 }
 
-//Update not implemented for base repository since it depend on specific provider
-func (b *BaseRepository) Update(templateID string) error {
+//Update not implemented for base manager since it depend on specific provider
+func (b *BaseManager) Update(templateID string) error {
 	panic("not implemented")
 }
 
@@ -165,7 +165,7 @@ func InitIronmanHome(ironmanHome string) error {
 			return errors.Wrap(err, "Failed to initialize ironman home")
 		}
 
-		err = os.Mkdir(filepath.Join(ironmanHome, repositoryTemplatesDirectory), os.ModePerm)
+		err = os.Mkdir(filepath.Join(ironmanHome, managerTemplatesDirectory), os.ModePerm)
 
 		if err != nil {
 			return errors.Wrap(err, "Failed to initialize ironman home")

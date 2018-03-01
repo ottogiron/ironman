@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/ironman-project/ironman/template/repository/git"
+	"github.com/ironman-project/ironman/template/manager/git"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -25,9 +25,9 @@ Example:
 ironman update my-template-id`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		templateID := args[0]
-		repository := git.New(ironmanHome)
+		manager := git.New(ironmanHome)
 		fmt.Println("Updating template", templateID, "...")
-		err := repository.Update(templateID)
+		err := manager.Update(templateID)
 		if err != nil {
 			return err
 		}

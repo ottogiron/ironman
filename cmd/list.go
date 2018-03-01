@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ironman-project/ironman/template/repository/git"
+	"github.com/ironman-project/ironman/template/manager/git"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 )
@@ -26,9 +26,9 @@ ironman list
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		repository := git.New(ironmanHome)
+		manager := git.New(ironmanHome)
 		fmt.Println("Installed templates")
-		installedList, err := repository.Installed()
+		installedList, err := manager.Installed()
 		if err != nil {
 			return err
 		}

@@ -5,26 +5,26 @@ import (
 	"path"
 	"strings"
 
-	"github.com/ironman-project/ironman/template/repository"
+	"github.com/ironman-project/ironman/template/manager"
 	"github.com/pkg/errors"
 	gogit "gopkg.in/src-d/go-git.v4"
 )
 
-var _ *repository.Repository = (*repository.Repository)(nil)
+var _ manager.Manager = (*Manager)(nil)
 
-//Repository represents an implementation of a ironman Repository
-type Repository struct {
-	*repository.BaseRepository
+//Manager represents an implementation of a ironman Manager
+type Manager struct {
+	*manager.BaseManager
 }
 
-//New returns a new instance of the git repository
-func New(path string) repository.Repository {
-	baseRepository := repository.NewBaseRepository(path)
-	return &Repository{baseRepository}
+//New returns a new instance of the git Manager
+func New(path string) manager.Manager {
+	BaseManager := manager.NewBaseManager(path)
+	return &Manager{BaseManager}
 }
 
 //Install installs a template from a git url
-func (r *Repository) Install(location string) error {
+func (r *Manager) Install(location string) error {
 	templatePath := r.templatePathFromLocation(location)
 
 	_, err := gogit.PlainClone(templatePath, false,
@@ -40,18 +40,18 @@ func (r *Repository) Install(location string) error {
 	return nil
 }
 
-//Update updates a template from a git repository
-func (r *Repository) Update(id string) error {
+//Update updates a template from a git Manager
+func (r *Manager) Update(id string) error {
 
 	templatePath := r.templatePathFromLocation(id)
 
 	gitRepo, err := gogit.PlainOpen(templatePath)
 
 	if err != nil {
-		return errors.Wrapf(err, "Failed to open template repository %s", id)
+		return errors.Wrapf(err, "Failed to open template Manager %s", id)
 	}
 
-	// Get the working directory for the repository
+	// Get the working directory for the Manager
 	w, err := gitRepo.Worktree()
 
 	if err != nil {
@@ -68,7 +68,7 @@ func (r *Repository) Update(id string) error {
 	return nil
 }
 
-func (r *Repository) templatePathFromLocation(location string) string {
+func (r *Manager) templatePathFromLocation(location string) string {
 	templateID := path.Base(strings.TrimSuffix(location, ".git"))
 	templatePath := r.TemplatePath(templateID)
 	return templatePath
