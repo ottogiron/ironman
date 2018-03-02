@@ -24,7 +24,12 @@ func newBleveTestIndex(t *testing.T) (bleve.Index, func()) {
 		t.Fatal("Failed to create test bleve index", err)
 	}
 	return index, func() {
-		err := os.RemoveAll(dir)
+		err := index.Close()
+
+		if err != nil {
+			t.Fatal("Failed to close bleve index", err)
+		}
+		err = os.RemoveAll(dir)
 		if err != nil {
 			t.Fatal("Failed to clean bleve index", err)
 		}
