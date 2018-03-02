@@ -33,8 +33,27 @@ func (r *bleeveRepository) Index(template model.Template) (string, error) {
 	return id.String(), nil
 }
 
-func (r *bleeveRepository) Update(model.Template) error {
-	panic("not implemented")
+func (r *bleeveRepository) Update(template model.Template) error {
+	query := bleve.NewMatchQuery(template.ID)
+	search := bleve.NewSearchRequest(query)
+	searchResults, err := r.index.Search(search)
+
+	if err != nil {
+		return errors.Wrapf(err, "Search for template failed id: %s")
+	}
+
+	if searchResults.Total != 1 {
+		return errors.Errorf("Could not update template. %s not found. Hits: %d", template.ID, searchResults.Total)
+	}
+
+	id := searchResults.Hits[0].ID
+	err = r.index.Index(id, template)
+
+	if err != nil {
+		return errors.Errorf("Failed to update template %s", template.ID)
+	}
+
+	return nil
 }
 
 func (r *bleeveRepository) Delete(ID string) error {
