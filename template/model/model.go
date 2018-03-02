@@ -1,4 +1,4 @@
-package metadata
+package model
 
 //Template template metadata definition
 type Template struct {

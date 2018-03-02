@@ -1,4 +1,4 @@
-package metadata
+package model
 
 //ReaderType defines the different types of metadata readers
 type ReaderType string
