@@ -24,13 +24,13 @@ func New(options ...Option) repository.Repository {
 	return r
 }
 
-func (r *bleeveRepository) Index(template model.Template) error {
+func (r *bleeveRepository) Index(template model.Template) (string, error) {
 	id := uuid.NewV4()
 	err := r.index.Index(id.String(), template)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to index template %s", template.ID)
+		return "", errors.Wrapf(err, "Failed to index template %s", template.ID)
 	}
-	return nil
+	return id.String(), nil
 }
 
 func (r *bleeveRepository) Update(model.Template) error {
