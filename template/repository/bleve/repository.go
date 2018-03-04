@@ -148,10 +148,30 @@ func deserialize(doc *document.Document) (*model.Template, error) {
 	return template, nil
 }
 
-func (r *bleeveRepository) Delete(ID string) error {
-	panic("not implemented")
+func (r *bleeveRepository) Delete(ID string) (bool, error) {
+	t, err := r.FindTemplateByID(ID)
+	if err != nil {
+		return false, errors.Wrapf(err, "Failed to delete template %s", ID)
+	}
+
+	//It doesn't exists
+	if t == nil {
+		return false, nil
+	}
+
+	err = r.index.Delete(t.IID)
+
+	if err != nil {
+		return false, errors.Wrapf(err, "Failed to delete template with id %s", ID)
+	}
+
+	return true, nil
 }
 
 func (r *bleeveRepository) List() ([]model.Template, error) {
 	panic("not implemented")
+}
+
+func (r *bleeveRepository) Exists(ID string) (bool, error) {
+	return false, nil
 }
