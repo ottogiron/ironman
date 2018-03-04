@@ -268,3 +268,49 @@ func Test_bleeveRepository_FindTemplateByID(t *testing.T) {
 		})
 	}
 }
+
+func Test_bleeveRepository_Delete(t *testing.T) {
+
+	type args struct {
+		ID string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    bool
+		wantErr bool
+	}{
+		{
+			"Delete template from index",
+			args{
+				"template-id",
+			},
+			true,
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r, index, clean := newTestRepository(t)
+			defer clean()
+			id := uuid.NewV4().String()
+			templ := &model.Template{
+				IID: id,
+				ID:  "template-id",
+			}
+			err := index.Index(id, templ)
+
+			if err != nil {
+				t.Error("Failed to index template to update", err)
+			}
+			got, err := r.Delete(tt.args.ID)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("bleeveRepository.Delete() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("bleeveRepository.Delete() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
