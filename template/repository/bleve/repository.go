@@ -28,14 +28,15 @@ func New(options ...Option) repository.Repository {
 func BuildIndex(path string) (bleve.Index, error) {
 	indexMapping := bleve.NewIndexMapping()
 
+	templateIDMapping := bleve.NewTextFieldMapping()
+	templateIDMapping.Analyzer = "keyword"
+
 	templateDocMapping := bleve.NewDocumentMapping()
 
-	templateIDMapping := bleve.NewTextFieldMapping()
+	generatorsMapping := bleve.NewDocumentMapping()
 
 	templateDocMapping.AddFieldMappingsAt("ID", templateIDMapping)
-
-	generatorsMapping := bleve.NewDocumentMapping()
-	templateDocMapping.AddSubDocumentMapping("Generators", generatorsMapping)
+	templateDocMapping.AddSubDocumentMapping("model.generator", generatorsMapping)
 
 	indexMapping.AddDocumentMapping("model.template", templateDocMapping)
 
@@ -59,9 +60,8 @@ func (r *bleeveRepository) Index(template *model.Template) (string, error) {
 }
 
 func (r *bleeveRepository) Update(template *model.Template) error {
-	query := bleve.NewMatchQuery(template.ID)
-	//query.SetField("ID")
-	//query.Analyzer = "keyword"
+	query := bleve.NewTermQuery(template.ID)
+	query.SetField("ID")
 	search := bleve.NewSearchRequest(query)
 	searchResults, err := r.index.Search(search)
 
