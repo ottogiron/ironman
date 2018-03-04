@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 
 	"github.com/blevesearch/bleve"
@@ -86,7 +87,6 @@ func Test_bleeveRepository_Index(t *testing.T) {
 				t.Errorf("bleeveRepository.Index() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-
 			doc, err := index.Document(id)
 
 			if err != nil {
@@ -96,6 +96,17 @@ func Test_bleeveRepository_Index(t *testing.T) {
 			if doc == nil {
 				t.Errorf("bleeveRepository.Index() nil , want %v", tt.args.template)
 			}
+
+			got, err := deserialize(doc)
+
+			if err != nil {
+				t.Errorf("bleeveRepository.Index()  error = %v", err)
+			}
+
+			if got != nil && !reflect.DeepEqual(got, tt.args.template) {
+				t.Errorf("bleeveRepository.FindTemplateByID() = %v, want %v", got, tt.args.template)
+			}
+
 		})
 	}
 }
@@ -207,6 +218,53 @@ func Test_bleeveRepository_Update(t *testing.T) {
 				}
 			}
 
+		})
+	}
+}
+
+func Test_bleeveRepository_FindTemplateByID(t *testing.T) {
+
+	type args struct {
+		ID string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    *model.Template
+		wantErr bool
+	}{
+		{
+			"Find by id",
+			args{
+				"test-template-id",
+			},
+			&model.Template{
+				ID:          "test-template-id",
+				Description: "Some description",
+			},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r, index, clean := newTestRepository(t)
+			defer clean()
+			err := index.Index(uuid.NewV4().String(), tt.want)
+
+			if err != nil {
+				t.Errorf("Failed to index template model")
+			}
+
+			got, err := r.FindTemplateByID(tt.args.ID)
+
+			if (err != nil) != tt.wantErr {
+				t.Errorf("bleeveRepository.FindTemplateByID() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if got != nil && !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("bleeveRepository.FindTemplateByID() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }

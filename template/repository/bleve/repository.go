@@ -2,6 +2,7 @@ package bleve
 
 import (
 	"github.com/blevesearch/bleve"
+	"github.com/blevesearch/bleve/document"
 
 	"github.com/ironman-project/ironman/template/model"
 	"github.com/ironman-project/ironman/template/repository"
@@ -85,9 +86,10 @@ func (r *bleeveRepository) Update(template *model.Template) error {
 }
 
 func (r *bleeveRepository) FindTemplateByID(ID string) (*model.Template, error) {
-	query := bleve.NewMatchQuery(ID)
+	query := bleve.NewTermQuery(ID)
 	query.SetField("ID")
 	search := bleve.NewSearchRequest(query)
+
 	searchResults, err := r.index.Search(search)
 
 	if err != nil {
@@ -98,12 +100,52 @@ func (r *bleeveRepository) FindTemplateByID(ID string) (*model.Template, error) 
 		return nil, nil
 	}
 
-	doc := searchResults.Hits[0]
-	t := &model.Template{
-		IID: doc.ID,
+	match := searchResults.Hits[0]
+	doc, err := r.index.Document(match.ID)
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "Failed to get template document %s", ID)
 	}
+
+	t, err := deserialize(doc)
+
+	if err != nil {
+		return nil, err
+	}
+
 	return t, nil
 
+}
+
+func deserialize(doc *document.Document) (*model.Template, error) {
+	template := &model.Template{}
+	var currGenerator *model.Generator
+	var generators []*model.Generator
+	for _, field := range doc.Fields {
+		value := string(field.Value())
+		switch field.Name() {
+		case "IID":
+			template.IID = value
+		case "ID":
+			template.ID = value
+		case "Name":
+			template.Name = value
+		case "Description":
+			template.Description = value
+		case "Generators.ID":
+			currGenerator = &model.Generator{}
+			currGenerator.ID = value
+		case "Generators.Name":
+			currGenerator.Name = value
+		case "Generators.Description":
+			currGenerator.Description = value
+			generators = append(generators, currGenerator)
+		default:
+			return nil, errors.Errorf("Could not deserialize template from bleve document. Field %s must be explicitly processed", field)
+		}
+	}
+	template.Generators = generators
+	return template, nil
 }
 
 func (r *bleeveRepository) Delete(ID string) error {
