@@ -7,58 +7,50 @@ import (
 	"testing"
 
 	"github.com/blevesearch/bleve"
+	_ "github.com/blevesearch/bleve/analysis/analyzer/keyword"
 	"github.com/ironman-project/ironman/template/model"
 	"github.com/ironman-project/ironman/template/repository"
 	uuid "github.com/satori/go.uuid"
 )
 
-func newBleveTestIndex(t *testing.T) (bleve.Index, func()) {
+func tempIndexPath(t *testing.T) string {
 	dir, err := ioutil.TempDir("", "ironman-bleve-test")
 	if err != nil {
 		t.Fatal("Failed to create test bleve index directory", err)
 	}
 
 	indexPath := filepath.Join(dir, "index")
-	indexMapping := bleve.NewIndexMapping()
+	return indexPath
+}
 
-	templateDocMapping := bleve.NewDocumentMapping()
+func newTestRepository(t *testing.T) (repository.Repository, bleve.Index, func()) {
+	path := tempIndexPath(t)
 
-	templateIDMapping := bleve.NewTextFieldMapping()
-
-	templateDocMapping.AddFieldMappingsAt("ID", templateIDMapping)
-	generatorsMapping := bleve.NewDocumentMapping()
-	templateDocMapping.AddSubDocumentMapping("Generators", generatorsMapping)
-
-	indexMapping.AddDocumentMapping("model.template", templateDocMapping)
-
-	index, err := bleve.New(indexPath, indexMapping)
+	index, err := BuildIndex(path)
 
 	if err != nil {
-		t.Fatal("Failed to create test bleve index", err)
+		t.Fatalf("Failed to open test index %s", err)
 	}
-	return index, func() {
+
+	r := New(SetIndex(index))
+
+	return r, index, func() {
 		err := index.Close()
 
 		if err != nil {
 			t.Fatal("Failed to close bleve index", err)
 		}
-		err = os.RemoveAll(dir)
+		err = os.RemoveAll(path)
 		if err != nil {
 			t.Fatal("Failed to clean bleve index", err)
 		}
 	}
 }
 
-func newTestRepository(t *testing.T) (repository.Repository, bleve.Index, func()) {
-	index, clean := newBleveTestIndex(t)
-	r := New(SetIndex(index))
-	return r, index, clean
-}
-
 func Test_bleeveRepository_Index(t *testing.T) {
 
 	type args struct {
-		template model.Template
+		template *model.Template
 	}
 	tests := []struct {
 		name    string
@@ -68,7 +60,7 @@ func Test_bleeveRepository_Index(t *testing.T) {
 		{
 			"Index a template",
 			args{
-				model.Template{
+				&model.Template{
 					ID:          "test-template",
 					Name:        "Test template",
 					Description: "This is a test template",
@@ -111,18 +103,18 @@ func Test_bleeveRepository_Index(t *testing.T) {
 func Test_bleeveRepository_Update(t *testing.T) {
 
 	type args struct {
-		template model.Template
+		template *model.Template
 	}
 	tests := []struct {
 		name     string
 		args     args
-		template model.Template
+		template *model.Template
 		wantErr  bool
 	}{
 		{
 			"Update template index",
 			args{
-				model.Template{
+				&model.Template{
 					ID:          "template-id",
 					Name:        "Updated name",
 					Description: "Updated description",
@@ -140,7 +132,7 @@ func Test_bleeveRepository_Update(t *testing.T) {
 					},
 				},
 			},
-			model.Template{
+			&model.Template{
 				ID: "template-id",
 			},
 			false,
@@ -151,6 +143,7 @@ func Test_bleeveRepository_Update(t *testing.T) {
 			r, index, clean := newTestRepository(t)
 			defer clean()
 			id := uuid.NewV4().String()
+			tt.template.IID = id
 			err := index.Index(id, tt.template)
 
 			if err != nil {
@@ -174,9 +167,11 @@ func Test_bleeveRepository_Update(t *testing.T) {
 			for _, field := range doc.Fields {
 
 				value := string(field.Value())
-
 				switch field.Name() {
-
+				case "IID":
+					if string(value) == "" || (value != id) {
+						t.Errorf("bleveRepository.Update() IID = %v want %v", value, id)
+					}
 				case "ID":
 					if string(value) == "" || (value != tt.args.template.ID) {
 						t.Errorf("bleveRepository.Update() templateID = %v want %v", value, tt.args.template.ID)

@@ -2,6 +2,8 @@ package model
 
 //Template template metadata definition
 type Template struct {
+	//IID internal database ID
+	IID         string
 	ID          string
 	Name        string
 	Description string

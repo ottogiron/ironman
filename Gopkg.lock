@@ -21,7 +21,7 @@
 
 [[projects]]
   name = "github.com/blevesearch/bleve"
-  packages = [".","analysis","analysis/analyzer/standard","analysis/datetime/flexible","analysis/datetime/optional","analysis/lang/en","analysis/token/lowercase","analysis/token/porter","analysis/token/stop","analysis/tokenizer/unicode","document","geo","index","index/scorch","index/scorch/mergeplan","index/scorch/segment","index/scorch/segment/mem","index/scorch/segment/zap","index/store","index/store/boltdb","index/store/gtreap","index/upsidedown","mapping","numeric","registry","search","search/collector","search/facet","search/highlight","search/highlight/format/html","search/highlight/fragmenter/simple","search/highlight/highlighter/html","search/highlight/highlighter/simple","search/query","search/scorer","search/searcher"]
+  packages = [".","analysis","analysis/analyzer/keyword","analysis/analyzer/standard","analysis/datetime/flexible","analysis/datetime/optional","analysis/lang/en","analysis/token/lowercase","analysis/token/porter","analysis/token/stop","analysis/tokenizer/single","analysis/tokenizer/unicode","document","geo","index","index/scorch","index/scorch/mergeplan","index/scorch/segment","index/scorch/segment/mem","index/scorch/segment/zap","index/store","index/store/boltdb","index/store/gtreap","index/upsidedown","mapping","numeric","registry","search","search/collector","search/facet","search/highlight","search/highlight/format/html","search/highlight/fragmenter/simple","search/highlight/highlighter/html","search/highlight/highlighter/simple","search/query","search/scorer","search/searcher"]
   revision = "1a319cdf5bf77dc8cee35a6b99f908792c2547ef"
   version = "v0.7.0"
 
@@ -298,6 +298,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d5c60c12b68cd4b0ff606909ae327a908b27e5ae3b5eacb11dc560fbf8f8f238"
+  inputs-digest = "cb23e3dc54344de6e52d005f772480292d8453a07a47358955baafaa3c4a4612"
   solver-name = "gps-cdcl"
   solver-version = 1

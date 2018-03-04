@@ -2,6 +2,7 @@ package bleve
 
 import (
 	"github.com/blevesearch/bleve"
+
 	"github.com/ironman-project/ironman/template/model"
 	"github.com/ironman-project/ironman/template/repository"
 	"github.com/pkg/errors"
@@ -17,15 +18,39 @@ type bleeveRepository struct {
 //New creates a new instance of a bleeve repository
 func New(options ...Option) repository.Repository {
 	r := &bleeveRepository{}
-
 	for _, option := range options {
 		option(r)
 	}
 	return r
 }
 
-func (r *bleeveRepository) Index(template model.Template) (string, error) {
+//BuildIndex builds a nex index based on a path
+func BuildIndex(path string) (bleve.Index, error) {
+	indexMapping := bleve.NewIndexMapping()
+
+	templateDocMapping := bleve.NewDocumentMapping()
+
+	templateIDMapping := bleve.NewTextFieldMapping()
+
+	templateDocMapping.AddFieldMappingsAt("ID", templateIDMapping)
+
+	generatorsMapping := bleve.NewDocumentMapping()
+	templateDocMapping.AddSubDocumentMapping("Generators", generatorsMapping)
+
+	indexMapping.AddDocumentMapping("model.template", templateDocMapping)
+
+	index, err := bleve.New(path, indexMapping)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return index, nil
+}
+
+func (r *bleeveRepository) Index(template *model.Template) (string, error) {
 	id := uuid.NewV4()
+	template.IID = id.String()
 	err := r.index.Index(id.String(), template)
 	if err != nil {
 		return "", errors.Wrapf(err, "Failed to index template %s", template.ID)
@@ -33,8 +58,10 @@ func (r *bleeveRepository) Index(template model.Template) (string, error) {
 	return id.String(), nil
 }
 
-func (r *bleeveRepository) Update(template model.Template) error {
+func (r *bleeveRepository) Update(template *model.Template) error {
 	query := bleve.NewMatchQuery(template.ID)
+	//query.SetField("ID")
+	//query.Analyzer = "keyword"
 	search := bleve.NewSearchRequest(query)
 	searchResults, err := r.index.Search(search)
 
@@ -47,6 +74,7 @@ func (r *bleeveRepository) Update(template model.Template) error {
 	}
 
 	id := searchResults.Hits[0].ID
+	template.IID = id
 	err = r.index.Index(id, template)
 
 	if err != nil {
@@ -54,6 +82,28 @@ func (r *bleeveRepository) Update(template model.Template) error {
 	}
 
 	return nil
+}
+
+func (r *bleeveRepository) FindTemplateByID(ID string) (*model.Template, error) {
+	query := bleve.NewMatchQuery(ID)
+	query.SetField("ID")
+	search := bleve.NewSearchRequest(query)
+	searchResults, err := r.index.Search(search)
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "Search for template failed id: %s")
+	}
+
+	if searchResults.Total != 1 {
+		return nil, nil
+	}
+
+	doc := searchResults.Hits[0]
+	t := &model.Template{
+		IID: doc.ID,
+	}
+	return t, nil
+
 }
 
 func (r *bleeveRepository) Delete(ID string) error {
