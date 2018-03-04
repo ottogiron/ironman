@@ -168,7 +168,7 @@ func (r *bleeveRepository) Delete(ID string) (bool, error) {
 	return true, nil
 }
 
-func (r *bleeveRepository) List() ([]model.Template, error) {
+func (r *bleeveRepository) List() ([]*model.Template, error) {
 	panic("not implemented")
 }
 
