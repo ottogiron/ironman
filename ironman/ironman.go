@@ -1,10 +1,19 @@
 package ironman
 
 import (
+	"log"
+	"path/filepath"
+
+	"github.com/blevesearch/bleve"
 	"github.com/ironman-project/ironman/template/manager"
 	"github.com/ironman-project/ironman/template/manager/git"
 	"github.com/ironman-project/ironman/template/model"
 	"github.com/ironman-project/ironman/template/repository"
+	brepository "github.com/ironman-project/ironman/template/repository/bleve"
+)
+
+const (
+	indexName = "templates.index"
 )
 
 //Ironman is the one administering the local
@@ -24,7 +33,32 @@ func New(home string, options ...Option) *Ironman {
 		manager := git.New(home)
 		ir.manager = manager
 	}
+
+	if ir.repository == nil {
+		indexPath := filepath.Join(home, indexName)
+		index, err := buildIndex(indexPath)
+		if err != nil {
+			log.Fatal("Failed to create ironman templates index", err)
+		}
+		ir.repository = brepository.New(
+			brepository.SetIndex(index),
+		)
+	}
 	return ir
+}
+
+func buildIndex(path string) (bleve.Index, error) {
+	// open the index
+	index, err := bleve.Open(path)
+	if err == bleve.ErrorIndexPathDoesNotExist {
+		index, err = brepository.BuildIndex(path)
+		if err != nil {
+			return nil, err
+		}
+	} else if err != nil {
+		return nil, err
+	}
+	return index, nil
 }
 
 //Install installs a new template based on a template locator

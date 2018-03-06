@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/blevesearch/bleve"
-	_ "github.com/blevesearch/bleve/analysis/analyzer/keyword"
 	"github.com/ironman-project/ironman/template/model"
 	"github.com/ironman-project/ironman/template/repository"
 	uuid "github.com/satori/go.uuid"
