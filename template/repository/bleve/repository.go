@@ -169,7 +169,33 @@ func (r *bleeveRepository) Delete(ID string) (bool, error) {
 }
 
 func (r *bleeveRepository) List() ([]*model.Template, error) {
-	panic("not implemented")
+	var results []*model.Template
+	query := bleve.NewMatchAllQuery()
+	search := bleve.NewSearchRequest(query)
+
+	searchResults, err := r.index.Search(search)
+
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to list all the available templates")
+	}
+
+	if searchResults.Total > 0 {
+		for _, result := range searchResults.Hits {
+			doc, err := r.index.Document(result.ID)
+
+			if err != nil {
+				return nil, errors.Wrapf(err, "Failed to retrieve template from document IID:%s", doc.ID)
+			}
+
+			templ, err := deserialize(doc)
+
+			if err != nil {
+				return nil, errors.Wrapf(err, "Failed to deserialize template from document IID:%s", doc.ID)
+			}
+			results = append(results, templ)
+		}
+	}
+	return results, nil
 }
 
 func (r *bleeveRepository) Exists(ID string) (bool, error) {

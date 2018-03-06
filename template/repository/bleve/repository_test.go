@@ -314,3 +314,59 @@ func Test_bleeveRepository_Delete(t *testing.T) {
 		})
 	}
 }
+
+func Test_bleeveRepository_List(t *testing.T) {
+
+	tests := []struct {
+		name    string
+		want    []*model.Template
+		wantErr bool
+	}{
+		{
+			"List all templates",
+			[]*model.Template{
+				&model.Template{ID: "template-id1"},
+				&model.Template{ID: "template-id2"},
+				&model.Template{ID: "template-id3"},
+			},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r, index, clean := newTestRepository(t)
+			defer clean()
+
+			for _, templ := range tt.want {
+				templ.IID = uuid.NewV4().String()
+				err := index.Index(templ.IID, templ)
+
+				if err != nil {
+					t.Error("Failed to index template to list", err)
+				}
+			}
+			got, err := r.List()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("bleeveRepository.List() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			for _, templ := range got {
+				if !containsTemplate(templ, got) {
+					t.Errorf("bleeveRepository.List() = %v, want %v", got, templ)
+				}
+
+			}
+
+		})
+	}
+}
+
+func containsTemplate(templ *model.Template, templates []*model.Template) bool {
+	for _, ltempl := range templates {
+		if reflect.DeepEqual(templ, ltempl) {
+			return true
+		}
+	}
+	return false
+}
