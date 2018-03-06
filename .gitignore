@@ -24,9 +24,7 @@ _testmain.go
 *.prof
 
 .glide
-ironman-*
-ironman
-ironman.tgz
+
 .test_repository_*
 .DS_Store
 .idea

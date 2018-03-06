@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ironman-project/ironman/template/manager/git"
+	"github.com/ironman-project/ironman/ironman"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 )
@@ -26,16 +26,20 @@ ironman list
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		manager := git.New(ironmanHome)
+		ironman := ironman.New(ironmanHome)
 		fmt.Println("Installed templates")
-		installedList, err := manager.Installed()
+		installedList, err := ironman.List()
+
 		if err != nil {
 			return err
 		}
 
-		if len(installedList) < 0 {
+		if len(installedList) == 0 {
 			fmt.Println("None")
+			return nil
+
 		}
+
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"ID", "Name", "Description"})
 

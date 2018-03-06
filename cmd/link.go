@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/ironman-project/ironman/template/manager/git"
+	"github.com/ironman-project/ironman/ironman"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -29,9 +29,9 @@ If you run "ironman list" you should see the symlink of your template created.
 	RunE: func(cmd *cobra.Command, args []string) error {
 		templatePath := args[0]
 		templateID := args[1]
-		manager := git.New(ironmanHome)
+		ironman := ironman.New(ironmanHome)
 		fmt.Printf("Linking template to repository with ID %s...", templateID)
-		err := manager.Link(templatePath, templateID)
+		err := ironman.Link(templatePath, templateID)
 		if err != nil {
 			return err
 		}

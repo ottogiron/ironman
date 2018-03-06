@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ironman-project/ironman/template/manager/git"
+	"github.com/ironman-project/ironman/ironman"
 	"github.com/spf13/cobra"
 )
 
@@ -25,14 +25,14 @@ Example:
 ironman uninstall my-template-id
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		templateURL := args[0]
-		manager := git.New(ironmanHome)
-		fmt.Println("Uninstalling template", templateURL, "...")
-		err := manager.Uninstall(templateURL)
+		templateID := args[0]
+		ironman := ironman.New(ironmanHome)
+		fmt.Println("Uninstalling template", templateID, "...")
+		err := ironman.Uninstall(templateID)
 		if err != nil {
 			return err
 		}
-		fmt.Println("Done")
+		fmt.Println("done")
 		return nil
 	},
 }
