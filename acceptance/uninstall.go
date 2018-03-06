@@ -30,7 +30,7 @@ func theUninstallProcessStateShouldBeSuccess() error {
 }
 
 func theUninstallOutputShouldContainAnd(out1, out2 string) error {
-	if !testcli.StdoutContains(out1) && !testcli.StdoutContains(out2) {
+	if !(testcli.StdoutContains(out1) && testcli.StdoutContains(out2)) {
 		return fmt.Errorf("output => %s", testcli.Stdout())
 	}
 	return nil

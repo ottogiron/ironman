@@ -10,12 +10,12 @@ Feature: List Available Templates
     Then The List process state should be success 
     And The List output should contain "Installed templates" and 
     """
-+--------------------+--------------------+-------------+
-|         ID         |        NAME        | DESCRIPTION |
-+--------------------+--------------------+-------------+
-| template-example   | template-example   | TODO        |
-+--------------------+--------------------+-------------+
-"""
+  +------------------+------------------+-------------+
+  |        ID        |       NAME       | DESCRIPTION |
+  +------------------+------------------+-------------+
+  | template-example | template-example | TODO        |
+  +------------------+------------------+-------------+
+    """
 
     Scenario: List available templates when none available 
     When List runs an no template is available

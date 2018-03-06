@@ -8,7 +8,7 @@ Feature: Uninstall a template
     Given A template to uninstall URL "https://github.com/ironman-project/template-example.git"
     When It runs with correct ID "template-example"
     Then The Uninstall process state should be success 
-    And The Uninstall output should contain "Uninstallinging template" and "done"
+    And The Uninstall output should contain "Uninstalling template" and "done"
     And An Uninstalled template with ID "template-example" should not exists
   
 

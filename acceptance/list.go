@@ -30,7 +30,8 @@ func theListProcessStateShouldBeSuccess() error {
 }
 
 func theListOutputShouldContainAnd(out1 string, out2 *gherkin.DocString) error {
-	if !testcli.StdoutContains(out1) && !testcli.StdoutContains(out2.Content) {
+
+	if !(testcli.StdoutContains(out1) && testcli.StdoutContains(out2.Content)) {
 		return fmt.Errorf("output => %s", testcli.Stdout())
 	}
 	return nil
@@ -49,7 +50,7 @@ func theListWithNoTemplateProcessStateShouldBeSuccess() error {
 }
 
 func theListOutputWithNoTemplateShouldContainAnd(out1, out2 string) error {
-	if !testcli.StdoutContains(out1) && !testcli.StdoutContains(out2) {
+	if !(testcli.StdoutContains(out1) && testcli.StdoutContains(out2)) {
 		return fmt.Errorf("output => %s", testcli.Stdout())
 	}
 	return nil
