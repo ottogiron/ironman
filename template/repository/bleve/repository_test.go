@@ -384,6 +384,7 @@ func Test_bleeveRepository_Exists(t *testing.T) {
 		wantErr bool
 	}{
 		{"Template exists", args{"template-id"}, true, false},
+		{"Template exists", args{"template-id-dont-exists"}, false, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
