@@ -370,3 +370,43 @@ func containsTemplate(templ *model.Template, templates []*model.Template) bool {
 	}
 	return false
 }
+
+func Test_bleeveRepository_Exists(t *testing.T) {
+
+	type args struct {
+		ID string
+	}
+	tests := []struct {
+		name string
+
+		args    args
+		want    bool
+		wantErr bool
+	}{
+		{"Template exists", args{"template-id"}, true, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r, index, clean := newTestRepository(t)
+			defer clean()
+			id := uuid.NewV4().String()
+			templ := &model.Template{
+				IID: id,
+				ID:  "template-id",
+			}
+			err := index.Index(id, templ)
+
+			if err != nil {
+				t.Error("Failed to index template to verify existence", err)
+			}
+			got, err := r.Exists(tt.args.ID)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("bleeveRepository.Exists() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("bleeveRepository.Exists() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

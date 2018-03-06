@@ -199,5 +199,15 @@ func (r *bleeveRepository) List() ([]*model.Template, error) {
 }
 
 func (r *bleeveRepository) Exists(ID string) (bool, error) {
+	templ, err := r.FindTemplateByID(ID)
+
+	if err != nil {
+		return false, errors.Wrapf(err, "Failed to verify if template exists %s", ID)
+	}
+
+	if templ != nil {
+		return true, nil
+	}
+
 	return false, nil
 }
