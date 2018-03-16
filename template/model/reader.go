@@ -1,15 +1,10 @@
 package model
 
-//ReaderType defines the different types of metadata readers
-type ReaderType string
+import (
+	"os"
+	"path/filepath"
 
-const (
-	//Yaml Reader type yaml
-	Yaml = "yaml"
-	//JSON reader type json
-	JSON = "json"
-	//Toml reader type toml
-	Toml = "toml"
+	"github.com/pkg/errors"
 )
 
 //Reader  template metadata reader
@@ -17,19 +12,38 @@ type Reader interface {
 	Read() (*Template, error)
 }
 
-//NewReader returns a new reader based on the type. Defaults to yaml
-func NewReader(path string, t ReaderType) Reader {
-	var reader Reader
-	switch t {
-	default:
-		reader = &yamlReader{}
+//NewFSReader returns a new reader based on the type. Defaults to yaml
+func NewFSReader(path string, fileExtension string, decoder Decoder) Reader {
+	reader := &fsReader{
+		path,
+		fileExtension,
+		decoder,
 	}
+
 	return reader
 }
 
-type yamlReader struct {
+type fsReader struct {
+	path          string
+	fileExtension string
+	decoder       Decoder
 }
 
-func (yr *yamlReader) Read() (*Template, error) {
-	return nil, nil
+func (r *fsReader) Read() (*Template, error) {
+	rootIronmanMetadataPath := filepath.Join(r.path, ".ironman."+r.fileExtension)
+	rootIronmanTemplateFile, err := os.Open(rootIronmanMetadataPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, errors.Wrap(err, rootIronmanMetadataPath)
+		}
+
+		return nil, errors.Wrapf(err, "Failed to read metadata file %s", rootIronmanMetadataPath)
+	}
+	var templateModel Template
+	err = r.decoder.Decode(&templateModel, rootIronmanTemplateFile)
+
+	if err != nil {
+	}
+
+	return &templateModel, nil
 }
