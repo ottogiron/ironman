@@ -1,2 +1,4 @@
-id: "alo"
-name: "Some name"
+
+id: "template-id"  
+name: "the template name"
+description: "the template description"

@@ -4,7 +4,7 @@ package model
 type Template struct {
 	//IID internal database ID
 	IID         string
-	ID          string
+	ID          string `json:"id" yaml:"id"`
 	Name        string
 	Description string
 	Generators  []*Generator
