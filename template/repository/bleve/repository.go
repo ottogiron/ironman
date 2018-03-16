@@ -11,6 +11,10 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+const (
+	idKey = "id"
+)
+
 var _ repository.Repository = (*bleeveRepository)(nil)
 
 type bleeveRepository struct {
@@ -37,7 +41,7 @@ func BuildIndex(path string) (bleve.Index, error) {
 
 	generatorsMapping := bleve.NewDocumentMapping()
 
-	templateDocMapping.AddFieldMappingsAt("ID", templateIDMapping)
+	templateDocMapping.AddFieldMappingsAt(idKey, templateIDMapping)
 	templateDocMapping.AddSubDocumentMapping("model.generator", generatorsMapping)
 
 	indexMapping.AddDocumentMapping("model.template", templateDocMapping)
@@ -63,7 +67,7 @@ func (r *bleeveRepository) Index(template *model.Template) (string, error) {
 
 func (r *bleeveRepository) Update(template *model.Template) error {
 	query := bleve.NewTermQuery(template.ID)
-	query.SetField("ID")
+	query.SetField(idKey)
 	search := bleve.NewSearchRequest(query)
 	searchResults, err := r.index.Search(search)
 
@@ -88,7 +92,7 @@ func (r *bleeveRepository) Update(template *model.Template) error {
 
 func (r *bleeveRepository) FindTemplateByID(ID string) (*model.Template, error) {
 	query := bleve.NewTermQuery(ID)
-	query.SetField("ID")
+	query.SetField(idKey)
 	search := bleve.NewSearchRequest(query)
 
 	searchResults, err := r.index.Search(search)
@@ -125,24 +129,24 @@ func deserialize(doc *document.Document) (*model.Template, error) {
 	for _, field := range doc.Fields {
 		value := string(field.Value())
 		switch field.Name() {
-		case "IID":
+		case "iid":
 			template.IID = value
-		case "ID":
+		case "id":
 			template.ID = value
-		case "Name":
+		case "name":
 			template.Name = value
-		case "Description":
+		case "description":
 			template.Description = value
-		case "Generators.ID":
+		case "generators.id":
 			currGenerator = &model.Generator{}
 			currGenerator.ID = value
-		case "Generators.Name":
+		case "generators.name":
 			currGenerator.Name = value
-		case "Generators.Description":
+		case "generators.description":
 			currGenerator.Description = value
 			generators = append(generators, currGenerator)
 		default:
-			return nil, errors.Errorf("Could not deserialize template from bleve document. Field %s must be explicitly processed", field)
+			return nil, errors.Errorf("Could not deserialize template from bleve document. Field %s must be explicitly processed", field.Name())
 		}
 	}
 	template.Generators = generators

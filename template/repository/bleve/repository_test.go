@@ -178,35 +178,35 @@ func Test_bleeveRepository_Update(t *testing.T) {
 
 				value := string(field.Value())
 				switch field.Name() {
-				case "IID":
+				case "iid":
 					if string(value) == "" || (value != id) {
 						t.Errorf("bleveRepository.Update() IID = %v want %v", value, id)
 					}
-				case "ID":
+				case "id":
 					if string(value) == "" || (value != tt.args.template.ID) {
 						t.Errorf("bleveRepository.Update() templateID = %v want %v", value, tt.args.template.ID)
 					}
-				case "Name":
+				case "name":
 					if string(value) == "" || (value != tt.args.template.Name) {
 						t.Errorf("bleveRepository.Update() templateName = %v want %v", value, tt.args.template.Name)
 					}
-				case "Description":
+				case "description":
 					if string(value) == "" || (value != tt.args.template.Description) {
 						t.Errorf("bleveRepository.Update() templateDescription = %v want %v", value, tt.args.template.Description)
 					}
-				case "Generators.ID":
+				case "generators.id":
 					pos := field.ArrayPositions()[0]
 					expectedID := tt.args.template.Generators[pos].ID
 					if value != expectedID {
 						t.Errorf("bleveRepository.Update() template.Generators[%d].ID = %v want %v", pos, value, expectedID)
 					}
-				case "Generators.Name":
+				case "generators.name":
 					pos := field.ArrayPositions()[0]
 					expectedName := tt.args.template.Generators[pos].Name
 					if value != expectedName {
 						t.Errorf("bleveRepository.Update() template.Generators[%d].Name = %v want %v", pos, value, expectedName)
 					}
-				case "Generators.Description":
+				case "generators.description":
 					pos := field.ArrayPositions()[0]
 					expectedDescription := tt.args.template.Generators[pos].Description
 					if value != expectedDescription {
