@@ -12,7 +12,7 @@ import (
 
 //Manager represents a local ironman manager
 type Manager interface {
-	Install(templateLocator string) error
+	Install(templateLocator string) (ID string, err error)
 	Update(templateID string) error
 	Uninstall(templateID string) error
 	Find(templateID string) error
@@ -20,7 +20,7 @@ type Manager interface {
 	Installed() ([]*template.Metadata, error)
 	Link(templatePath string, templateID string) error
 	Unlink(templateID string) error
-	TemplatePath(templateID string) string
+	TemplateLocation(templateID string) string
 }
 
 const (
@@ -44,7 +44,7 @@ func (b *BaseManager) Uninstall(templateID string) error {
 	if err := validateTemplateID(templateID); err != nil {
 		return err
 	}
-	templatePath := b.TemplatePath(templateID)
+	templatePath := b.TemplateLocation(templateID)
 	err := os.RemoveAll(templatePath)
 	if err != nil {
 		return errors.Wrapf(err, "Failed to remove template %s", templateID)
@@ -62,7 +62,7 @@ func (b *BaseManager) IsInstalled(templateID string) (bool, error) {
 	if err := validateTemplateID(templateID); err != nil {
 		return false, err
 	}
-	templatePath := b.TemplatePath(templateID)
+	templatePath := b.TemplateLocation(templateID)
 	_, err := os.Stat(templatePath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -80,8 +80,8 @@ func validateTemplateID(templateID string) error {
 	return nil
 }
 
-//TemplatePath returns the file system path of a template based on the ID
-func (b *BaseManager) TemplatePath(templateID string) string {
+//TemplateLocation returns the file system path of a template based on the ID
+func (b *BaseManager) TemplateLocation(templateID string) string {
 	return filepath.Join(b.path, managerTemplatesDirectory, templateID)
 }
 
@@ -107,7 +107,7 @@ func (b *BaseManager) Link(templatePath string, templateID string) error {
 		return err
 	}
 
-	linkPath := b.TemplatePath(templateID)
+	linkPath := b.TemplateLocation(templateID)
 
 	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
 		return errors.Wrapf(err, "Failed to create symlink to ironman manager path should %s exists ", templatePath)
@@ -134,7 +134,7 @@ func (b *BaseManager) Unlink(templateID string) error {
 		return err
 	}
 
-	templatePath := b.TemplatePath(templateID)
+	templatePath := b.TemplateLocation(templateID)
 
 	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
 		return errors.Wrapf(err, "Failed to remove symlink for template ID %s", err)

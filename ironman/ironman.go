@@ -63,7 +63,7 @@ func buildIndex(path string) (bleve.Index, error) {
 
 //Install installs a new template based on a template locator
 func (i *Ironman) Install(templateLocator string) error {
-	err := i.manager.Install(templateLocator)
+	_, err := i.manager.Install(templateLocator)
 	if err != nil {
 		return err
 	}

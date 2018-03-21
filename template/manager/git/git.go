@@ -24,9 +24,9 @@ func New(path string) manager.Manager {
 }
 
 //Install installs a template from a git url
-func (r *Manager) Install(location string) error {
-	templatePath := r.templatePathFromLocation(location)
-
+func (r *Manager) Install(location string) (string, error) {
+	id := templateIDFromLocation(location)
+	templatePath := r.templatePathFromID(id)
 	_, err := gogit.PlainClone(templatePath, false,
 		&gogit.CloneOptions{
 			URL:      location,
@@ -35,15 +35,15 @@ func (r *Manager) Install(location string) error {
 	)
 
 	if err != nil {
-		return errors.Wrapf(err, "Failed to install template  %s", location)
+		return "", errors.Wrapf(err, "Failed to install template  %s", location)
 	}
-	return nil
+	return id, nil
 }
 
 //Update updates a template from a git Manager
 func (r *Manager) Update(id string) error {
 
-	templatePath := r.templatePathFromLocation(id)
+	templatePath := r.templatePathFromID(id)
 
 	gitRepo, err := gogit.PlainOpen(templatePath)
 
@@ -68,8 +68,12 @@ func (r *Manager) Update(id string) error {
 	return nil
 }
 
-func (r *Manager) templatePathFromLocation(location string) string {
-	templateID := path.Base(strings.TrimSuffix(location, ".git"))
-	templatePath := r.TemplatePath(templateID)
+func (r *Manager) templatePathFromID(templateID string) string {
+
+	templatePath := r.TemplateLocation(templateID)
 	return templatePath
+}
+
+func templateIDFromLocation(location string) string {
+	return path.Base(strings.TrimSuffix(location, ".git"))
 }

@@ -47,19 +47,25 @@ func TestManager_Install(t *testing.T) {
 			defer func() {
 				_ = r.Uninstall(tt.expectedTemplateID)
 			}()
-			if err := r.Install(tt.args.location); (err != nil) != tt.wantErr {
+			var gotID string
+			var err error
+			if gotID, err = r.Install(tt.args.location); (err != nil) != tt.wantErr {
 				t.Errorf("Manager.Install() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
-			expectedTemplatePath := r.TemplatePath(tt.expectedTemplateID)
+			if gotID != tt.expectedTemplateID {
+				t.Errorf("Manager.Install() ID = %v, want %v", gotID, tt.expectedTemplateID)
+			}
 
-			if !testutils.FileExists(expectedTemplatePath) {
-				t.Errorf("Manager.Install() template was not installed want path %v", expectedTemplatePath)
+			expectedTemplateLocation := r.TemplateLocation(tt.expectedTemplateID)
+
+			if !testutils.FileExists(expectedTemplateLocation) {
+				t.Errorf("Manager.Install() template was not installed want path %v", expectedTemplateLocation)
 			}
 
 			for _, fileRelativePath := range tt.expectedFilesPaths {
-				filePath := filepath.Join(expectedTemplatePath, fileRelativePath)
+				filePath := filepath.Join(expectedTemplateLocation, fileRelativePath)
 				if !testutils.FileExists(filePath) {
 					t.Errorf("Manager.Install() expected file was not found, path %v", filePath)
 				}
@@ -89,7 +95,7 @@ func TestManager_Update(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := newTestGitManager()
 
-			err := r.Install(tt.args.location)
+			_, err := r.Install(tt.args.location)
 
 			defer func() {
 				r.Uninstall(tt.args.id)
