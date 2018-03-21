@@ -1,0 +1,59 @@
+package model
+
+import (
+	"reflect"
+	"testing"
+)
+
+func Test_fsReader_Read(t *testing.T) {
+	type fields struct {
+		path          string
+		fileExtension string
+		decoder       Decoder
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		want    *Template
+		wantErr bool
+	}{
+		{
+			"Read template metadata from file system",
+			fields{
+				"testing/test_read_template",
+				"yaml",
+				NewDecoder(DecoderTypeYAML),
+			},
+			&Template{
+				ID:          "test-read-template",
+				Name:        "Test Read Template",
+				Description: "This is a test template",
+				Generators: []*Generator{
+					&Generator{
+						ID:          "generator",
+						Name:        "Test Generator",
+						Description: "This is a test generator",
+					},
+				},
+			},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := &fsReader{
+				path:          tt.fields.path,
+				fileExtension: tt.fields.fileExtension,
+				decoder:       tt.fields.decoder,
+			}
+			got, err := r.Read()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("fsReader.Read() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("fsReader.Read() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

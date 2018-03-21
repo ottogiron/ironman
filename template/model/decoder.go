@@ -12,12 +12,12 @@ import (
 type DecoderType string
 
 const (
-	//Yaml decoder type yaml
-	Yaml = "yaml"
-	//JSON decoder type json
-	JSON = "json"
-	//Toml decoder type toml
-	Toml = "toml"
+	//DecoderTypeYAML decoder type yaml
+	DecoderTypeYAML = "yaml"
+	//DecoderTypeJSON decoder type json
+	DecoderTypeJSON = "json"
+	//DecoderTypeToml decoder type toml
+	DecoderTypeToml = "toml"
 )
 
 //Decoder  template metadata reader
