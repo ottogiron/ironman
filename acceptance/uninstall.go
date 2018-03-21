@@ -24,7 +24,7 @@ func itRunsWithCorrectID(ID string) error {
 
 func theUninstallProcessStateShouldBeSuccess() error {
 	if !testcli.Success() {
-		return fmt.Errorf("Uninstall command did not succeded %s %s", testcli.Error(), testcli.Stderr())
+		return fmt.Errorf("Uninstall command did not succeeded %s %s", testcli.Error(), testcli.Stderr())
 	}
 	return nil
 }

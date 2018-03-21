@@ -24,7 +24,7 @@ func listRuns() error {
 
 func theListProcessStateShouldBeSuccess() error {
 	if !testcli.Success() {
-		return fmt.Errorf("List command did not succeded %s %s", testcli.Error(), testcli.Stderr())
+		return fmt.Errorf("List command did not succeeded %s %s", testcli.Error(), testcli.Stderr())
 	}
 	return nil
 }
@@ -44,7 +44,7 @@ func listRunsAnNoTemplateIsAvailable() error {
 
 func theListWithNoTemplateProcessStateShouldBeSuccess() error {
 	if !testcli.Success() {
-		return fmt.Errorf("List command did not succeded %s %s", testcli.Error(), testcli.Stderr())
+		return fmt.Errorf("List command did not succeeded %s %s", testcli.Error(), testcli.Stderr())
 	}
 	return nil
 }

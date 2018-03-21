@@ -14,7 +14,7 @@ func (fm *FixedListMapper) Map(f field.Field) (interface{}, error) {
 	//Example
 	//id: myListWithDifferntThings
 	//type: fieldlist
-	//label: My List of differnt things
+	//label: My List of different things
 	//fields:
 	// 	- id: myThing1
 	//	  type: text

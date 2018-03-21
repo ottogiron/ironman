@@ -18,7 +18,7 @@ func itRunsWithCorrectURL(URL string) error {
 
 func theProcessStateShouldBeSuccess() error {
 	if !testcli.Success() {
-		return fmt.Errorf("Install command did not succeded %s %s", testcli.Error(), testcli.Stderr())
+		return fmt.Errorf("Install command did not succeeded %s %s", testcli.Error(), testcli.Stderr())
 	}
 	return nil
 }

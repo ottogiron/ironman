@@ -23,7 +23,7 @@ func updateRunsWithCorrectTemplateID(templateID string) error {
 
 func theUpdateProcessStateShouldBeSuccess() error {
 	if !testcli.Success() {
-		return fmt.Errorf("Update command did not succeded %s %s", testcli.Error(), testcli.Stderr())
+		return fmt.Errorf("Update command did not succeeded %s %s", testcli.Error(), testcli.Stderr())
 	}
 	return nil
 }

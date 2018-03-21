@@ -18,7 +18,7 @@ func itRunsWithCorrectATemplatePathToLinkWithID(templatePath, ID string) error {
 
 func theLinkProcessStateShouldBeSuccess() error {
 	if !testcli.Success() {
-		return fmt.Errorf("Link command did not succeded %s %s %s", testcli.Error(), testcli.Stderr(), testcli.Stdout())
+		return fmt.Errorf("Link command did not succeeded %s %s %s", testcli.Error(), testcli.Stderr(), testcli.Stdout())
 	}
 	return nil
 }
