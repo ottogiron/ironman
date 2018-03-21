@@ -7,8 +7,9 @@ import (
 
 func Test_fsReader_Read(t *testing.T) {
 	type fields struct {
+		ignore        []string
 		path          string
-		fileExtension string
+		fileExtension MetadataFileExtension
 		decoder       Decoder
 	}
 	tests := []struct {
@@ -20,6 +21,7 @@ func Test_fsReader_Read(t *testing.T) {
 		{
 			"Read template metadata from file system",
 			fields{
+				[]string{".git"},
 				"testing/test_read_template",
 				"yaml",
 				NewDecoder(DecoderTypeYAML),
@@ -42,11 +44,11 @@ func Test_fsReader_Read(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := &fsReader{
-				path:          tt.fields.path,
+				ignoreFiles:   tt.fields.ignore,
 				fileExtension: tt.fields.fileExtension,
 				decoder:       tt.fields.decoder,
 			}
-			got, err := r.Read()
+			got, err := r.Read(tt.fields.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("fsReader.Read() error = %v, wantErr %v", err, tt.wantErr)
 				return

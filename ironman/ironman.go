@@ -18,9 +18,10 @@ const (
 
 //Ironman is the one administering the local
 type Ironman struct {
-	manager    manager.Manager
-	repository repository.Repository
-	home       string
+	manager     manager.Manager
+	modelReader model.Reader
+	repository  repository.Repository
+	home        string
 }
 
 //New returns a new instance of ironman
@@ -44,6 +45,12 @@ func New(home string, options ...Option) *Ironman {
 			brepository.SetIndex(index),
 		)
 	}
+
+	if ir.modelReader == nil {
+		decoder := model.NewDecoder(model.DecoderTypeYAML)
+		modelReader := model.NewFSReader([]string{".git"}, model.MetadataFileExtensionYAML, decoder)
+		ir.modelReader = modelReader
+	}
 	return ir
 }
 
@@ -63,10 +70,26 @@ func buildIndex(path string) (bleve.Index, error) {
 
 //Install installs a new template based on a template locator
 func (i *Ironman) Install(templateLocator string) error {
-	_, err := i.manager.Install(templateLocator)
+	ID, err := i.manager.Install(templateLocator)
 	if err != nil {
 		return err
 	}
+
+	templatePath := i.manager.TemplateLocation(ID)
+	model, err := i.modelReader.Read(templatePath)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = i.repository.Index(model)
+
+	if err != nil {
+		//rollback manager installation
+		_ = i.manager.Uninstall(ID)
+		return err
+	}
+
 	return nil
 }
 
@@ -83,18 +106,12 @@ func (i *Ironman) Link(templatePath, templateID string) error {
 
 //List returns a list of all the installed ironman templates
 func (i *Ironman) List() ([]*model.Template, error) {
-	results, err := i.manager.Installed()
+	results, err := i.repository.List()
 	if err != nil {
 		return nil, err
 	}
-	var installed []*model.Template
-	for _, result := range results {
-		template := &model.Template{
-			ID: result.ID,
-		}
-		installed = append(installed, template)
-	}
-	return installed, nil
+
+	return results, nil
 }
 
 //Uninstall uninstalls an ironman template

@@ -44,7 +44,7 @@ ironman list
 		table.SetHeader([]string{"ID", "Name", "Description"})
 
 		for _, installed := range installedList {
-			table.Append([]string{installed.ID, installed.ID, "TODO"})
+			table.Append([]string{installed.ID, installed.Name, installed.Description})
 		}
 		table.Render() // Send output
 		return nil

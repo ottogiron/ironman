@@ -12,30 +12,38 @@ const (
 	meatadataFileName = ".ironman"
 )
 
+//MetadataFileExtension metadata file extension type
+type MetadataFileExtension string
+
+const (
+	//MetadataFileExtensionYAML file extension for yaml metadata files
+	MetadataFileExtensionYAML = "yaml"
+)
+
 //Reader  template metadata reader
 type Reader interface {
-	Read() (*Template, error)
+	Read(location string) (*Template, error)
 }
 
-//NewFSReader returns a new reader based on the type. Defaults to yaml
-func NewFSReader(path string, fileExtension string, decoder Decoder) Reader {
+//NewFSReader returns a new reader based on the type.
+func NewFSReader(ignoreFiles []string, fileExtension MetadataFileExtension, decoder Decoder) Reader {
 	reader := &fsReader{
-		path,
 		fileExtension,
 		decoder,
+		ignoreFiles,
 	}
 
 	return reader
 }
 
 type fsReader struct {
-	path          string
-	fileExtension string
+	fileExtension MetadataFileExtension
 	decoder       Decoder
+	ignoreFiles   []string
 }
 
-func (r *fsReader) Read() (*Template, error) {
-	rootIronmanMetadataPath := filepath.Join(r.path, meatadataFileName+"."+r.fileExtension)
+func (r *fsReader) Read(path string) (*Template, error) {
+	rootIronmanMetadataPath := filepath.Join(path, meatadataFileName+"."+string(r.fileExtension))
 	rootIronmanTemplateFile, err := os.Open(rootIronmanMetadataPath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -51,15 +59,15 @@ func (r *fsReader) Read() (*Template, error) {
 		return nil, errors.Wrapf(err, "Failed to decode template information from %s", rootIronmanMetadataPath)
 	}
 
-	generatorFiles, err := ioutil.ReadDir(r.path)
+	generatorFiles, err := ioutil.ReadDir(path)
 
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to read available generators for %s", r.path)
+		return nil, errors.Wrapf(err, "Failed to read available generators for %s", path)
 	}
 
 	for _, generatorFile := range generatorFiles {
-		if generatorFile.IsDir() {
-			generatorMetadataPath := filepath.Join(r.path, generatorFile.Name(), meatadataFileName+"."+r.fileExtension)
+		if generatorFile.IsDir() && !r.ignore(generatorFile.Name()) {
+			generatorMetadataPath := filepath.Join(path, generatorFile.Name(), meatadataFileName+"."+string(r.fileExtension))
 			generatorMetadataFile, err := os.Open(generatorMetadataPath)
 			if err != nil {
 				if os.IsNotExist(err) {
@@ -78,4 +86,13 @@ func (r *fsReader) Read() (*Template, error) {
 	}
 
 	return &templateModel, nil
+}
+
+func (r *fsReader) ignore(fileName string) bool {
+	for _, ignore := range r.ignoreFiles {
+		if ignore == fileName {
+			return true
+		}
+	}
+	return false
 }
