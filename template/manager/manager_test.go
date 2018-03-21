@@ -214,7 +214,7 @@ func TestBaseManager_Link(t *testing.T) {
 				return
 			}
 
-			ymlFilePath := filepath.Join(createdLinkPath, ".ironman.yml")
+			ymlFilePath := filepath.Join(createdLinkPath, ".ironman.yaml")
 			if !testutils.FileExists(ymlFilePath) {
 				t.Errorf("BaseManager.Link() %s file should exists", ymlFilePath)
 			}

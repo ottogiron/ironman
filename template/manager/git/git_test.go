@@ -30,7 +30,7 @@ func TestManager_Install(t *testing.T) {
 			"Install template",
 			args{"https://github.com/ironman-project/template-example.git"},
 			"template-example",
-			[]string{".ironman.yml"},
+			[]string{".ironman.yaml"},
 			false,
 		},
 		{

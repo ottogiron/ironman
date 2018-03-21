@@ -95,6 +95,7 @@ func (i *Ironman) Install(templateLocator string) error {
 
 //Link Creates a symlink to the ironman repository from any path in the filesystem
 func (i *Ironman) Link(templatePath, templateID string) error {
+
 	err := i.manager.Link(templatePath, templateID)
 
 	if err != nil {
