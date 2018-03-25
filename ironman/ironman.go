@@ -10,6 +10,7 @@ import (
 	"github.com/ironman-project/ironman/template/model"
 	"github.com/ironman-project/ironman/template/repository"
 	brepository "github.com/ironman-project/ironman/template/repository/bleve"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -82,6 +83,16 @@ func (i *Ironman) Install(templateLocator string) error {
 		return err
 	}
 
+	exists, err := i.repository.Exists(model.ID)
+
+	if err != nil {
+		return errors.Wrapf(err, "Failed to validate if template already exists %s", model.ID)
+	}
+
+	if exists {
+		return errors.Errorf("Template already exists %s", model.ID)
+	}
+
 	_, err = i.repository.Index(model)
 
 	if err != nil {
@@ -117,27 +128,55 @@ func (i *Ironman) List() ([]*model.Template, error) {
 
 //Uninstall uninstalls an ironman template
 func (i *Ironman) Uninstall(templateID string) error {
-	err := i.manager.Uninstall(templateID)
+
+	exists, err := i.repository.Exists(templateID)
+
+	if err != nil {
+		return errors.Wrapf(err, "Failed to validate if template exists %s", templateID)
+	}
+
+	if !exists {
+		return errors.Errorf("Template is not installed")
+	}
+
+	err = i.manager.Uninstall(templateID)
+
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
 //Unlink unlinks a previously linked ironman template
 func (i *Ironman) Unlink(templateID string) error {
+
 	err := i.manager.Unlink(templateID)
+
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
 //Update updates an iroman template
 func (i *Ironman) Update(templateID string) error {
-	err := i.manager.Update(templateID)
+	exists, err := i.repository.Exists(templateID)
+
+	if err != nil {
+		return errors.Wrapf(err, "Failed to validate if template exists %s", templateID)
+	}
+
+	if !exists {
+		return errors.Errorf("Template is not installed")
+	}
+
+	err = i.manager.Update(templateID)
+
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
