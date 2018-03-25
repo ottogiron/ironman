@@ -213,3 +213,9 @@ func (i *Ironman) Update(templateID string) error {
 
 	return nil
 }
+
+//Generate generates a new file or directory based on a generator
+func (i *Ironman) Generate(templateID string, generatorID string, path string) error {
+
+	return nil
+}
