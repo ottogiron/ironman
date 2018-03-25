@@ -1,8 +1,10 @@
 package ironman
 
 import (
+	"bytes"
 	"log"
 	"path/filepath"
+	"text/template"
 
 	"github.com/ironman-project/ironman/template/validator"
 
@@ -18,6 +20,18 @@ import (
 const (
 	indexName = "templates.index"
 )
+
+var validationTempl *template.Template
+
+const validatoinTemplateText = ``
+
+func init() {
+	var err error
+	validationTempl, err = template.New("validationTemplate").Parse(validatoinTemplateText)
+	if err != nil {
+		log.Fatalf("Failed to initialize validation errors template %s", err)
+	}
+}
 
 //Ironman is the one administering the local
 type Ironman struct {
@@ -90,6 +104,26 @@ func (i *Ironman) Install(templateLocator string) error {
 
 	if err != nil {
 		return err
+	}
+
+	//validate model
+	for _, validator := range i.validators {
+		valid, validationErr, err := validator.Validate(model)
+
+		if err != nil {
+			return errors.Wrap(err, "Failed to validate model")
+		}
+
+		if !valid {
+			var validationErrBuffer bytes.Buffer
+			err := validationTempl.Execute(&validationErrBuffer, validationErr)
+
+			if err != nil {
+				return errors.Wrap(err, "Failed to create validation error message")
+			}
+
+			return errors.New(validationErrBuffer.String())
+		}
 	}
 
 	_, err = i.repository.Index(model)
