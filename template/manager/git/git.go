@@ -27,6 +27,7 @@ func New(path string) manager.Manager {
 func (r *Manager) Install(location string) (string, error) {
 	id := templateIDFromLocation(location)
 	templatePath := r.templatePathFromID(id)
+
 	_, err := gogit.PlainClone(templatePath, false,
 		&gogit.CloneOptions{
 			URL:      location,

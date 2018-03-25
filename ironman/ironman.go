@@ -4,6 +4,8 @@ import (
 	"log"
 	"path/filepath"
 
+	"github.com/ironman-project/ironman/template/validator"
+
 	"github.com/blevesearch/bleve"
 	"github.com/ironman-project/ironman/template/manager"
 	"github.com/ironman-project/ironman/template/manager/git"
@@ -23,6 +25,7 @@ type Ironman struct {
 	modelReader model.Reader
 	repository  repository.Repository
 	home        string
+	validators  []validator.Validator
 }
 
 //New returns a new instance of ironman
@@ -52,6 +55,10 @@ func New(home string, options ...Option) *Ironman {
 		modelReader := model.NewFSReader([]string{".git"}, model.MetadataFileExtensionYAML, decoder)
 		ir.modelReader = modelReader
 	}
+
+	if ir.validators == nil {
+		ir.validators = []validator.Validator{}
+	}
 	return ir
 }
 
@@ -71,7 +78,9 @@ func buildIndex(path string) (bleve.Index, error) {
 
 //Install installs a new template based on a template locator
 func (i *Ironman) Install(templateLocator string) error {
+
 	ID, err := i.manager.Install(templateLocator)
+
 	if err != nil {
 		return err
 	}
@@ -81,16 +90,6 @@ func (i *Ironman) Install(templateLocator string) error {
 
 	if err != nil {
 		return err
-	}
-
-	exists, err := i.repository.Exists(model.ID)
-
-	if err != nil {
-		return errors.Wrapf(err, "Failed to validate if template already exists %s", model.ID)
-	}
-
-	if exists {
-		return errors.Errorf("Template already exists %s", model.ID)
 	}
 
 	_, err = i.repository.Index(model)
