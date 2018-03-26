@@ -62,6 +62,12 @@
   version = "v1.4.7"
 
 [[projects]]
+  name = "github.com/ghodss/yaml"
+  packages = ["."]
+  revision = "0ca9ea5df5451ffdf184b4428c902747c2c11cd7"
+  version = "v1.0.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/glycerine/go-unsnap-stream"
   packages = ["."]
@@ -102,6 +108,12 @@
   packages = ["."]
   revision = "fa48d7ff1cfb9f26c514b80d520880394293bf08"
   version = "0.2"
+
+[[projects]]
+  name = "github.com/kubernetes/helm"
+  packages = ["pkg/strvals"]
+  revision = "a80231648a1473929271764b920a8e346f6de844"
+  version = "v2.8.2"
 
 [[projects]]
   name = "github.com/magiconair/properties"
@@ -298,6 +310,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "5529d77a6bd839b9e2de1ca12dfd23a5a908b435ccadf04abe998a3d06737100"
+  inputs-digest = "f1942befbb2ed568d0b3327c4f0dcd88e2488a61197623d1b7f046a628557467"
   solver-name = "gps-cdcl"
   solver-version = 1

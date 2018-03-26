@@ -1,11 +1,12 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/spf13/cobra"
 )
+
+var values []string
 
 // generateCmd represents the generate command
 var generateCmd = &cobra.Command{
@@ -59,8 +60,8 @@ ironman generate template:example:controller ~/mynewapp
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		//TODO: Render the template
-		fmt.Println("generate called")
-		return errors.New("hola")
+		fmt.Println("generate called", values)
+		return nil
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {
 		//TODO: we need to run the "post generate" commands
@@ -69,5 +70,5 @@ ironman generate template:example:controller ~/mynewapp
 
 func init() {
 	rootCmd.AddCommand(generateCmd)
-
+	generateCmd.Flags().StringArrayVarP(&values, "set", "s", []string{}, "Coma separated list of values --set key=value, key2=value2")
 }
