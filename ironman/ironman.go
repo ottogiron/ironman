@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"text/template"
 
+	"github.com/ironman-project/ironman/template/values"
+
 	"github.com/ironman-project/ironman/template/validator"
 
 	"github.com/blevesearch/bleve"
@@ -215,7 +217,7 @@ func (i *Ironman) Update(templateID string) error {
 }
 
 //Generate generates a new file or directory based on a generator
-func (i *Ironman) Generate(templateID string, generatorID string, path string) error {
+func (i *Ironman) Generate(templateID string, generatorID string, generationPath string, values values.Values) error {
 
 	return nil
 }

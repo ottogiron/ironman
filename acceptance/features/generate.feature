@@ -6,7 +6,7 @@ Feature: Generate a template
 
   Scenario: Generate a template with correct ID
     Given A template to generate installed with URL "https://github.com/ironman-project/template-example.git"
-    When Generate runs with ID "template-example" generator ID "app" and flags "--set foo=bar, bar=foo"
+    When Generate runs with ID "template-example" generator ID "app" and flags "foo=bar,bar=foo"
     Then The generate process state should be success 
     And The generate output should contain "Running template generator app" and "done"
     And A file "foobar.txt" under the generated path should contain "Foo is bar, Bar is foo"

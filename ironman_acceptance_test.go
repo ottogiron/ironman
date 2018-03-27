@@ -13,4 +13,5 @@ func FeatureContext(s *godog.Suite) {
 	acceptance.UnlinkContext(s)
 	acceptance.UninstallContext(s)
 	acceptance.ListContext(s)
+	acceptance.GenerateContext(s)
 }

@@ -2,15 +2,25 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/ironman-project/ironman/ironman"
+	"github.com/ironman-project/ironman/template/values/strvals"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
-var values []string
+var values string
 
 // generateCmd represents the generate command
 var generateCmd = &cobra.Command{
 	Use: "generate <template>:<generator> <destination_path>",
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("template ID arg is required")
+		}
+		return nil
+	},
 	Short: `Generates a new project based on an installed template using a template generator.
 			If no generator was given, it will use 'app' by default.
 			It will generate the project on the destination path received (it should not exists) and
@@ -59,8 +69,37 @@ ironman generate template:example:controller ~/mynewapp
 		//TODO: we need to run the "pre generate" commands
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		//TODO: Render the template
-		fmt.Println("generate called", values)
+		templateTokens := strings.Split(args[0], ":")
+		templateID := templateTokens[0]
+		generatorID := "app"
+		path := "."
+		if len(templateTokens) > 2 {
+			return errors.Errorf("The generator format should be <template>:<generator>")
+		}
+
+		if len(templateTokens) == 2 {
+			generatorID = templateTokens[1]
+		}
+
+		if len(args) == 2 {
+			path = args[1]
+		}
+
+		thman := ironman.New(ironmanHome)
+		valuesReader := strvals.New(values)
+		values, err := valuesReader.Read()
+
+		if err != nil {
+			return err
+		}
+
+		fmt.Println("Running template generator", generatorID)
+		err = thman.Generate(templateID, generatorID, path, values)
+		if err != nil {
+			return err
+		}
+		fmt.Println("Done")
+
 		return nil
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {
@@ -70,5 +109,5 @@ ironman generate template:example:controller ~/mynewapp
 
 func init() {
 	rootCmd.AddCommand(generateCmd)
-	generateCmd.Flags().StringArrayVarP(&values, "set", "s", []string{}, "Coma separated list of values --set key=value, key2=value2")
+	generateCmd.Flags().StringVarP(&values, "set", "s", "", "Coma separated list of values --set key=value,key2=value2")
 }
