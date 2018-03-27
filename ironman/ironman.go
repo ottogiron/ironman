@@ -2,10 +2,14 @@ package ironman
 
 import (
 	"bytes"
-	"log"
-	"path/filepath"
-	"text/template"
+	"context"
 
+	"log"
+	"os"
+	"path/filepath"
+	gtemplate "text/template"
+
+	"github.com/ironman-project/ironman/template"
 	"github.com/ironman-project/ironman/template/values"
 
 	"github.com/ironman-project/ironman/template/validator"
@@ -20,16 +24,17 @@ import (
 )
 
 const (
-	indexName = "templates.index"
+	indexName          = "templates.index"
+	templatesDirectory = "templates"
 )
 
-var validationTempl *template.Template
+var validationTempl *gtemplate.Template
 
 const validatoinTemplateText = ``
 
 func init() {
 	var err error
-	validationTempl, err = template.New("validationTemplate").Parse(validatoinTemplateText)
+	validationTempl, err = gtemplate.New("validationTemplate").Parse(validatoinTemplateText)
 	if err != nil {
 		log.Fatalf("Failed to initialize validation errors template %s", err)
 	}
@@ -42,6 +47,7 @@ type Ironman struct {
 	repository  repository.Repository
 	home        string
 	validators  []validator.Validator
+	engine      template.Engine
 }
 
 //New returns a new instance of ironman
@@ -51,7 +57,7 @@ func New(home string, options ...Option) *Ironman {
 		option(ir)
 	}
 	if ir.manager == nil {
-		manager := git.New(home)
+		manager := git.New(home, templatesDirectory)
 		ir.manager = manager
 	}
 
@@ -74,6 +80,10 @@ func New(home string, options ...Option) *Ironman {
 
 	if ir.validators == nil {
 		ir.validators = []validator.Validator{}
+	}
+
+	if ir.engine == nil {
+		ir.engine = template.NewGoEngine("ironman")
 	}
 	return ir
 }
@@ -217,7 +227,52 @@ func (i *Ironman) Update(templateID string) error {
 }
 
 //Generate generates a new file or directory based on a generator
-func (i *Ironman) Generate(templateID string, generatorID string, generationPath string, values values.Values) error {
+func (i *Ironman) Generate(context context.Context, templateID string, generatorID string, generationPath string, values values.Values) error {
 
+	exists, err := i.repository.Exists(templateID)
+
+	if err != nil {
+		return errors.Wrapf(err, "Failed to validate if template exists %s", templateID)
+	}
+
+	if !exists {
+		return errors.Errorf("Template is not installed")
+	}
+
+	templateModel, err := i.repository.FindTemplateByID(templateID)
+
+	if err != nil {
+		return errors.Wrapf(err, "Could not find template by ID %s", templateID)
+	}
+
+	genteratorModel := templateModel.Generator(generatorID)
+
+	if genteratorModel == nil {
+		return errors.Errorf("Generator %s does not exists", generatorID)
+	}
+
+	generatorPath := filepath.Join(i.home, templatesDirectory, templateModel.DirectoryName, genteratorModel.DirectoryName)
+	generator := template.NewGenerator(generatorPath, generationPath, templateModel, values, i.engine)
+
+	if err := generator.Generate(context); err != nil {
+		return err
+	}
+	return nil
+}
+
+//InitIronmanHome inits the ironman home directory
+func InitIronmanHome(ironmanHome string) error {
+	if _, err := os.Stat(ironmanHome); os.IsNotExist(err) {
+		err := os.Mkdir(ironmanHome, os.ModePerm)
+		if err != nil {
+			return errors.Wrap(err, "Failed to initialize ironman home")
+		}
+
+		err = os.Mkdir(filepath.Join(ironmanHome, templatesDirectory), os.ModePerm)
+
+		if err != nil {
+			return errors.Wrap(err, "Failed to initialize ironman home")
+		}
+	}
 	return nil
 }

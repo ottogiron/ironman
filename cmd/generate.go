@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -94,7 +95,7 @@ ironman generate template:example:controller ~/mynewapp
 		}
 
 		fmt.Println("Running template generator", generatorID)
-		err = thman.Generate(templateID, generatorID, path, values)
+		err = thman.Generate(context.Background(), templateID, generatorID, path, values)
 		if err != nil {
 			return err
 		}

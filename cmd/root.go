@@ -5,9 +5,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ironman-project/ironman/ironman"
 	"github.com/mitchellh/go-homedir"
 
-	"github.com/ironman-project/ironman/template/manager"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -37,7 +37,7 @@ func Execute() {
 }
 
 func initializeIronmanHome() {
-	err := manager.InitIronmanHome(ironmanHome)
+	err := ironman.InitIronmanHome(ironmanHome)
 	if err != nil {
 		fmt.Printf("Failed to create ironman home directory %s %s", ironmanHome, err)
 		os.Exit(-1)
