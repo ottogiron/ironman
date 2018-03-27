@@ -1,10 +1,10 @@
 package strvals
 
 import (
-	"encoding/json"
 	"testing"
 
 	"github.com/ironman-project/ironman/template/values"
+	"github.com/ironman-project/ironman/testutils"
 )
 
 func Test_reader_Read(t *testing.T) {
@@ -56,20 +56,11 @@ func Test_reader_Read(t *testing.T) {
 				return
 			}
 
-			j1 := marshall(got, t)
-			j2 := marshall(tt.want, t)
+			j1 := testutils.Marshal(got, t)
+			j2 := testutils.Marshal(tt.want, t)
 			if j1 != j2 {
 				t.Errorf("reader.Read() = %v, want %v", j1, j2)
 			}
 		})
 	}
-}
-
-func marshall(val interface{}, t *testing.T) string {
-	bytes, err := json.Marshal(val)
-
-	if err != nil {
-		t.Fatalf("Failed to marshal object %v", val)
-	}
-	return string(bytes)
 }

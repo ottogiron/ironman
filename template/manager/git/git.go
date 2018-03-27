@@ -18,8 +18,8 @@ type Manager struct {
 }
 
 //New returns a new instance of the git Manager
-func New(path string) manager.Manager {
-	BaseManager := manager.NewBaseManager(path)
+func New(path string, templatesDirectory string) manager.Manager {
+	BaseManager := manager.NewBaseManager(path, templatesDirectory)
 	return &Manager{BaseManager}
 }
 

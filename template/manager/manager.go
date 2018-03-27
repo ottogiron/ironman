@@ -23,20 +23,17 @@ type Manager interface {
 	TemplateLocation(templateID string) string
 }
 
-const (
-	managerTemplatesDirectory = "templates"
-)
-
 //BaseManager implements basic generic manager operations
 type BaseManager struct {
-	path          string
-	templatesPath string
+	path               string
+	templatesPath      string
+	templatesDirectory string
 }
 
 //NewBaseManager returns a new instance of a base manager
-func NewBaseManager(path string) *BaseManager {
+func NewBaseManager(path string, managerTemplatesDirectory string) *BaseManager {
 	templatesPath := filepath.Join(path, managerTemplatesDirectory)
-	return &BaseManager{path, templatesPath}
+	return &BaseManager{path, templatesPath, managerTemplatesDirectory}
 }
 
 //Uninstall uninstalls a template
@@ -82,7 +79,7 @@ func validateTemplateID(templateID string) error {
 
 //TemplateLocation returns the file system path of a template based on the ID
 func (b *BaseManager) TemplateLocation(templateID string) string {
-	return filepath.Join(b.path, managerTemplatesDirectory, templateID)
+	return filepath.Join(b.path, b.templatesDirectory, templateID)
 }
 
 //Installed returns a lists of installed templates
@@ -155,21 +152,4 @@ func (b *BaseManager) Install(templateLocator string) error {
 //Update not implemented for base manager since it depend on specific provider
 func (b *BaseManager) Update(templateID string) error {
 	panic("not implemented")
-}
-
-//InitIronmanHome inits the ironman home directory
-func InitIronmanHome(ironmanHome string) error {
-	if _, err := os.Stat(ironmanHome); os.IsNotExist(err) {
-		err := os.Mkdir(ironmanHome, os.ModePerm)
-		if err != nil {
-			return errors.Wrap(err, "Failed to initialize ironman home")
-		}
-
-		err = os.Mkdir(filepath.Join(ironmanHome, managerTemplatesDirectory), os.ModePerm)
-
-		if err != nil {
-			return errors.Wrap(err, "Failed to initialize ironman home")
-		}
-	}
-	return nil
 }

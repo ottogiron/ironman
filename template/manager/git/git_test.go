@@ -11,7 +11,7 @@ import (
 
 func newTestGitManager() manager.Manager {
 
-	return New("testing")
+	return New("testing", "templates")
 }
 
 func TestManager_Install(t *testing.T) {

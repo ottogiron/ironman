@@ -1,8 +1,9 @@
 package model
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/ironman-project/ironman/testutils"
 )
 
 func Test_fsReader_Read(t *testing.T) {
@@ -53,8 +54,10 @@ func Test_fsReader_Read(t *testing.T) {
 				t.Errorf("fsReader.Read() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("fsReader.Read() = %v, want %v", got, tt.want)
+			gotM := testutils.Marshal(got, t)
+			wantM := testutils.Marshal(tt.want, t)
+			if gotM != wantM {
+				t.Errorf("fsReader.Read() = %v, want %v", gotM, wantM)
 			}
 		})
 	}

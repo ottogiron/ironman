@@ -59,6 +59,8 @@ func (r *fsReader) Read(path string) (*Template, error) {
 		return nil, errors.Wrapf(err, "Failed to decode template information from %s", rootIronmanMetadataPath)
 	}
 
+	templateModel.DirectoryName = filepath.Base(path)
+
 	generatorFiles, err := ioutil.ReadDir(path)
 
 	if err != nil {
@@ -81,6 +83,7 @@ func (r *fsReader) Read(path string) (*Template, error) {
 			if err != nil {
 				return nil, errors.Wrapf(err, "Failed to decode generator information from %s", generatorMetadataPath)
 			}
+			generatorModel.DirectoryName = generatorFile.Name()
 			templateModel.Generators = append(templateModel.Generators, &generatorModel)
 		}
 	}

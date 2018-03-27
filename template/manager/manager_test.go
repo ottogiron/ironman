@@ -12,8 +12,9 @@ import (
 )
 
 var (
-	testManagerPath   = "testing/repository"
-	testTemplatesPath = filepath.Join(testManagerPath, managerTemplatesDirectory)
+	testManagerPath        = "testing/repository"
+	testTemplatesDirectory = "templates"
+	testTemplatesPath      = filepath.Join(testManagerPath, testTemplatesDirectory)
 )
 
 func createTestTemplate(t *testing.T, names ...string) (string, func()) {
@@ -21,7 +22,7 @@ func createTestTemplate(t *testing.T, names ...string) (string, func()) {
 	if err != nil {
 		t.Fatalf("Failed to create test manager %s", err)
 	}
-	sourcePath := filepath.Join(testManagerPath, "templates", "base")
+	sourcePath := filepath.Join(testManagerPath, testTemplatesDirectory, "base")
 	for _, name := range names {
 		destPath := filepath.Join(tempManager, name)
 		err = testutils.CopyDir(sourcePath, destPath)
@@ -51,7 +52,7 @@ func TestNewBaseManager(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewBaseManager(tt.args.path); !reflect.DeepEqual(got, tt.want) {
+			if got := NewBaseManager(tt.args.path, "templates"); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewBaseManager() = %v, want %v", got, tt.want)
 			}
 		})
@@ -73,7 +74,7 @@ func TestBaseManager_Uninstall(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			managerPath, clean := createTestTemplate(t, tt.args.templateID)
 			defer clean()
-			b := NewBaseManager(managerPath)
+			b := NewBaseManager(managerPath, testTemplatesDirectory)
 			if err := b.Uninstall(tt.args.templateID); (err != nil) != tt.wantErr {
 				t.Errorf("BaseManager.Uninstall() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -120,7 +121,7 @@ func TestBaseManager_IsInstalled(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			b := NewBaseManager(tt.managerPath)
+			b := NewBaseManager(tt.managerPath, testTemplatesDirectory)
 			got, err := b.IsInstalled(tt.args.templateID)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("BaseManager.IsInstalled() error = %v, wantErr %v", err, tt.wantErr)
@@ -145,7 +146,7 @@ func TestBaseManager_Installed(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			b := NewBaseManager(tt.managerPath)
+			b := NewBaseManager(tt.managerPath, testTemplatesDirectory)
 			got, err := b.Installed()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("BaseManager.Installed() error = %v, wantErr %v", err, tt.wantErr)
@@ -196,7 +197,7 @@ func TestBaseManager_Link(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			b := NewBaseManager(testManagerPath)
+			b := NewBaseManager(testManagerPath, testTemplatesDirectory)
 			createdLinkPath := filepath.Join(testTemplatesPath, tt.args.templateID)
 			defer func() {
 				_ = os.Remove(createdLinkPath)
@@ -255,7 +256,7 @@ func TestBaseManager_Unlink(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			b := NewBaseManager(testManagerPath)
+			b := NewBaseManager(testManagerPath, testTemplatesDirectory)
 			createdLinkPath := filepath.Join(testTemplatesPath, tt.args.templateID)
 			defer func() {
 				_ = os.Remove(createdLinkPath)
@@ -308,26 +309,6 @@ func TestBaseManager_Update(t *testing.T) {
 			b := &BaseManager{}
 			if err := b.Update(tt.args.templateID); (err != nil) != tt.wantErr {
 				t.Errorf("BaseManager.Update() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func TestInitIronmanHome(t *testing.T) {
-	type args struct {
-		ironmanHome string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := InitIronmanHome(tt.args.ironmanHome); (err != nil) != tt.wantErr {
-				t.Errorf("InitIronmanHome() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
