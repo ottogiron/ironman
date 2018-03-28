@@ -10,6 +10,8 @@ import (
 	gtemplate "text/template"
 
 	"github.com/ironman-project/ironman/template"
+	"github.com/ironman-project/ironman/template/engine"
+	"github.com/ironman-project/ironman/template/engine/goengine"
 	"github.com/ironman-project/ironman/template/values"
 
 	"github.com/ironman-project/ironman/template/validator"
@@ -47,7 +49,6 @@ type Ironman struct {
 	repository  repository.Repository
 	home        string
 	validators  []validator.Validator
-	engine      template.Engine
 }
 
 //New returns a new instance of ironman
@@ -82,9 +83,6 @@ func New(home string, options ...Option) *Ironman {
 		ir.validators = []validator.Validator{}
 	}
 
-	if ir.engine == nil {
-		ir.engine = template.NewGoEngine("ironman")
-	}
 	return ir
 }
 
@@ -252,7 +250,15 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 	}
 
 	generatorPath := filepath.Join(i.home, templatesDirectory, templateModel.DirectoryName, genteratorModel.DirectoryName)
-	generator := template.NewGenerator(generatorPath, generationPath, templateModel, values, i.engine)
+	data := template.GeneratorData{
+		Template:  templateModel,
+		Generator: genteratorModel,
+		Values:    values,
+	}
+	engineFactory := func() engine.Engine {
+		return goengine.New("ironman")
+	}
+	generator := template.NewGenerator(generatorPath, generationPath, []string{".ironman.yaml"}, data, engineFactory)
 
 	if err := generator.Generate(context); err != nil {
 		return err

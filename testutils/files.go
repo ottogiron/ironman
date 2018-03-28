@@ -17,6 +17,15 @@ func CreateTempFile(contents string, t *testing.T) (string, func()) {
 	}
 }
 
+//CreateTempDir Creates a temporary directory with an specified name
+func CreateTempDir(prefix string, t *testing.T) string {
+	name, err := ioutil.TempDir("", prefix)
+	if err != nil {
+		t.Fatalf("Could not create temp directory %s %s", err, name)
+	}
+	return name
+}
+
 //CreateTempFileInDir creates a file in a directory
 func CreateTempFileInDir(dir string, contents string, t *testing.T) (path string) {
 	f, err := ioutil.TempFile(dir, "test_file_")
