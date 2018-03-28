@@ -137,6 +137,8 @@ func deserialize(doc *document.Document) (*model.Template, error) {
 			template.Name = value
 		case "description":
 			template.Description = value
+		case "directory_name":
+			template.DirectoryName = value
 		case "generators.id":
 			currGenerator = &model.Generator{}
 			currGenerator.ID = value
@@ -144,6 +146,8 @@ func deserialize(doc *document.Document) (*model.Template, error) {
 			currGenerator.Name = value
 		case "generators.description":
 			currGenerator.Description = value
+		case "generators.directory_name":
+			currGenerator.DirectoryName = value
 			generators = append(generators, currGenerator)
 		default:
 			return nil, errors.Errorf("Could not deserialize template from bleve document. Field %s must be explicitly processed", field.Name())

@@ -28,14 +28,16 @@ func Test_fsReader_Read(t *testing.T) {
 				NewDecoder(DecoderTypeYAML),
 			},
 			&Template{
-				ID:          "test-read-template",
-				Name:        "Test Read Template",
-				Description: "This is a test template",
+				ID:            "test-read-template",
+				Name:          "Test Read Template",
+				Description:   "This is a test template",
+				DirectoryName: "test_read_template",
 				Generators: []*Generator{
 					&Generator{
-						ID:          "generator",
-						Name:        "Test Generator",
-						Description: "This is a test generator",
+						ID:            "generator",
+						Name:          "Test Generator",
+						Description:   "This is a test generator",
+						DirectoryName: "generator",
 					},
 				},
 			},
@@ -54,11 +56,24 @@ func Test_fsReader_Read(t *testing.T) {
 				t.Errorf("fsReader.Read() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
+
+			if got.DirectoryName != tt.want.DirectoryName {
+				t.Errorf("fsReader.Read() directory_name = %s want %s", got.DirectoryName, tt.want.DirectoryName)
+			}
+
+			for i, generator := range tt.want.Generators {
+				gotGenerator := got.Generators[i]
+				if generator.DirectoryName != gotGenerator.DirectoryName {
+					t.Errorf("fsReader.Read() generator directory_name = %s want %s", gotGenerator.DirectoryName, generator.DirectoryName)
+				}
+			}
+
 			gotM := testutils.Marshal(got, t)
 			wantM := testutils.Marshal(tt.want, t)
 			if gotM != wantM {
 				t.Errorf("fsReader.Read() = %v, want %v", gotM, wantM)
 			}
+
 		})
 	}
 }

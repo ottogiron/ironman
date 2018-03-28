@@ -53,7 +53,8 @@ type Ironman struct {
 
 //New returns a new instance of ironman
 func New(home string, options ...Option) *Ironman {
-	ir := &Ironman{}
+
+	ir := &Ironman{home: home}
 	for _, option := range options {
 		option(ir)
 	}
@@ -110,6 +111,7 @@ func (i *Ironman) Install(templateLocator string) error {
 	}
 
 	templatePath := i.manager.TemplateLocation(ID)
+
 	model, err := i.modelReader.Read(templatePath)
 
 	if err != nil {
@@ -156,6 +158,18 @@ func (i *Ironman) Link(templatePath, templateID string) error {
 		return err
 	}
 
+	model, err := i.modelReader.Read(templatePath)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = i.repository.Index(model)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -188,6 +202,12 @@ func (i *Ironman) Uninstall(templateID string) error {
 		return err
 	}
 
+	_, err = i.repository.Delete(templateID)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -195,6 +215,12 @@ func (i *Ironman) Uninstall(templateID string) error {
 func (i *Ironman) Unlink(templateID string) error {
 
 	err := i.manager.Unlink(templateID)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = i.repository.Delete(templateID)
 
 	if err != nil {
 		return err
@@ -250,19 +276,23 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 	}
 
 	generatorPath := filepath.Join(i.home, templatesDirectory, templateModel.DirectoryName, genteratorModel.DirectoryName)
+
 	data := template.GeneratorData{
 		Template:  templateModel,
 		Generator: genteratorModel,
 		Values:    values,
 	}
+
 	engineFactory := func() engine.Engine {
 		return goengine.New("ironman")
 	}
+
 	generator := template.NewGenerator(generatorPath, generationPath, []string{".ironman.yaml"}, data, engineFactory)
 
 	if err := generator.Generate(context); err != nil {
 		return err
 	}
+
 	return nil
 }
 

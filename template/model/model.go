@@ -8,7 +8,7 @@ type Template struct {
 	Name          string       `json:"name" yaml:"name"`
 	Description   string       `json:"description" yaml:"description"`
 	Generators    []*Generator `json:"generators" yaml:"generators"`
-	DirectoryName string       `json:"-" yaml:"-"`
+	DirectoryName string       `json:"directory_name,omitempty" yaml:"directory_name,omitempty"`
 }
 
 //Type Simple type serialization for template model
@@ -31,7 +31,7 @@ type Generator struct {
 	ID            string `json:"id" yaml:"id"`
 	Name          string `json:"name" yaml:"name"`
 	Description   string `json:"description" yaml:"description"`
-	DirectoryName string `json:"-" yaml:"-"`
+	DirectoryName string `json:"directory_name,omitempty" yaml:"directory_name,omitempty"`
 }
 
 //Type Simple type serialization for generator model

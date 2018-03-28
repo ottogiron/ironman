@@ -102,7 +102,7 @@ func (g *generator) Generate(ctx context.Context) error {
 	err := <-errc
 
 	if err != nil {
-		return errors.Wrapf(err, "Failed to process generator path templates %s", g.path)
+		return errors.Wrapf(err, "Failed to process generator path templates: %s", g.path)
 	}
 
 	return nil

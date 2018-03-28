@@ -125,19 +125,22 @@ func Test_bleeveRepository_Update(t *testing.T) {
 			"Update template index",
 			args{
 				&model.Template{
-					ID:          "template-id",
-					Name:        "Updated name",
-					Description: "Updated description",
+					ID:            "template-id",
+					Name:          "Updated name",
+					Description:   "Updated description",
+					DirectoryName: "test",
 					Generators: []*model.Generator{
 						&model.Generator{
-							ID:          "test-generator",
-							Name:        "Test generator",
-							Description: "This is a test generator",
+							ID:            "test-generator",
+							Name:          "Test generator",
+							Description:   "This is a test generator",
+							DirectoryName: "test",
 						},
 						&model.Generator{
-							ID:          "test-generator2",
-							Name:        "Test generator2",
-							Description: "This is a test generator 2",
+							ID:            "test-generator2",
+							Name:          "Test generator2",
+							Description:   "This is a test generator 2",
+							DirectoryName: "test2",
 						},
 					},
 				},
@@ -194,6 +197,10 @@ func Test_bleeveRepository_Update(t *testing.T) {
 					if string(value) == "" || (value != tt.args.template.Description) {
 						t.Errorf("bleveRepository.Update() templateDescription = %v want %v", value, tt.args.template.Description)
 					}
+				case "directory_name":
+					if string(value) == "" || (value != tt.args.template.DirectoryName) {
+						t.Errorf("bleveRepository.Update() templateDirectoryName = %v want %v", value, tt.args.template.DirectoryName)
+					}
 				case "generators.id":
 					pos := field.ArrayPositions()[0]
 					expectedID := tt.args.template.Generators[pos].ID
@@ -211,6 +218,12 @@ func Test_bleeveRepository_Update(t *testing.T) {
 					expectedDescription := tt.args.template.Generators[pos].Description
 					if value != expectedDescription {
 						t.Errorf("bleveRepository.Update() template.Generators[%d].Description = %v want %v", pos, value, expectedDescription)
+					}
+				case "generators.directory_name":
+					pos := field.ArrayPositions()[0]
+					expectedDirectoryName := tt.args.template.Generators[pos].DirectoryName
+					if value != expectedDirectoryName {
+						t.Errorf("bleveRepository.Update() template.Generators[%d].DirectoryName = %v want %v", pos, value, expectedDirectoryName)
 					}
 				default:
 					t.Error("doc.Fields should assert field", field.Name(), string(field.Value()))
