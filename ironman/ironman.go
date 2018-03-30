@@ -3,6 +3,7 @@ package ironman
 import (
 	"bytes"
 	"context"
+	"io"
 
 	"log"
 	"os"
@@ -269,19 +270,16 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 	if os.IsPermission(err) {
 		return errors.Wrapf(err, "Failed to create generation path %s", generationPath)
 	} else if os.IsExist(err) {
-		f, err := os.Open(generationPath)
-		if err != nil {
-			return errors.Wrapf(err, "Failed to create generation path %s", generationPath)
-		}
-		names, err := f.Readdirnames(1)
+		empty, err := isDirEmpty(generationPath)
 
 		if err != nil {
-			return errors.Wrapf(err, "Failed to validate if generation path is empty %s", generationPath)
+			return errors.Wrapf(err, "Failed to validate if generation path is empty", err)
 		}
 
-		if len(names) != 0 {
+		if !empty {
 			return errors.Errorf("Generation path is not empty %s", generationPath)
 		}
+
 	}
 
 	templateModel, err := i.repository.FindTemplateByID(templateID)
@@ -317,6 +315,20 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 	}
 
 	return nil
+}
+
+func isDirEmpty(name string) (bool, error) {
+	f, err := os.Open(name)
+	if err != nil {
+		return false, err
+	}
+	defer f.Close()
+
+	_, err = f.Readdirnames(1) // Or f.Readdir(1)
+	if err == io.EOF {
+		return true, nil
+	}
+	return false, err // Either not empty or error, suits both cases
 }
 
 //InitIronmanHome inits the ironman home directory
