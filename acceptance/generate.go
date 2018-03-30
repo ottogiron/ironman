@@ -30,7 +30,7 @@ func generateRunsWithIDGeneratorIDAndFlags(templateID, generatorID, flags string
 
 func theGenerateProcessStateShouldBeSuccess() error {
 	if !testcli.Success() {
-		return fmt.Errorf("Generate command did not succeeded %s %s", testcli.Error(), testcli.Stderr())
+		return fmt.Errorf("Generate command did not succeeded %s %s", testcli.Stdout(), testcli.Error(), testcli.Stderr())
 	}
 	return nil
 }
