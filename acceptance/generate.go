@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/ironman-project/ironman/testutils"
@@ -58,16 +59,23 @@ func aFileUnderTheGeneratedPathShouldContain(file, contents string) error {
 	return nil
 }
 
-func generateWithNonExistingIDRunsWithIDGeneratorID(arg1, arg2 string) error {
-	return godog.ErrPending
+func generateWithNonExistingIDRunsWithIDGeneratorID(templateID, generatorID string) error {
+	testcli.Run(testutils.ExecutablePath(), "generate", templateID+":"+generatorID, generatedPath, "--ironman-home="+ironmanTestDir)
+	return nil
 }
 
 func theGenerateWithNonExistingIDProcessStateShouldBeFailure() error {
-	return godog.ErrPending
+	if !testcli.Failure() {
+		return fmt.Errorf("Generate command did not failed %s", testcli.Stdout())
+	}
+	return nil
 }
 
-func theGenerateWithNonExistingIDOutputShouldCointain(arg1 string) error {
-	return godog.ErrPending
+func theGenerateWithNonExistingIDOutputShouldCointain(expectedOutput string) error {
+	if !strings.Contains(testcli.Stderr(), expectedOutput) {
+		return fmt.Errorf("output => %s", testcli.Stderr())
+	}
+	return nil
 }
 
 //GenerateContext context for generate command
