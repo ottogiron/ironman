@@ -308,7 +308,6 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 		generationPath,
 		data,
 		template.SetGeneratorOutput(i.output),
-		template.SetGeneratorForce(force),
 	)
 
 	if err := generator.Generate(context); err != nil {

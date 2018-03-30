@@ -41,7 +41,6 @@ type generator struct {
 	data           GeneratorData
 	engine         engine.Factory
 	logger         *log.Logger
-	force          bool
 }
 
 //NewGenerator returns a new instance of a generator
@@ -56,7 +55,6 @@ func NewGenerator(path string, generationPath string, data GeneratorData, option
 			return goengine.New("ironman")
 		},
 		logger: log.New(os.Stdout, "", 0),
-		force:  false,
 	}
 
 	for _, option := range options {
@@ -115,7 +113,6 @@ func (g *generator) Generate(ctx context.Context) error {
 
 		if wresult.err != nil {
 			cancelFunc()
-			g.logger.Print("Processing failed for", wresult.pathTo)
 			return wresult.err
 		}
 	}
@@ -244,27 +241,24 @@ func (g *generator) writeFile(presult processResult) writeResult {
 
 	if presult.pathResult.isDir {
 
-		//remove the directory
-		if g.force {
-			err := os.RemoveAll(toPath)
-			if err != nil {
-				return writeResult{err: errors.Wrap(err, "Failed to force  generation")}
-			}
-		}
-
-		err := os.Mkdir(toPath, os.ModePerm)
-		if err != nil {
-			return writeResult{err: errors.Wrap(err, "Failed to create directory")}
-		}
-
 		return writeResult{pathFrom: presult.pathResult.path, pathTo: toPath}
 	}
+
 	g.logger.Print("Writing... ", toPath)
+
+	//Create directory
+	dir := filepath.Dir(toPath)
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		err := os.Mkdir(dir, os.ModePerm)
+		if err != nil {
+			return writeResult{err: errors.Wrap(err, "Failed to create generation directory")}
+		}
+	}
+
 	err := ioutil.WriteFile(toPath, presult.bytes, os.ModePerm)
 
 	if err != nil {
 		return writeResult{err: err}
 	}
-
 	return writeResult{pathFrom: presult.pathResult.path, pathTo: toPath}
 }

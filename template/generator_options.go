@@ -30,10 +30,3 @@ func SetGeneratorIgnoreList(ignoreList []string) GeneratorOption {
 		generator.ignore = ignoreList
 	}
 }
-
-//SetGeneratorForce sets the generator force flag
-func SetGeneratorForce(force bool) GeneratorOption {
-	return func(generator *generator) {
-		generator.force = force
-	}
-}
