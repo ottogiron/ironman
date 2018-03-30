@@ -32,5 +32,4 @@ build/dist
 .vscode
 debug
 coverage.html
-vendor
 template/manager/git/testing/templates

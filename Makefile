@@ -22,7 +22,7 @@ lint:
 	go fmt $(SOURCE_DIRS)
 	go vet $(SOURCE_DIRS)
 
-test: install_dependencies lint
+test:  lint
 	 go test -v $(SOURCE_DIRS) -cover -bench . -race
 
 acceptance: binaries 
@@ -30,8 +30,6 @@ acceptance: binaries
 	godog acceptance/features
 
 
-install_dependencies: 
-	dep ensure
 
 cover: 
 	gocov test $(SOURCE_DIRS) | gocov-html > coverage.html && open coverage.html
