@@ -11,8 +11,6 @@ import (
 	gtemplate "text/template"
 
 	"github.com/ironman-project/ironman/template"
-	"github.com/ironman-project/ironman/template/engine"
-	"github.com/ironman-project/ironman/template/engine/goengine"
 	"github.com/ironman-project/ironman/template/values"
 
 	"github.com/ironman-project/ironman/template/validator"
@@ -31,36 +29,39 @@ const (
 	templatesDirectory = "templates"
 )
 
-var validationTempl *gtemplate.Template
-
 const validatoinTemplateText = ``
-
-func init() {
-	var err error
-	validationTempl, err = gtemplate.New("validationTemplate").Parse(validatoinTemplateText)
-	if err != nil {
-		log.Fatalf("Failed to initialize validation errors template %s", err)
-	}
-}
 
 //Ironman is the one administering the local
 type Ironman struct {
-	manager     manager.Manager
-	modelReader model.Reader
-	repository  repository.Repository
-	home        string
-	validators  []validator.Validator
+	manager                manager.Manager
+	modelReader            model.Reader
+	repository             repository.Repository
+	home                   string
+	validators             []validator.Validator
+	logger                 *log.Logger
+	output                 io.Writer
+	validationTempl        *gtemplate.Template
+	validationTemplateText string
 }
 
 //New returns a new instance of ironman
 func New(home string, options ...Option) *Ironman {
+	logger := log.New(os.Stdout, "", 0)
 
-	ir := &Ironman{home: home}
+	ir := &Ironman{home: home, logger: logger, output: os.Stdout}
+
 	for _, option := range options {
 		option(ir)
 	}
+
+	var err error
+	ir.validationTempl, err = gtemplate.New("validationTemplate").Parse(validatoinTemplateText)
+	if err != nil {
+		ir.logger.Fatalf("Failed to initialize validation errors template %s", err)
+	}
+
 	if ir.manager == nil {
-		manager := git.New(home, templatesDirectory)
+		manager := git.New(home, templatesDirectory, git.SetOutput(ir.output))
 		ir.manager = manager
 	}
 
@@ -68,7 +69,7 @@ func New(home string, options ...Option) *Ironman {
 		indexPath := filepath.Join(home, indexName)
 		index, err := buildIndex(indexPath)
 		if err != nil {
-			log.Fatal("Failed to create ironman templates index", err)
+			ir.logger.Fatal("Failed to create ironman templates index", err)
 		}
 		ir.repository = brepository.New(
 			brepository.SetIndex(index),
@@ -129,7 +130,7 @@ func (i *Ironman) Install(templateLocator string) error {
 
 		if !valid {
 			var validationErrBuffer bytes.Buffer
-			err := validationTempl.Execute(&validationErrBuffer, validationErr)
+			err := i.validationTempl.Execute(&validationErrBuffer, validationErr)
 
 			if err != nil {
 				return errors.Wrap(err, "Failed to create validation error message")
@@ -304,11 +305,7 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 		Values:    values,
 	}
 
-	engineFactory := func() engine.Engine {
-		return goengine.New("ironman")
-	}
-
-	generator := template.NewGenerator(generatorPath, generationPath, []string{".ironman.yaml"}, data, engineFactory)
+	generator := template.NewGenerator(generatorPath, generationPath, data, template.SetGeneratorOutput(i.output))
 
 	if err := generator.Generate(context); err != nil {
 		return err

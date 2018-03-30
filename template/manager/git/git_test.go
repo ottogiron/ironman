@@ -1,6 +1,7 @@
 package git
 
 import (
+	"io/ioutil"
 	"path/filepath"
 	"testing"
 
@@ -11,7 +12,7 @@ import (
 
 func newTestGitManager() manager.Manager {
 
-	return New("testing", "templates")
+	return New("testing", "templates", SetOutput(ioutil.Discard))
 }
 
 func TestManager_Install(t *testing.T) {

@@ -1,6 +1,9 @@
 package ironman
 
 import (
+	"io"
+	"log"
+
 	"github.com/ironman-project/ironman/template/manager"
 	"github.com/ironman-project/ironman/template/repository"
 	"github.com/ironman-project/ironman/template/validator"
@@ -29,5 +32,13 @@ func SetValidators(validators ...validator.Validator) Option {
 		for _, validator := range validators {
 			i.validators = append(i.validators, validator)
 		}
+	}
+}
+
+//SetOutput sets ironman output writer
+func SetOutput(output io.Writer) Option {
+	return func(i *Ironman) {
+		i.logger = log.New(output, "", 0)
+		i.output = output
 	}
 }

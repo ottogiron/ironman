@@ -1,6 +1,7 @@
 package git
 
 import (
+	"io"
 	"os"
 	"path"
 	"strings"
@@ -15,12 +16,17 @@ var _ manager.Manager = (*Manager)(nil)
 //Manager represents an implementation of a ironman Manager
 type Manager struct {
 	*manager.BaseManager
+	output io.Writer
 }
 
 //New returns a new instance of the git Manager
-func New(path string, templatesDirectory string) manager.Manager {
+func New(path string, templatesDirectory string, options ...Option) manager.Manager {
 	BaseManager := manager.NewBaseManager(path, templatesDirectory)
-	return &Manager{BaseManager}
+	m := &Manager{
+		BaseManager: BaseManager,
+		output:      os.Stdout,
+	}
+	return m
 }
 
 //Install installs a template from a git url

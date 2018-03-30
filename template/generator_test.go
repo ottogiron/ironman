@@ -77,12 +77,12 @@ console.log("Foo is bar bar is foo")`,
 			defer func() {
 				_ = os.RemoveAll(tempDir)
 			}()
+
 			g := NewGenerator(
 				tt.fields.path,
 				tempDir,
-				[]string{".ironman.yaml"},
 				tt.fields.data,
-				engineFactory,
+				SetGeneratorOutput(ioutil.Discard),
 			)
 			if err := g.Generate(tt.args.ctx); (err != nil) != tt.wantErr {
 				t.Errorf("generator.Generate() error = %v, wantErr %v", err, tt.wantErr)

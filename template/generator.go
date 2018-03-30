@@ -4,12 +4,14 @@ import (
 	"bytes"
 	"context"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
 
 	"github.com/ironman-project/ironman/template/engine"
+	"github.com/ironman-project/ironman/template/engine/goengine"
 	"github.com/ironman-project/ironman/template/model"
 	"github.com/ironman-project/ironman/template/values"
 	"github.com/pkg/errors"
@@ -35,17 +37,28 @@ type generator struct {
 	ignore         []string
 	data           GeneratorData
 	engine         engine.Factory
+	logger         *log.Logger
 }
 
 //NewGenerator returns a new instance of a generator
-func NewGenerator(path string, generationPath string, ignore []string, data GeneratorData, engineFactory engine.Factory) Generator {
-	return &generator{
-		path,
-		generationPath,
-		ignore,
-		data,
-		engineFactory,
+func NewGenerator(path string, generationPath string, data GeneratorData, options ...GeneratorOption) Generator {
+
+	g := &generator{
+		path:           path,
+		generationPath: generationPath,
+		data:           data,
+		ignore:         []string{".ironman.yaml"},
+		engine: func() engine.Engine {
+			return goengine.New("ironman")
+		},
+		logger: log.New(os.Stdout, "", 0),
 	}
+
+	for _, option := range options {
+		option(g)
+	}
+
+	return g
 }
 
 type processResult struct {
@@ -238,6 +251,6 @@ func (g *generator) writeFile(presult processResult) writeResult {
 	if err != nil {
 		return writeResult{err: err}
 	}
-
+	g.logger.Println("Processing template.... ", toPath)
 	return writeResult{pathFrom: presult.pathResult.path, pathTo: toPath}
 }
