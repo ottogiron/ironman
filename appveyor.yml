@@ -5,7 +5,7 @@ shallow_clone: true # for startup speed
 
 environment:
   GOPATH: C:\gopath
-  GOVERSION: 1.9.5
+  GOVERSION: 1.10
   GOOS: windows 
   CGO_ENABLED: 1 
   GOARCH: amd64
