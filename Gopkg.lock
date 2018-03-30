@@ -2,10 +2,20 @@
 
 
 [[projects]]
+  name = "github.com/BurntSushi/toml"
+  packages = ["."]
+  revision = "b26d9c308763d68093482582cea63d69be07a0f0"
+  version = "v0.3.0"
+
+[[projects]]
   name = "github.com/DATA-DOG/godog"
-  packages = [".","colors","gherkin"]
-  revision = "4dc98b0e2b130c3c9d06868a050320e5b310d3e7"
-  version = "v0.7.4"
+  packages = [
+    ".",
+    "colors",
+    "gherkin"
+  ]
+  revision = "0371765570d36374bef4ab9f62ed0491f0862a3c"
+  version = "v0.7.6"
 
 [[projects]]
   name = "github.com/Masterminds/semver"
@@ -22,8 +32,8 @@
 [[projects]]
   name = "github.com/RoaringBitmap/roaring"
   packages = ["."]
-  revision = "579959187317130bda443ec40f81c914e24b1396"
-  version = "v0.4.2"
+  revision = "d6540aab65a17321470b1661bfc52da1823871e9"
+  version = "v0.4.3"
 
 [[projects]]
   branch = "master"
@@ -39,7 +49,46 @@
 
 [[projects]]
   name = "github.com/blevesearch/bleve"
-  packages = [".","analysis","analysis/analyzer/keyword","analysis/analyzer/standard","analysis/datetime/flexible","analysis/datetime/optional","analysis/lang/en","analysis/token/lowercase","analysis/token/porter","analysis/token/stop","analysis/tokenizer/single","analysis/tokenizer/unicode","document","geo","index","index/scorch","index/scorch/mergeplan","index/scorch/segment","index/scorch/segment/mem","index/scorch/segment/zap","index/store","index/store/boltdb","index/store/gtreap","index/upsidedown","mapping","numeric","registry","search","search/collector","search/facet","search/highlight","search/highlight/format/html","search/highlight/fragmenter/simple","search/highlight/highlighter/html","search/highlight/highlighter/simple","search/query","search/scorer","search/searcher"]
+  packages = [
+    ".",
+    "analysis",
+    "analysis/analyzer/keyword",
+    "analysis/analyzer/standard",
+    "analysis/datetime/flexible",
+    "analysis/datetime/optional",
+    "analysis/lang/en",
+    "analysis/token/lowercase",
+    "analysis/token/porter",
+    "analysis/token/stop",
+    "analysis/tokenizer/single",
+    "analysis/tokenizer/unicode",
+    "document",
+    "geo",
+    "index",
+    "index/scorch",
+    "index/scorch/mergeplan",
+    "index/scorch/segment",
+    "index/scorch/segment/mem",
+    "index/scorch/segment/zap",
+    "index/store",
+    "index/store/boltdb",
+    "index/store/gtreap",
+    "index/upsidedown",
+    "mapping",
+    "numeric",
+    "registry",
+    "search",
+    "search/collector",
+    "search/facet",
+    "search/highlight",
+    "search/highlight/format/html",
+    "search/highlight/fragmenter/simple",
+    "search/highlight/highlighter/html",
+    "search/highlight/highlighter/simple",
+    "search/query",
+    "search/scorer",
+    "search/searcher"
+  ]
   revision = "1a319cdf5bf77dc8cee35a6b99f908792c2547ef"
   version = "v0.7.0"
 
@@ -64,14 +113,31 @@
 [[projects]]
   branch = "master"
   name = "github.com/couchbase/vellum"
-  packages = [".","regexp","utf8"]
-  revision = "9e4f15ba220601e0546afe6718d189ebbf60e143"
+  packages = [
+    ".",
+    "regexp",
+    "utf8"
+  ]
+  revision = "5083a469fcef50a4705e3c90652246ecd6806f2a"
 
 [[projects]]
   branch = "master"
   name = "github.com/edsrzf/mmap-go"
   packages = ["."]
   revision = "0bce6a6887123b67a60366d2c9fe2dfb74289d2e"
+
+[[projects]]
+  name = "github.com/emirpasic/gods"
+  packages = [
+    "containers",
+    "lists",
+    "lists/arraylist",
+    "trees",
+    "trees/binaryheap",
+    "utils"
+  ]
+  revision = "f6c17b524822278a87e3b3bd809fec33b51f5b46"
+  version = "v1.9.0"
 
 [[projects]]
   name = "github.com/fsnotify/fsnotify"
@@ -89,11 +155,30 @@
   branch = "master"
   name = "github.com/glycerine/go-unsnap-stream"
   packages = ["."]
-  revision = "62a9a9eb44fd8932157b1a8ace2149eff5971af6"
+  revision = "9f0cb55181dd3a0a4c168d3dbc72d4aca4853126"
+
+[[projects]]
+  name = "github.com/gobwas/glob"
+  packages = [
+    ".",
+    "compiler",
+    "match",
+    "syntax",
+    "syntax/ast",
+    "syntax/lexer",
+    "util/runes",
+    "util/strings"
+  ]
+  revision = "5ccd90ef52e1e632236f7326478d4faa74f99438"
+  version = "v0.2.3"
 
 [[projects]]
   name = "github.com/golang/protobuf"
-  packages = ["proto"]
+  packages = [
+    "proto",
+    "ptypes/any",
+    "ptypes/timestamp"
+  ]
   revision = "925541529c1fa6821df4e44ce2723319eb2be768"
   version = "v1.0.0"
 
@@ -106,8 +191,19 @@
 [[projects]]
   branch = "master"
   name = "github.com/hashicorp/hcl"
-  packages = [".","hcl/ast","hcl/parser","hcl/scanner","hcl/strconv","hcl/token","json/parser","json/scanner","json/token"]
-  revision = "23c074d0eceb2b8a5bfdbb271ab780cde70f05a8"
+  packages = [
+    ".",
+    "hcl/ast",
+    "hcl/parser",
+    "hcl/printer",
+    "hcl/scanner",
+    "hcl/strconv",
+    "hcl/token",
+    "json/parser",
+    "json/scanner",
+    "json/token"
+  ]
+  revision = "f40e974e75af4e271d97ce0fc917af5898ae7bda"
 
 [[projects]]
   name = "github.com/huandu/xstrings"
@@ -136,20 +232,14 @@
 [[projects]]
   name = "github.com/kevinburke/ssh_config"
   packages = ["."]
-  revision = "fa48d7ff1cfb9f26c514b80d520880394293bf08"
-  version = "0.2"
-
-[[projects]]
-  name = "github.com/kubernetes/helm"
-  packages = ["pkg/strvals"]
-  revision = "a80231648a1473929271764b920a8e346f6de844"
-  version = "v2.8.2"
+  revision = "9fc7bb800b555d63157c65a904c86a2cc7b4e795"
+  version = "0.4"
 
 [[projects]]
   name = "github.com/magiconair/properties"
   packages = ["."]
-  revision = "d419a98cdbed11a922bf76f257b7c4be79b50e73"
-  version = "v1.7.4"
+  revision = "c3beff4c2358b44d0493c7dda585e7db7ff28ae6"
+  version = "v1.7.6"
 
 [[projects]]
   name = "github.com/mattn/go-runewidth"
@@ -167,7 +257,7 @@
   branch = "master"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
-  revision = "b4575eea38cca1123ec2dc90c26529b5c5acfcff"
+  revision = "00c29f56e2386353d58c599509e8dc3801b0d716"
 
 [[projects]]
   branch = "master"
@@ -179,7 +269,7 @@
   branch = "master"
   name = "github.com/olekukonko/tablewriter"
   packages = ["."]
-  revision = "96aac992fc8b1a4c83841a6c3e7178d20d989625"
+  revision = "b8a9be070da40449e501c3c4730a889e42d87a9e"
 
 [[projects]]
   name = "github.com/pelletier/go-buffruneio"
@@ -190,8 +280,8 @@
 [[projects]]
   name = "github.com/pelletier/go-toml"
   packages = ["."]
-  revision = "16398bac157da96aa88f98a2df640c7f32af1da2"
-  version = "v1.0.1"
+  revision = "acdc4509485b587f5e675510c4f2c63e90ff68a8"
+  version = "v1.1.0"
 
 [[projects]]
   name = "github.com/philhofer/fwd"
@@ -218,28 +308,31 @@
   version = "v1.2.0"
 
 [[projects]]
-  branch = "master"
   name = "github.com/sergi/go-diff"
   packages = ["diffmatchpatch"]
   revision = "1744e2970ca51c86172c8190fadad617561ed6e7"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/spf13/afero"
-  packages = [".","mem"]
-  revision = "ec3a3111d1e1bdff38a61e09d5a5f5e974905611"
-  version = "v1.0.1"
+  packages = [
+    ".",
+    "mem"
+  ]
+  revision = "bb8f1927f2a9d3ab41c9340aa034f6b803f4359c"
+  version = "v1.0.2"
 
 [[projects]]
   name = "github.com/spf13/cast"
   packages = ["."]
-  revision = "acbeb36b902d72a7a4c18e8f3241075e7ab763e4"
-  version = "v1.1.0"
+  revision = "8965335b8c7107321228e3e3702cab9832751bac"
+  version = "v1.2.0"
 
 [[projects]]
   name = "github.com/spf13/cobra"
   packages = ["."]
-  revision = "7b2c5ac9fc04fc5efafb60700713d4fa609b777b"
-  version = "v0.0.1"
+  revision = "a1f051bc3eba734da4772d60e2d677f47cf93ef4"
+  version = "v0.0.2"
 
 [[projects]]
   branch = "master"
@@ -256,12 +349,17 @@
 [[projects]]
   name = "github.com/spf13/viper"
   packages = ["."]
-  revision = "25b30aa063fc18e48662b86996252eabdcf2f0c7"
-  version = "v1.0.0"
+  revision = "b5e8006cbee93ec955a89ab31e0e3ce3204f3736"
+  version = "v1.0.2"
 
 [[projects]]
   name = "github.com/src-d/gcfg"
-  packages = [".","scanner","token","types"]
+  packages = [
+    ".",
+    "scanner",
+    "token",
+    "types"
+  ]
   revision = "f187355171c936ac84a82793659ebb4936bc1c23"
   version = "v1.3.0"
 
@@ -292,38 +390,113 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
-  packages = ["cast5","curve25519","ed25519","ed25519/internal/edwards25519","openpgp","openpgp/armor","openpgp/elgamal","openpgp/errors","openpgp/packet","openpgp/s2k","pbkdf2","scrypt","ssh","ssh/agent","ssh/knownhosts"]
-  revision = "13931e22f9e72ea58bb73048bc752b48c6d4d4ac"
+  packages = [
+    "cast5",
+    "curve25519",
+    "ed25519",
+    "ed25519/internal/edwards25519",
+    "internal/chacha20",
+    "openpgp",
+    "openpgp/armor",
+    "openpgp/elgamal",
+    "openpgp/errors",
+    "openpgp/packet",
+    "openpgp/s2k",
+    "pbkdf2",
+    "poly1305",
+    "scrypt",
+    "ssh",
+    "ssh/agent",
+    "ssh/knownhosts"
+  ]
+  revision = "88942b9c40a4c9d203b82b3731787b672d6e809b"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
   packages = ["context"]
-  revision = "5ccada7d0a7ba9aeb5d3aca8d3501b4c2a509fec"
+  revision = "6078986fec03a1dcc236c34816c71b0e05018fda"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
-  packages = ["unix","windows"]
-  revision = "fff93fa7cd278d84afc205751523809c464168ab"
+  packages = [
+    "unix",
+    "windows"
+  ]
+  revision = "378d26f46672a356c46195c28f61bdb4c0a781dd"
 
 [[projects]]
-  branch = "master"
   name = "golang.org/x/text"
-  packages = ["internal/gen","internal/triegen","internal/ucd","transform","unicode/cldr","unicode/norm"]
-  revision = "e19ae1496984b1c655b8044a65c0300a3c878dd3"
+  packages = [
+    "internal/gen",
+    "internal/triegen",
+    "internal/ucd",
+    "transform",
+    "unicode/cldr",
+    "unicode/norm"
+  ]
+  revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
+  version = "v0.3.0"
 
 [[projects]]
   name = "gopkg.in/src-d/go-billy.v4"
-  packages = [".","helper/chroot","helper/polyfill","osfs","util"]
-  revision = "e940f8b62a8e61adc71f69802c1cc8305b64ec96"
-  version = "v4.0.2"
+  packages = [
+    ".",
+    "helper/chroot",
+    "helper/polyfill",
+    "osfs",
+    "util"
+  ]
+  revision = "027dceab1aa836eb310d92c2eb2266e4dc9f4b81"
+  version = "v4.1.0"
 
 [[projects]]
   name = "gopkg.in/src-d/go-git.v4"
-  packages = [".","config","internal/revision","plumbing","plumbing/cache","plumbing/filemode","plumbing/format/config","plumbing/format/diff","plumbing/format/gitignore","plumbing/format/idxfile","plumbing/format/index","plumbing/format/objfile","plumbing/format/packfile","plumbing/format/pktline","plumbing/object","plumbing/protocol/packp","plumbing/protocol/packp/capability","plumbing/protocol/packp/sideband","plumbing/revlist","plumbing/storer","plumbing/transport","plumbing/transport/client","plumbing/transport/file","plumbing/transport/git","plumbing/transport/http","plumbing/transport/internal/common","plumbing/transport/server","plumbing/transport/ssh","storage","storage/filesystem","storage/filesystem/internal/dotgit","storage/memory","utils/binary","utils/diff","utils/ioutil","utils/merkletrie","utils/merkletrie/filesystem","utils/merkletrie/index","utils/merkletrie/internal/frame","utils/merkletrie/noder"]
-  revision = "bf3b1f1fb9e0a04d0f87511a7ded2562b48a19d8"
-  version = "v4.0.0"
+  packages = [
+    ".",
+    "config",
+    "internal/revision",
+    "plumbing",
+    "plumbing/cache",
+    "plumbing/filemode",
+    "plumbing/format/config",
+    "plumbing/format/diff",
+    "plumbing/format/gitignore",
+    "plumbing/format/idxfile",
+    "plumbing/format/index",
+    "plumbing/format/objfile",
+    "plumbing/format/packfile",
+    "plumbing/format/pktline",
+    "plumbing/object",
+    "plumbing/protocol/packp",
+    "plumbing/protocol/packp/capability",
+    "plumbing/protocol/packp/sideband",
+    "plumbing/revlist",
+    "plumbing/storer",
+    "plumbing/transport",
+    "plumbing/transport/client",
+    "plumbing/transport/file",
+    "plumbing/transport/git",
+    "plumbing/transport/http",
+    "plumbing/transport/internal/common",
+    "plumbing/transport/server",
+    "plumbing/transport/ssh",
+    "storage",
+    "storage/filesystem",
+    "storage/filesystem/internal/dotgit",
+    "storage/memory",
+    "utils/binary",
+    "utils/diff",
+    "utils/ioutil",
+    "utils/merkletrie",
+    "utils/merkletrie/filesystem",
+    "utils/merkletrie/index",
+    "utils/merkletrie/internal/frame",
+    "utils/merkletrie/noder"
+  ]
+  revision = "1d28459504251497e0ce6132a0fadd5eb44ffd22"
+  version = "v4.2.0"
 
 [[projects]]
   name = "gopkg.in/warnings.v0"
@@ -332,14 +505,34 @@
   version = "v0.1.2"
 
 [[projects]]
-  branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "d670f9405373e636a5a2765eea47fac0c9bc91a4"
+  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
+  version = "v2.2.1"
+
+[[projects]]
+  branch = "master"
+  name = "k8s.io/apimachinery"
+  packages = ["pkg/version"]
+  revision = "0ed326127d3068118ef128c76673dad6005736ba"
+
+[[projects]]
+  name = "k8s.io/helm"
+  packages = [
+    "pkg/chartutil",
+    "pkg/ignore",
+    "pkg/proto/hapi/chart",
+    "pkg/proto/hapi/version",
+    "pkg/strvals",
+    "pkg/sympath",
+    "pkg/version"
+  ]
+  revision = "a80231648a1473929271764b920a8e346f6de844"
+  version = "v2.8.2"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "e7a25f7d8cacf0eb2742343b21ed05aadfa8153216ffd454b004a04fe7cc6ef6"
+  inputs-digest = "af540515c35ccfb39c3cb1f5c0d625fc9aa18f3ea5b41f81cf26117526551bb5"
   solver-name = "gps-cdcl"
   solver-version = 1

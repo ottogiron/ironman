@@ -1,13 +1,12 @@
 package goengine
 
 import (
-	"html/template"
 	"io"
 	gtemplate "text/template"
 
 	"github.com/Masterminds/sprig"
 	"github.com/ironman-project/ironman/template/engine"
-	"github.com/kubernetes/helm/pkg/chartutil"
+	"k8s.io/helm/pkg/chartutil"
 )
 
 var _ engine.Engine = (*goEngine)(nil)
@@ -52,25 +51,24 @@ func (g *goEngine) Execute(writer io.Writer, data interface{}) error {
 //	   included in the FuncMap is a placeholder.
 //      - "tpl": This is late-bound in Engine.Render(). The version
 //	   included in the FuncMap is a placeholder.
-func FuncMap() template.FuncMap {
+func FuncMap() gtemplate.FuncMap {
 	f := sprig.TxtFuncMap()
 	delete(f, "env")
 	delete(f, "expandenv")
 
 	// Add some extra functionality
-	extra := template.FuncMap{
+	extra := gtemplate.FuncMap{
 		"toToml":   chartutil.ToToml,
 		"toYaml":   chartutil.ToYaml,
 		"fromYaml": chartutil.FromYaml,
 		"toJson":   chartutil.ToJson,
 		"fromJson": chartutil.FromJson,
-
 		// This is a placeholder for the "include" function, which is
 		// late-bound to a template. By declaring it here, we preserve the
 		// integrity of the linter.
-		"include":  func(string, interface{}) string { return "not implemented" },
-		"required": func(string, interface{}) interface{} { return "not implemented" },
-		"tpl":      func(string, interface{}) interface{} { return "not implemented" },
+		// "include":  func(string, interface{}) string { return "not implemented" },
+		// "required": func(string, interface{}) interface{} { return "not implemented" },
+		// "tpl":      func(string, interface{}) interface{} { return "not implemented" },
 	}
 
 	for k, v := range extra {

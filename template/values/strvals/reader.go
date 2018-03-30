@@ -2,8 +2,8 @@ package strvals
 
 import (
 	"github.com/ironman-project/ironman/template/values"
-	"github.com/kubernetes/helm/pkg/strvals"
 	"github.com/pkg/errors"
+	"k8s.io/helm/pkg/strvals"
 )
 
 var _ values.Reader = (*reader)(nil)
