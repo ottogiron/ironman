@@ -1,10 +1,8 @@
 package cmd
 
 import (
-	"fmt"
 	"net/url"
 
-	"github.com/ironman-project/ironman/ironman"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -30,13 +28,13 @@ iroman install https://github.com/ironman-project/template-example.git
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		templateURL := args[0]
-		thman := ironman.New(ironmanHome)
-		fmt.Println("Installing template", templateURL, "...")
-		err := thman.Install(templateURL)
+
+		ilogger().Println("Installing template", templateURL, "...")
+		err := iironman().Install(templateURL)
 		if err != nil {
 			return err
 		}
-		fmt.Println("Done")
+		ilogger().Println("Done")
 		return nil
 	},
 }

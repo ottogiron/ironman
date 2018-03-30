@@ -2,9 +2,7 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 
-	"github.com/ironman-project/ironman/ironman"
 	"github.com/spf13/cobra"
 )
 
@@ -26,13 +24,13 @@ ironman uninstall my-template-id
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		templateID := args[0]
-		ironman := ironman.New(ironmanHome)
-		fmt.Println("Uninstalling template", templateID, "...")
-		err := ironman.Uninstall(templateID)
+
+		ilogger().Println("Uninstalling template", templateID, "...")
+		err := iironman().Uninstall(templateID)
 		if err != nil {
 			return err
 		}
-		fmt.Println("done")
+		ilogger().Println("done")
 		return nil
 	},
 }

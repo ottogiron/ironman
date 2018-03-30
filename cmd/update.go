@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
-	"github.com/ironman-project/ironman/ironman"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -25,13 +22,13 @@ Example:
 ironman update my-template-id`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		templateID := args[0]
-		ironman := ironman.New(ironmanHome)
-		fmt.Println("Updating template", templateID, "...")
-		err := ironman.Update(templateID)
+
+		ilogger().Println("Updating template", templateID, "...")
+		err := iironman().Update(templateID)
 		if err != nil {
 			return err
 		}
-		fmt.Println("Done")
+		ilogger().Println("Done")
 		return nil
 	},
 }

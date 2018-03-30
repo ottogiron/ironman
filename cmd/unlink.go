@@ -2,9 +2,7 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 
-	"github.com/ironman-project/ironman/ironman"
 	"github.com/spf13/cobra"
 )
 
@@ -26,14 +24,13 @@ ironman unlink my-template-id
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		templateID := args[0]
-		ironman := ironman.New(ironmanHome)
 
-		err := ironman.Unlink(templateID)
-		fmt.Printf("Unlinking template from repository with ID %s...", templateID)
+		err := iironman().Unlink(templateID)
+		ilogger().Printf("Unlinking template from repository with ID %s...", templateID)
 		if err != nil {
 			return err
 		}
-		fmt.Println("Done")
+		ilogger().Println("Done")
 		return nil
 	},
 }

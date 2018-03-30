@@ -2,10 +2,8 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
-	"github.com/ironman-project/ironman/ironman"
 	"github.com/ironman-project/ironman/template/values/strvals"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -86,7 +84,6 @@ ironman generate template:example:controller ~/mynewapp
 			path = args[1]
 		}
 
-		thman := ironman.New(ironmanHome)
 		valuesReader := strvals.New(values)
 		values, err := valuesReader.Read()
 
@@ -94,12 +91,12 @@ ironman generate template:example:controller ~/mynewapp
 			return err
 		}
 
-		fmt.Println("Running template generator", generatorID)
-		err = thman.Generate(context.Background(), templateID, generatorID, path, values)
+		ilogger().Println("Running template generator", generatorID)
+		err = iironman().Generate(context.Background(), templateID, generatorID, path, values)
 		if err != nil {
 			return err
 		}
-		fmt.Println("Done")
+		ilogger().Println("Done")
 
 		return nil
 	},

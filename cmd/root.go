@@ -2,6 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -12,8 +15,10 @@ import (
 	"github.com/spf13/viper"
 )
 
+//Commands global variables
 var cfgFile string
 var ironmanHome string
+var verbose bool
 
 // RootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -60,6 +65,7 @@ func init() {
 	}
 	defaultIronmanHomeDir := filepath.Join(defaultHomeDir, ".ironman")
 	rootCmd.PersistentFlags().StringVar(&ironmanHome, "ironman-home", defaultIronmanHomeDir, "ironman home directory")
+	rootCmd.PersistentFlags().BoolVar(&verbose, "verbose", true, "verbose output")
 
 }
 
@@ -77,4 +83,31 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+}
+
+var thman *ironman.Ironman
+
+func iironman() *ironman.Ironman {
+	if thman == nil {
+		thman = ironman.New(ironmanHome, ironman.SetOutput(ironmanOutput()))
+	}
+
+	return thman
+}
+
+var logger *log.Logger
+
+func ilogger() *log.Logger {
+	if logger == nil {
+		logger = log.New(ironmanOutput(), "", 0)
+	}
+	return logger
+}
+
+func ironmanOutput() io.Writer {
+	var output io.Writer = os.Stdout
+	if !verbose {
+		output = ioutil.Discard
+	}
+	return output
 }
