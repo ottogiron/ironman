@@ -65,8 +65,7 @@ func init() {
 	}
 	defaultIronmanHomeDir := filepath.Join(defaultHomeDir, ".ironman")
 	rootCmd.PersistentFlags().StringVar(&ironmanHome, "ironman-home", defaultIronmanHomeDir, "ironman home directory")
-	rootCmd.PersistentFlags().BoolVar(&verbose, "verbose", true, "verbose output")
-
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", true, "verbose output e.g --verbose false")
 }
 
 // initConfig reads in config file and ENV variables if set.

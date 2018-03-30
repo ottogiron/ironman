@@ -38,6 +38,7 @@ type generator struct {
 	data           GeneratorData
 	engine         engine.Factory
 	logger         *log.Logger
+	force          bool
 }
 
 //NewGenerator returns a new instance of a generator
@@ -52,6 +53,7 @@ func NewGenerator(path string, generationPath string, data GeneratorData, option
 			return goengine.New("ironman")
 		},
 		logger: log.New(os.Stdout, "", 0),
+		force:  false,
 	}
 
 	for _, option := range options {
@@ -238,9 +240,17 @@ func (g *generator) writeFile(presult processResult) writeResult {
 
 	if presult.pathResult.isDir {
 
+		//remove the directory
+		if g.force {
+			err := os.RemoveAll(toPath)
+			if err != nil {
+				return writeResult{err: errors.Wrap(err, "Failed to force  generation")}
+			}
+		}
+
 		err := os.Mkdir(toPath, os.ModePerm)
 		if err != nil {
-			return writeResult{err: err}
+			return writeResult{err: errors.Wrap(err, "Failed to create directory")}
 		}
 
 		return writeResult{pathFrom: presult.pathResult.path, pathTo: toPath}
@@ -251,6 +261,6 @@ func (g *generator) writeFile(presult processResult) writeResult {
 	if err != nil {
 		return writeResult{err: err}
 	}
-	g.logger.Println("Processing template.... ", toPath)
+	g.logger.Println("Processing... ", toPath)
 	return writeResult{pathFrom: presult.pathResult.path, pathTo: toPath}
 }

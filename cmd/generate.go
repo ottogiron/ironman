@@ -10,6 +10,7 @@ import (
 )
 
 var values string
+var forceGeneration bool
 
 // generateCmd represents the generate command
 var generateCmd = &cobra.Command{
@@ -92,7 +93,7 @@ ironman generate template:example:controller ~/mynewapp
 		}
 
 		ilogger().Println("Running template generator", generatorID)
-		err = iironman().Generate(context.Background(), templateID, generatorID, path, values)
+		err = iironman().Generate(context.Background(), templateID, generatorID, path, values, forceGeneration)
 		if err != nil {
 			return err
 		}
@@ -107,5 +108,6 @@ ironman generate template:example:controller ~/mynewapp
 
 func init() {
 	rootCmd.AddCommand(generateCmd)
-	generateCmd.Flags().StringVarP(&values, "set", "s", "", "Coma separated list of values --set key=value,key2=value2")
+	generateCmd.Flags().StringVarP(&values, "set", "s", "", "Coma separated list of values e.g. ironman generate template /generation/path --set key=value,key2=value2")
+	generateCmd.Flags().BoolVarP(&forceGeneration, "force", "f", false, "Forces generation even if directory or file exists. e.g ironman generate -f template /generation/path")
 }

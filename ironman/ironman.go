@@ -253,7 +253,7 @@ func (i *Ironman) Update(templateID string) error {
 }
 
 //Generate generates a new file or directory based on a generator
-func (i *Ironman) Generate(context context.Context, templateID string, generatorID string, generationPath string, values values.Values) error {
+func (i *Ironman) Generate(context context.Context, templateID string, generatorID string, generationPath string, values values.Values, force bool) error {
 	//First validate if template exists
 	exists, err := i.repository.Exists(templateID)
 
@@ -270,7 +270,7 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 
 	if os.IsPermission(err) {
 		return errors.Wrapf(err, "Failed to create generation path %s", generationPath)
-	} else if os.IsExist(err) {
+	} else if os.IsExist(err) && !force {
 		empty, err := isDirEmpty(generationPath)
 
 		if err != nil {
@@ -297,15 +297,19 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 
 	generatorPath := filepath.Join(i.home, templatesDirectory, templateModel.DirectoryName, genteratorModel.DirectoryName)
 
-	//return errors.New("templates direcotry is " + generatorPath)
-
 	data := template.GeneratorData{
 		Template:  templateModel,
 		Generator: genteratorModel,
 		Values:    values,
 	}
 
-	generator := template.NewGenerator(generatorPath, generationPath, data, template.SetGeneratorOutput(i.output))
+	generator := template.NewGenerator(
+		generatorPath,
+		generationPath,
+		data,
+		template.SetGeneratorOutput(i.output),
+		template.SetGeneratorForce(force),
+	)
 
 	if err := generator.Generate(context); err != nil {
 		return err
