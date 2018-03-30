@@ -3,7 +3,6 @@ package template
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -77,22 +76,20 @@ func (g *generator) Generate(ctx context.Context) error {
 
 	workersExecute(1, func(w int, wg *sync.WaitGroup) {
 		g.processor(childCtx, paths, presults)
-		fmt.Println("Worker process ID Leaving:", w)
 		wg.Done()
 	}, func() {
 		close(presults)
-		fmt.Println("Process workers closed")
+
 	})
 
 	wresults := make(chan writeResult)
 	workersExecute(1, func(w int, wg *sync.WaitGroup) {
 		g.write(childCtx, presults, wresults)
-		fmt.Println("Worker write ID Leaving:", w)
 		wg.Done()
 	},
 		func() {
 			close(wresults)
-			fmt.Println("Write workers closed")
+
 		},
 	)
 
