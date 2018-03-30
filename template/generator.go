@@ -17,6 +17,9 @@ import (
 	"github.com/pkg/errors"
 )
 
+//arbitrary number
+const noGeneratorWorkers = 20
+
 //GeneratorData represents the data to be passed to each generator file template
 type GeneratorData struct {
 	Template  *model.Template
@@ -89,7 +92,7 @@ func (g *generator) Generate(ctx context.Context) error {
 
 	presults := make(chan processResult)
 
-	workersExecute(1, func(w int, wg *sync.WaitGroup) {
+	workersExecute(noGeneratorWorkers, func(w int, wg *sync.WaitGroup) {
 		g.processor(childCtx, paths, presults)
 		wg.Done()
 	}, func() {
@@ -98,7 +101,7 @@ func (g *generator) Generate(ctx context.Context) error {
 	})
 
 	wresults := make(chan writeResult)
-	workersExecute(1, func(w int, wg *sync.WaitGroup) {
+	workersExecute(noGeneratorWorkers, func(w int, wg *sync.WaitGroup) {
 		g.write(childCtx, presults, wresults)
 		wg.Done()
 	},
