@@ -252,7 +252,7 @@ func (i *Ironman) Update(templateID string) error {
 
 //Generate generates a new file or directory based on a generator
 func (i *Ironman) Generate(context context.Context, templateID string, generatorID string, generationPath string, values values.Values) error {
-
+	//First validate if template exists
 	exists, err := i.repository.Exists(templateID)
 
 	if err != nil {
@@ -261,6 +261,27 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 
 	if !exists {
 		return errors.Errorf("Template is not installed")
+	}
+
+	//If template exists validate generation directory
+	err = os.Mkdir(generationPath, os.ModePerm)
+
+	if os.IsPermission(err) {
+		return errors.Wrapf(err, "Failed to create generation path %s", generationPath)
+	} else if os.IsExist(err) {
+		f, err := os.Open(generationPath)
+		if err != nil {
+			return errors.Wrapf(err, "Failed to create generation path %s", generationPath)
+		}
+		names, err := f.Readdirnames(1)
+
+		if err != nil {
+			return errors.Wrapf(err, "Failed to validate if generation path is empty %s", generationPath)
+		}
+
+		if len(names) != 0 {
+			return errors.Errorf("Generation path is not empty %s", generationPath)
+		}
 	}
 
 	templateModel, err := i.repository.FindTemplateByID(templateID)
@@ -276,6 +297,8 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 	}
 
 	generatorPath := filepath.Join(i.home, templatesDirectory, templateModel.DirectoryName, genteratorModel.DirectoryName)
+
+	//return errors.New("templates direcotry is " + generatorPath)
 
 	data := template.GeneratorData{
 		Template:  templateModel,

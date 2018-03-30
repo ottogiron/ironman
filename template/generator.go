@@ -50,15 +50,20 @@ func NewGenerator(path string, generationPath string, ignore []string, data Gene
 }
 
 type processResult struct {
-	bytes []byte
-	path  string
-	err   error
+	bytes      []byte
+	pathResult pathResult
+	err        error
 }
 
 type writeResult struct {
 	pathFrom string
 	pathTo   string
 	err      error
+}
+
+type pathResult struct {
+	path  string
+	isDir bool
 }
 
 func (g *generator) Generate(ctx context.Context) error {
@@ -96,7 +101,6 @@ func (g *generator) Generate(ctx context.Context) error {
 			cancelFunc()
 			return wresult.err
 		}
-		fmt.Printf("\nPath to is:%v\n", wresult)
 	}
 
 	err := <-errc
@@ -120,9 +124,9 @@ func workersExecute(number int, work func(workerID int, wg *sync.WaitGroup), don
 	}()
 }
 
-func (g *generator) walkFiles(context context.Context) (<-chan string, <-chan error) {
+func (g *generator) walkFiles(context context.Context) (<-chan pathResult, <-chan error) {
 	errc := make(chan error, 1)
-	paths := make(chan string)
+	paths := make(chan pathResult)
 
 	go func() {
 		defer close(paths)
@@ -133,11 +137,11 @@ func (g *generator) walkFiles(context context.Context) (<-chan string, <-chan er
 				return err
 			}
 
-			if !info.Mode().IsRegular() {
+			if info.IsDir() && path == g.path {
 				return nil
 			}
 
-			if info.IsDir() {
+			if !info.IsDir() && !info.Mode().IsRegular() {
 				return nil
 			}
 
@@ -146,7 +150,7 @@ func (g *generator) walkFiles(context context.Context) (<-chan string, <-chan er
 			}
 
 			select {
-			case paths <- path:
+			case paths <- pathResult{path, info.IsDir()}:
 			case <-context.Done():
 				return errors.New("Walk canceled")
 
@@ -167,7 +171,7 @@ func (g *generator) ignoreFile(fileName string) bool {
 	return false
 }
 
-func (g *generator) processor(context context.Context, paths <-chan string, result chan<- processResult) {
+func (g *generator) processor(context context.Context, paths <-chan pathResult, result chan<- processResult) {
 	for path := range paths {
 		data, err := g.processFile(path)
 		select {
@@ -178,10 +182,15 @@ func (g *generator) processor(context context.Context, paths <-chan string, resu
 	}
 }
 
-func (g *generator) processFile(path string) ([]byte, error) {
-	data, err := ioutil.ReadFile(path)
+func (g *generator) processFile(pathResult pathResult) ([]byte, error) {
+
+	if pathResult.isDir {
+		return nil, nil
+	}
+
+	data, err := ioutil.ReadFile(pathResult.path)
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to read template contents", path)
+		return nil, errors.Wrapf(err, "Failed to read template contents", pathResult.path)
 	}
 	engine := g.engine()
 	tmpl, err := engine.Parse(string(data))
@@ -189,7 +198,7 @@ func (g *generator) processFile(path string) ([]byte, error) {
 	err = tmpl.Execute(&buffer, g.data)
 
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to execute template processing %s", path)
+		return nil, errors.Wrapf(err, "Failed to execute template processing %s", pathResult.path)
 	}
 
 	return buffer.Bytes(), nil
@@ -213,9 +222,19 @@ func (g *generator) writeFile(presult processResult) writeResult {
 		return writeResult{err: presult.err}
 	}
 
-	toRelativePath := strings.TrimPrefix(presult.path, g.path)
+	toRelativePath := strings.TrimPrefix(presult.pathResult.path, g.path)
 
 	toPath := filepath.Join(g.generationPath, toRelativePath)
+
+	if presult.pathResult.isDir {
+
+		err := os.Mkdir(toPath, os.ModePerm)
+		if err != nil {
+			return writeResult{err: err}
+		}
+
+		return writeResult{pathFrom: presult.pathResult.path, pathTo: toPath}
+	}
 
 	err := ioutil.WriteFile(toPath, presult.bytes, os.ModePerm)
 
@@ -223,5 +242,5 @@ func (g *generator) writeFile(presult processResult) writeResult {
 		return writeResult{err: err}
 	}
 
-	return writeResult{pathFrom: presult.path, pathTo: toPath}
+	return writeResult{pathFrom: presult.pathResult.path, pathTo: toPath}
 }

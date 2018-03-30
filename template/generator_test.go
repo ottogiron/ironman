@@ -62,6 +62,11 @@ func Test_generator_Generate(t *testing.T) {
 					contents: `//This a generated file from template test and generator app
 console.log("Foo is bar bar is foo")`,
 				},
+				fileResult{
+					relativePath: "internal/hi.js",
+					contents: `//This a generated file from template test and generator app
+console.log("Foo is bar bar is foo")`,
+				},
 			},
 			false,
 		},
