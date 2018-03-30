@@ -126,6 +126,7 @@ func Test_bleeveRepository_Update(t *testing.T) {
 			args{
 				&model.Template{
 					ID:            "template-id",
+					Version:       "0.1.0",
 					Name:          "Updated name",
 					Description:   "Updated description",
 					DirectoryName: "test",
@@ -189,6 +190,11 @@ func Test_bleeveRepository_Update(t *testing.T) {
 					if string(value) == "" || (value != tt.args.template.ID) {
 						t.Errorf("bleveRepository.Update() templateID = %v want %v", value, tt.args.template.ID)
 					}
+				case "version":
+					if string(value) == "" || (value != tt.args.template.Version) {
+						t.Errorf("bleveRepository.Update() templateVersion = %v want %v", value, tt.args.template.Version)
+					}
+
 				case "name":
 					if string(value) == "" || (value != tt.args.template.Name) {
 						t.Errorf("bleveRepository.Update() templateName = %v want %v", value, tt.args.template.Name)

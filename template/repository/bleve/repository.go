@@ -133,6 +133,8 @@ func deserialize(doc *document.Document) (*model.Template, error) {
 			template.IID = value
 		case "id":
 			template.ID = value
+		case "version":
+			template.Version = value
 		case "name":
 			template.Name = value
 		case "description":

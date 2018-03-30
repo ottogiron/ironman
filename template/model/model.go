@@ -5,6 +5,7 @@ type Template struct {
 	//IID internal database ID
 	IID           string       `json:"iid,omitempty" yaml:"iid,omitempty"`
 	ID            string       `json:"id" yaml:"id"`
+	Version       string       `json:"version" yaml:"version"`
 	Name          string       `json:"name" yaml:"name"`
 	Description   string       `json:"description" yaml:"description"`
 	Generators    []*Generator `json:"generators" yaml:"generators"`
