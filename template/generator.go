@@ -112,8 +112,10 @@ func (g *generator) Generate(ctx context.Context) error {
 	)
 
 	for wresult := range wresults {
+
 		if wresult.err != nil {
 			cancelFunc()
+			g.logger.Print("Processing failed %s", wresult.pathTo)
 			return wresult.err
 		}
 	}
@@ -215,7 +217,6 @@ func (g *generator) processFile(pathResult pathResult) ([]byte, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "Failed to execute template processing %s", pathResult.path)
 	}
-
 	return buffer.Bytes(), nil
 }
 
@@ -258,12 +259,12 @@ func (g *generator) writeFile(presult processResult) writeResult {
 
 		return writeResult{pathFrom: presult.pathResult.path, pathTo: toPath}
 	}
-
+	g.logger.Print("Writing... ", toPath)
 	err := ioutil.WriteFile(toPath, presult.bytes, os.ModePerm)
 
 	if err != nil {
 		return writeResult{err: err}
 	}
-	g.logger.Println("Processing... ", toPath)
+
 	return writeResult{pathFrom: presult.pathResult.path, pathTo: toPath}
 }
