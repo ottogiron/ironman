@@ -115,7 +115,7 @@ func (g *generator) Generate(ctx context.Context) error {
 
 		if wresult.err != nil {
 			cancelFunc()
-			g.logger.Print("Processing failed %s", wresult.pathTo)
+			g.logger.Print("Processing failed for", wresult.pathTo)
 			return wresult.err
 		}
 	}
