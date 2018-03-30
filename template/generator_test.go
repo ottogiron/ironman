@@ -41,7 +41,7 @@ func Test_generator_Generate(t *testing.T) {
 		{
 			"Generate template",
 			fields{
-				"testing/templates/valid/app",
+				filepath.Join("testing", "templates", "valid", "app"),
 				GeneratorData{
 					&model.Template{
 						Name: "test",
