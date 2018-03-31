@@ -2,15 +2,39 @@ package cmd
 
 import (
 	"context"
+	"fmt"
+	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/ironman-project/ironman/template/values/strvals"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	yaml "gopkg.in/yaml.v2"
+	helmstrvals "k8s.io/helm/pkg/strvals"
 )
 
-var values string
+type valueFiles []string
+
+func (v *valueFiles) String() string {
+	return fmt.Sprint(*v)
+}
+
+func (v *valueFiles) Type() string {
+	return "valueFiles"
+}
+
+func (v *valueFiles) Set(value string) error {
+	for _, filePath := range strings.Split(value, ",") {
+		*v = append(*v, filePath)
+	}
+	return nil
+}
+
+var values []string
+var stringValues []string
 var forceGeneration bool
+var valFiles valueFiles
 
 // generateCmd represents the generate command
 var generateCmd = &cobra.Command{
@@ -85,7 +109,7 @@ ironman generate template:example:controller ~/mynewapp
 			path = args[1]
 		}
 
-		valuesReader := strvals.New(values)
+		valuesReader := strvals.New(valFiles, values)
 		values, err := valuesReader.Read()
 
 		if err != nil {
@@ -108,6 +132,84 @@ ironman generate template:example:controller ~/mynewapp
 
 func init() {
 	rootCmd.AddCommand(generateCmd)
-	generateCmd.Flags().StringVarP(&values, "set", "s", "", "Coma separated list of values e.g. ironman generate template /generation/path --set key=value,key2=value2")
-	generateCmd.Flags().BoolVarP(&forceGeneration, "force", "f", false, "Forces generation even if directory or file exists. e.g ironman generate -f template /generation/path")
+	f := generateCmd.Flags()
+	f.StringArrayVar(&values, "set", []string{}, "set values on the command line (can specify multiple or separate values with commas: key1=val1,key2=val2)")
+	f.VarP(&valFiles, "values", "f", "specify values in a YAML file (can specify multiple)")
+	f.BoolVar(&forceGeneration, "force", false, "Forces generation even if directory or file exists. e.g ironman generate --force template /generation/path")
+
+}
+
+// vals merges values from files specified via -f/--values and
+// directly via --set, marshaling them to YAML
+func vals(valueFiles valueFiles, values []string) ([]byte, error) {
+	base := map[string]interface{}{}
+
+	// User specified a values files via -f/--values
+	for _, filePath := range valueFiles {
+		currentMap := map[string]interface{}{}
+
+		var bytes []byte
+		var err error
+		if strings.TrimSpace(filePath) == "-" {
+			bytes, err = ioutil.ReadAll(os.Stdin)
+		} else {
+			bytes, err = readFile(filePath)
+		}
+
+		if err != nil {
+			return []byte{}, err
+		}
+
+		if err := yaml.Unmarshal(bytes, &currentMap); err != nil {
+			return []byte{}, fmt.Errorf("failed to parse %s: %s", filePath, err)
+		}
+		// Merge with the previous map
+		base = mergeValues(base, currentMap)
+	}
+
+	// User specified a value via --set
+	for _, value := range values {
+		if err := helmstrvals.ParseInto(value, base); err != nil {
+			return []byte{}, fmt.Errorf("failed parsing --set data: %s", err)
+		}
+	}
+
+	return yaml.Marshal(base)
+}
+
+//readFile load a file from the local directory or a remote file with a url.
+func readFile(filePath string) ([]byte, error) {
+	return ioutil.ReadFile(filePath)
+}
+
+// Merges source and destination map, preferring values from the source map
+func mergeValues(dest map[string]interface{}, src map[string]interface{}) map[string]interface{} {
+	for k, v := range src {
+		// If the key doesn't exist already, then just set the key to that value
+		if _, exists := dest[k]; !exists {
+			dest[k] = v
+			continue
+		}
+		nextMap, ok := v.(map[string]interface{})
+		// If it isn't another map, overwrite the value
+		if !ok {
+			dest[k] = v
+			continue
+		}
+		// If the key doesn't exist already, then just set the key to that value
+		if _, exists := dest[k]; !exists {
+			dest[k] = nextMap
+			continue
+		}
+		// Edge case: If the key exists in the destination, but isn't a map
+		destMap, isMap := dest[k].(map[string]interface{})
+		// If the source map has a map for this key, prefer it
+		if !isMap {
+			dest[k] = v
+			continue
+		}
+		// If we got to this point, it is a map in both, so merge them
+		dest[k] = mergeValues(destMap, nextMap)
+	}
+	return dest
 }

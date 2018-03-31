@@ -1,6 +1,7 @@
 package strvals
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/ironman-project/ironman/template/values"
@@ -9,17 +10,19 @@ import (
 
 func Test_reader_Read(t *testing.T) {
 	tests := []struct {
-		name    string
-		vals    string
-		want    values.Values
-		wantErr bool
+		name       string
+		valueFiles []string
+		vals       []string
+		want       values.Values
+		wantErr    bool
 	}{
-		{"Parse value", "name1=1", values.Values{"name1": 1}, false},
-		{"Parse values", "name1=1,name2=2", values.Values{"name1": 1, "name2": 2}, false},
-		{"Parse invalid values", "name1=value1,,,,name2=value2,", nil, true},
+		{"Parse value", []string{}, []string{"name1=1"}, values.Values{"name1": 1}, false},
+		{"Parse values", []string{}, []string{"name1=1,name2=2"}, values.Values{"name1": 1, "name2": 2}, false},
+		{"Parse invalid values", []string{}, []string{"name1=value1,,,,name2=value2,"}, nil, true},
 		{
 			"Parse inner values",
-			"outer.inner1=value,outer.middle.inner=value,",
+			[]string{},
+			[]string{"outer.inner1=value,outer.middle.inner=value,"},
 			values.Values{
 				"outer": map[string]interface{}{
 					"inner1": "value",
@@ -32,13 +35,15 @@ func Test_reader_Read(t *testing.T) {
 		},
 		{
 			"Parse map with list value",
-			"name1={value1,value2},name2={value1,value2}",
+			[]string{},
+			[]string{"name1={value1,value2},name2={value1,value2}"},
 			values.Values{"name1": []string{"value1", "value2"}, "name2": []string{"value1", "value2"}},
 			false,
 		},
 		{
 			"Parse list",
-			"list[0].foo=bar,list[0].hello=world",
+			[]string{},
+			[]string{"list[0].foo=bar,list[0].hello=world"},
 			values.Values{
 				"list": []interface{}{
 					map[string]interface{}{"foo": "bar", "hello": "world"},
@@ -46,10 +51,24 @@ func Test_reader_Read(t *testing.T) {
 			},
 			false,
 		},
+		{
+			"Parse value files with override",
+			[]string{filepath.Join("testing", "values", "values.yaml"), filepath.Join("testing", "values", "values.override.yaml")},
+			[]string{"foo=foo_inline"},
+			values.Values{"foo": "foo_inline", "bar": "bar_override"},
+			false,
+		},
+		{
+			"Parse value files ",
+			[]string{filepath.Join("testing", "values", "values.yaml")},
+			[]string{},
+			values.Values{"foo": "foo", "bar": "bar"},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &reader{tt.vals}
+			r := &reader{valueFiles: tt.valueFiles, values: tt.vals}
 			got, err := r.Read()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("reader.Read() error = %v, wantErr %v", err, tt.wantErr)
