@@ -25,8 +25,9 @@ type fileResult struct {
 
 func Test_generator_Generate(t *testing.T) {
 	type fields struct {
-		path string
-		data GeneratorData
+		path           string
+		data           GeneratorData
+		generationPath string
 	}
 	type args struct {
 		ctx context.Context
@@ -39,10 +40,10 @@ func Test_generator_Generate(t *testing.T) {
 		wantErr   bool
 	}{
 		{
-			"Generate template",
+			"Generate template with directory generator",
 			fields{
-				filepath.Join("testing", "templates", "valid", "app"),
-				GeneratorData{
+				path: filepath.Join("testing", "templates", "valid", "app"),
+				data: GeneratorData{
 					&model.Template{
 						Name: "test",
 					},
@@ -59,13 +60,72 @@ func Test_generator_Generate(t *testing.T) {
 			[]fileResult{
 				fileResult{
 					relativePath: "hi.js",
-					contents: `//This a generated file from template test and generator app
-console.log("Foo is bar bar is foo")`,
+					contents:     testutils.ReadFile(t, "testing", "expected", "templates", "valid", "app", "hi.js"),
 				},
 				fileResult{
 					relativePath: "internal/hi.js",
-					contents: `//This a generated file from template test and generator app
-console.log("Foo is bar bar is foo")`,
+					contents:     testutils.ReadFile(t, "testing", "expected", "templates", "valid", "app", "hi.js"),
+				},
+			},
+			false,
+		},
+		{
+			"Generate template with file generator relative path",
+			fields{
+				path: filepath.Join("testing", "templates", "valid", "controller"),
+				data: GeneratorData{
+					&model.Template{
+						Name: "test",
+					},
+					&model.Generator{
+						Name:  "controller",
+						TType: model.GeneratorTypeFile,
+						FileTypeOptions: model.FileTypeOptions{
+							DefaultTemplateFile: "Controller.java",
+						},
+					},
+					values.Values{
+						"Name": "Foo",
+					},
+				},
+				generationPath: "NewController.java",
+			},
+			args{context.Background()},
+			[]fileResult{
+				fileResult{
+					relativePath: "NewController.java",
+					contents:     testutils.ReadFile(t, "testing", "expected", "templates", "valid", "controller", "Controller.java"),
+				},
+			},
+			false,
+		},
+		{
+			"Generate template with file generator on internal directory",
+			fields{
+				path: filepath.Join("testing", "templates", "valid", "controller"),
+				data: GeneratorData{
+					&model.Template{
+						Name: "test",
+					},
+					&model.Generator{
+						Name:  "controller",
+						TType: model.GeneratorTypeFile,
+						FileTypeOptions: model.FileTypeOptions{
+							DefaultTemplateFile:        "Controller.java",
+							FileGenerationRelativePath: "controllers",
+						},
+					},
+					values.Values{
+						"Name": "Foo",
+					},
+				},
+				generationPath: "NewController.java",
+			},
+			args{context.Background()},
+			[]fileResult{
+				fileResult{
+					relativePath: "controllers/NewController.java",
+					contents:     testutils.ReadFile(t, "testing", "expected", "templates", "valid", "controller", "Controller.java"),
 				},
 			},
 			false,
@@ -74,13 +134,17 @@ console.log("Foo is bar bar is foo")`,
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tempDir := testutils.CreateTempDir("test_valid", t)
+			generationDir := filepath.Join(tempDir, filepath.Dir(tt.fields.generationPath))
+			generationPath := filepath.Join(tempDir, tt.fields.generationPath)
+			_ = os.MkdirAll(generationDir, os.ModePerm)
 			defer func() {
 				_ = os.RemoveAll(tempDir)
+
 			}()
 
 			g := NewGenerator(
 				tt.fields.path,
-				tempDir,
+				generationPath,
 				tt.fields.data,
 				SetGeneratorOutput(ioutil.Discard),
 			)
@@ -93,10 +157,11 @@ console.log("Foo is bar bar is foo")`,
 				file, err := ioutil.ReadFile(filepath.Join(tempDir, wantFile.relativePath))
 				if err != nil {
 					t.Errorf("generator.Generate() error = %v file should exists", wantFile.relativePath)
+					continue
 				}
 
 				if string(file) != wantFile.contents {
-					t.Errorf("Generator.Generate() \ncontents %s\n want \n%s\n", string(file), wantFile.contents)
+					t.Errorf("Generator.Generate() \ncontents\n %s\n want \n%s\n", string(file), wantFile.contents)
 				}
 			}
 		})

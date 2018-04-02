@@ -1,0 +1,6 @@
+id: controller
+description: Generator for a controller test
+type: file
+fileTypeOptions: 
+  defaultTemplateFile: Controller.java
+  

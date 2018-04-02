@@ -40,6 +40,12 @@ func (t *Template) Generator(ID string) *Generator {
 	return nil
 }
 
+//FileTypeOptions  options for file type generator
+type FileTypeOptions struct {
+	DefaultTemplateFile        string `json:"defaultTemplateFile" yaml:"defaultTemplateFile"`
+	FileGenerationRelativePath string `json:"fileGenerationRelativePath" yaml:"fileGenerationRelativePath"`
+}
+
 //GeneratorType represents a generator type, directory or file
 type GeneratorType string
 
@@ -52,12 +58,12 @@ const (
 
 //Generator generator metadata definition
 type Generator struct {
-	ID                          string        `json:"id" yaml:"id"`
-	TType                       GeneratorType `json:"type" yaml:"type"`
-	Name                        string        `json:"name" yaml:"name"`
-	Description                 string        `json:"description" yaml:"description"`
-	DirectoryName               string        `json:"directoryName,omitempty" yaml:"directoryName,omitempty"`
-	FileTypeDefaultTemplateFile string        `json:"fileTypeDefaultTemplateFile" yaml:"fileTypeDefaultTemplateFile"`
+	ID              string          `json:"id" yaml:"id"`
+	TType           GeneratorType   `json:"type" yaml:"type"`
+	Name            string          `json:"name" yaml:"name"`
+	Description     string          `json:"description" yaml:"description"`
+	DirectoryName   string          `json:"directoryName,omitempty" yaml:"directoryName,omitempty"`
+	FileTypeOptions FileTypeOptions `json:"filetypeOptions" yaml:"filetypeOptions"`
 }
 
 //Type Simple type serialization for generator model

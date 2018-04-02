@@ -153,7 +153,9 @@ func deserialize(doc *document.Document) (*model.Template, error) {
 		case "deprecated":
 			template.Deprecated, _ = strconv.ParseBool(value)
 		case "generators.id":
-			generators = append(generators, &model.Generator{})
+			generators = append(generators, &model.Generator{
+				FileTypeOptions: model.FileTypeOptions{},
+			})
 			generators[field.ArrayPositions()[0]].ID = value
 		case "generators.type":
 			generators[field.ArrayPositions()[0]].TType = model.GeneratorType(value)
@@ -163,8 +165,10 @@ func deserialize(doc *document.Document) (*model.Template, error) {
 			generators[field.ArrayPositions()[0]].Description = value
 		case "generators.directoryName":
 			generators[field.ArrayPositions()[0]].DirectoryName = value
-		case "generators.fileTypeDefaultTemplateFile":
-			generators[field.ArrayPositions()[0]].FileTypeDefaultTemplateFile = value
+		case "generators.filetypeOptions.defaultTemplateFile":
+			generators[field.ArrayPositions()[0]].FileTypeOptions.DefaultTemplateFile = value
+		case "generators.filetypeOptions.fileGenerationRelativePath":
+			generators[field.ArrayPositions()[0]].FileTypeOptions.FileGenerationRelativePath = value
 		case "mantainers.name":
 			mantainers = append(mantainers, &model.Mantainer{})
 			mantainers[field.ArrayPositions()[0]].Name = value

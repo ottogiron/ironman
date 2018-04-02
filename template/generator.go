@@ -65,9 +65,9 @@ func NewGenerator(path string, generationPath string, data GeneratorData, option
 }
 
 type processResult struct {
-	bytes      []byte
-	pathResult pathResult
-	err        error
+	bytes              []byte
+	templatePathResult templatePathResult
+	err                error
 }
 
 type writeResult struct {
@@ -76,17 +76,43 @@ type writeResult struct {
 	err      error
 }
 
-type pathResult struct {
+type templatePathResult struct {
 	path  string
 	isDir bool
 }
 
 func (g *generator) Generate(ctx context.Context) error {
+	gdata := g.data.Generator
+	//Generate a file only if the generator type is file
+	if g.data.Generator.TType == model.GeneratorTypeFile {
+		if gdata.FileTypeOptions.DefaultTemplateFile == "" {
+			return errors.Errorf("The default template file for the file generator %s is not set", gdata.ID)
+		}
+		templateFilePath := filepath.Join(g.path, gdata.FileTypeOptions.DefaultTemplateFile)
+		presult := templatePathResult{templateFilePath, false}
+		bytes, err := g.processFile(presult)
+		if err != nil {
+			return errors.Wrapf(err, "Failed to process generator %s for template %s", gdata.ID, templateFilePath)
+		}
 
+		wr := g.writeFile(processResult{
+			bytes,
+			presult,
+			nil,
+		})
+
+		if wr.err != nil {
+			return wr.err
+		}
+
+		return nil
+	}
+
+	//The default if type is empty is directory
 	childCtx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 
-	paths, errc := g.walkFiles(childCtx)
+	paths, errc := g.walkTemplateFiles(childCtx)
 
 	presults := make(chan processResult)
 
@@ -138,9 +164,9 @@ func workersExecute(number int, work func(workerID int, wg *sync.WaitGroup), don
 	}()
 }
 
-func (g *generator) walkFiles(context context.Context) (<-chan pathResult, <-chan error) {
+func (g *generator) walkTemplateFiles(context context.Context) (<-chan templatePathResult, <-chan error) {
 	errc := make(chan error, 1)
-	paths := make(chan pathResult)
+	paths := make(chan templatePathResult)
 
 	go func() {
 		defer close(paths)
@@ -164,7 +190,7 @@ func (g *generator) walkFiles(context context.Context) (<-chan pathResult, <-cha
 			}
 
 			select {
-			case paths <- pathResult{path, info.IsDir()}:
+			case paths <- templatePathResult{path, info.IsDir()}:
 			case <-context.Done():
 				return errors.New("Walk canceled")
 
@@ -185,7 +211,7 @@ func (g *generator) ignoreFile(fileName string) bool {
 	return false
 }
 
-func (g *generator) processor(context context.Context, paths <-chan pathResult, result chan<- processResult) {
+func (g *generator) processor(context context.Context, paths <-chan templatePathResult, result chan<- processResult) {
 	for path := range paths {
 		data, err := g.processFile(path)
 		select {
@@ -196,15 +222,15 @@ func (g *generator) processor(context context.Context, paths <-chan pathResult, 
 	}
 }
 
-func (g *generator) processFile(pathResult pathResult) ([]byte, error) {
+func (g *generator) processFile(templatePathResult templatePathResult) ([]byte, error) {
 
-	if pathResult.isDir {
+	if templatePathResult.isDir {
 		return nil, nil
 	}
 
-	data, err := ioutil.ReadFile(pathResult.path)
+	data, err := ioutil.ReadFile(templatePathResult.path)
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to read template contents", pathResult.path)
+		return nil, errors.Wrapf(err, "Failed to read template contents", templatePathResult.path)
 	}
 	engine := g.engine()
 	tmpl, err := engine.Parse(string(data))
@@ -212,7 +238,7 @@ func (g *generator) processFile(pathResult pathResult) ([]byte, error) {
 	err = tmpl.Execute(&buffer, g.data)
 
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to execute template processing %s", pathResult.path)
+		return nil, errors.Wrapf(err, "Failed to execute template processing %s", templatePathResult.path)
 	}
 	return buffer.Bytes(), nil
 }
@@ -235,13 +261,27 @@ func (g *generator) writeFile(presult processResult) writeResult {
 		return writeResult{err: presult.err}
 	}
 
-	toRelativePath := strings.TrimPrefix(presult.pathResult.path, g.path)
+	toRelativePath := strings.TrimPrefix(presult.templatePathResult.path, g.path)
+	generationDir := g.generationPath
+	if g.data.Generator.TType == model.GeneratorTypeFile {
+		//Join relative extra path from the defined generation path
+		//e.g ironman generate template:controller /path/to/newController.go
+		//Generation path => controller.go
+		//Base Path => /path/to
+		//Generator defined Relative path to base path controllers (directory)
+		//output should be /path/to/controllers/newController.go
+		basePath := filepath.Dir(toRelativePath)
+		fileName := filepath.Base(g.generationPath)
+		newPath := filepath.Join(basePath, g.data.Generator.FileTypeOptions.FileGenerationRelativePath, fileName)
+		toRelativePath = newPath
+		generationDir = filepath.Dir(generationDir)
+	}
 
-	toPath := filepath.Join(g.generationPath, toRelativePath)
+	toPath := filepath.Join(generationDir, toRelativePath)
 
-	if presult.pathResult.isDir {
+	if presult.templatePathResult.isDir {
 
-		return writeResult{pathFrom: presult.pathResult.path, pathTo: toPath}
+		return writeResult{pathFrom: presult.templatePathResult.path, pathTo: toPath}
 	}
 
 	g.logger.Print("Writing... ", toPath)
@@ -260,5 +300,5 @@ func (g *generator) writeFile(presult processResult) writeResult {
 	if err != nil {
 		return writeResult{err: err}
 	}
-	return writeResult{pathFrom: presult.pathResult.path, pathTo: toPath}
+	return writeResult{pathFrom: presult.templatePathResult.path, pathTo: toPath}
 }

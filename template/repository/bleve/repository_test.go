@@ -167,6 +167,10 @@ func Test_bleeveRepository_Update(t *testing.T) {
 							Name:          "Test generator",
 							Description:   "This is a test generator",
 							DirectoryName: "test",
+							FileTypeOptions: model.FileTypeOptions{
+								DefaultTemplateFile:        "controller.go",
+								FileGenerationRelativePath: "controllers",
+							},
 						},
 						&model.Generator{
 							ID:            "test-generator2",
@@ -283,11 +287,17 @@ func Test_bleeveRepository_Update(t *testing.T) {
 					if value != expectedDirectoryName {
 						t.Errorf("bleveRepository.Update() template.Generators[%d].DirectoryName = %v want %v", pos, value, expectedDirectoryName)
 					}
-				case "generators.fileTypeDefaultTemplateFile":
+				case "generators.filetypeOptions.defaultTemplateFile":
 					pos := field.ArrayPositions()[0]
-					expectedFileTypeDefaultTemplateFile := tt.args.template.Generators[pos].FileTypeDefaultTemplateFile
+					expectedFileTypeDefaultTemplateFile := tt.args.template.Generators[pos].FileTypeOptions.DefaultTemplateFile
 					if value != expectedFileTypeDefaultTemplateFile {
 						t.Errorf("bleveRepository.Update() template.Generators[%d].FileTypeDefaultTemplateFile = %v want %v", pos, value, expectedFileTypeDefaultTemplateFile)
+					}
+				case "generators.filetypeOptions.fileGenerationRelativePath":
+					pos := field.ArrayPositions()[0]
+					expectedFileTypeFileGenerationRelativePath := tt.args.template.Generators[pos].FileTypeOptions.FileGenerationRelativePath
+					if value != expectedFileTypeFileGenerationRelativePath {
+						t.Errorf("bleveRepository.Update() template.Generators[%d].FileTypeFileGenerationRelativePath = %v want %v", pos, value, expectedFileTypeFileGenerationRelativePath)
 					}
 				case "sources":
 					expectedSource := tt.args.template.Sources[field.ArrayPositions()[0]]
