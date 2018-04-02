@@ -142,13 +142,13 @@ func deserialize(doc *document.Document) (*model.Template, error) {
 			template.Name = value
 		case "description":
 			template.Description = value
-		case "directory_name":
+		case "directoryName":
 			template.DirectoryName = value
 		case "home":
 			template.HomeURL = value
 		case "sources":
 			sources = append(sources, value)
-		case "app_version":
+		case "appVersion":
 			template.AppVersion = value
 		case "deprecated":
 			template.Deprecated, _ = strconv.ParseBool(value)
@@ -161,9 +161,9 @@ func deserialize(doc *document.Document) (*model.Template, error) {
 			generators[field.ArrayPositions()[0]].Name = value
 		case "generators.description":
 			generators[field.ArrayPositions()[0]].Description = value
-		case "generators.directory_name":
+		case "generators.directoryName":
 			generators[field.ArrayPositions()[0]].DirectoryName = value
-		case "generators.file_type_default_file":
+		case "generators.fileTypeDefaultTemplateFile":
 			generators[field.ArrayPositions()[0]].FileTypeDefaultFile = value
 		case "mantainers.name":
 			mantainers = append(mantainers, &model.Mantainer{})

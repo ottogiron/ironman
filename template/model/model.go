@@ -17,11 +17,11 @@ type Template struct {
 	Name          string       `json:"name" yaml:"name"`
 	Description   string       `json:"description" yaml:"description"`
 	Generators    []*Generator `json:"generators" yaml:"generators"`
-	DirectoryName string       `json:"directory_name,omitempty" yaml:"directory_name,omitempty"`
+	DirectoryName string       `json:"directoryName,omitempty" yaml:"directoryName,omitempty"`
 	HomeURL       string       `json:"home" yaml:"home"`
 	Sources       []string     `json:"sources" yaml:"sources"`
 	Mantainers    []*Mantainer `json:"mantainers" yaml:"mantainers"`
-	AppVersion    string       `json:"app_version" yaml:"app_version"`
+	AppVersion    string       `json:"appVersion" yaml:"appVersion"`
 	Deprecated    bool         `json:"deprecated" yaml:"deprecated"`
 }
 
@@ -52,12 +52,12 @@ const (
 
 //Generator generator metadata definition
 type Generator struct {
-	ID                  string        `json:"id" yaml:"id"`
-	TType               GeneratorType `json:"type" yaml:"type"`
-	Name                string        `json:"name" yaml:"name"`
-	Description         string        `json:"description" yaml:"description"`
-	DirectoryName       string        `json:"directory_name,omitempty" yaml:"directory_name,omitempty"`
-	FileTypeDefaultFile string        `json:"file_type_default_file" yaml:"file_type_default_file"`
+	ID                          string        `json:"id" yaml:"id"`
+	TType                       GeneratorType `json:"type" yaml:"type"`
+	Name                        string        `json:"name" yaml:"name"`
+	Description                 string        `json:"description" yaml:"description"`
+	DirectoryName               string        `json:"directoryName,omitempty" yaml:"directoryName,omitempty"`
+	FileTypeDefaultTemplateFile string        `json:"fileTypeDefaultTemplateFile" yaml:"fileTypeDefaultTemplateFile"`
 }
 
 //Type Simple type serialization for generator model

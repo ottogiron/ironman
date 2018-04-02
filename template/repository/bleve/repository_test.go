@@ -235,7 +235,7 @@ func Test_bleeveRepository_Update(t *testing.T) {
 					if string(value) == "" || (value != tt.args.template.Description) {
 						t.Errorf("bleveRepository.Update() templateDescription = %v want %v", value, tt.args.template.Description)
 					}
-				case "directory_name":
+				case "directoryName":
 					if string(value) == "" || (value != tt.args.template.DirectoryName) {
 						t.Errorf("bleveRepository.Update() templateDirectoryName = %v want %v", value, tt.args.template.DirectoryName)
 					}
@@ -243,7 +243,7 @@ func Test_bleeveRepository_Update(t *testing.T) {
 					if string(value) == "" || (value != tt.args.template.HomeURL) {
 						t.Errorf("bleveRepository.Update() templateHomeURL = %v want %v", value, tt.args.template.HomeURL)
 					}
-				case "app_version":
+				case "appVersion":
 					if string(value) == "" || (value != tt.args.template.AppVersion) {
 						t.Errorf("bleveRepository.Update() templateAppVersion = %v want %v", value, tt.args.template.AppVersion)
 					}
@@ -277,17 +277,17 @@ func Test_bleeveRepository_Update(t *testing.T) {
 					if value != expectedDescription {
 						t.Errorf("bleveRepository.Update() template.Generators[%d].Description = %v want %v", pos, value, expectedDescription)
 					}
-				case "generators.directory_name":
+				case "generators.directoryName":
 					pos := field.ArrayPositions()[0]
 					expectedDirectoryName := tt.args.template.Generators[pos].DirectoryName
 					if value != expectedDirectoryName {
 						t.Errorf("bleveRepository.Update() template.Generators[%d].DirectoryName = %v want %v", pos, value, expectedDirectoryName)
 					}
-				case "generators.file_type_default_file":
+				case "generators.fileTypeDefaultTemplateFile":
 					pos := field.ArrayPositions()[0]
-					expectedFileTypeDefaultFile := tt.args.template.Generators[pos].FileTypeDefaultFile
-					if value != expectedFileTypeDefaultFile {
-						t.Errorf("bleveRepository.Update() template.Generators[%d].FileTypeDefaultFile = %v want %v", pos, value, expectedFileTypeDefaultFile)
+					expectedFileTypeDefaultTemplateFile := tt.args.template.Generators[pos].FileTypeDefaultTemplateFile
+					if value != expectedFileTypeDefaultTemplateFile {
+						t.Errorf("bleveRepository.Update() template.Generators[%d].FileTypeDefaultTemplateFile = %v want %v", pos, value, expectedFileTypeDefaultTemplateFile)
 					}
 				case "sources":
 					expectedSource := tt.args.template.Sources[field.ArrayPositions()[0]]
