@@ -5,7 +5,10 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"testing"
+
+	"github.com/ironman-project/ironman/testutils"
 
 	"github.com/blevesearch/bleve"
 	"github.com/ironman-project/ironman/template/model"
@@ -64,11 +67,25 @@ func Test_bleeveRepository_Index(t *testing.T) {
 					ID:          "test-template",
 					Name:        "Test template",
 					Description: "This is a test template",
+					HomeURL:     "https://ironman-project.io",
+					Sources: []string{
+						"https://github.com/ironman-project/ironman",
+						"https://ironman-project.io",
+					},
+					Mantainers: []*model.Mantainer{
+						&model.Mantainer{Name: "Otto Giron", Email: "otto"},
+						&model.Mantainer{Name: "Gepser Hoil", Email: "jepzer@gepser.com"},
+					},
 					Generators: []*model.Generator{
 						&model.Generator{
 							ID:          "test-generator",
 							Name:        "Test generator",
 							Description: "This is a test generator",
+						},
+						&model.Generator{
+							ID:          "test-generator2",
+							Name:        "Test generator2",
+							Description: "This is a test generator2",
 						},
 					},
 				},
@@ -102,8 +119,11 @@ func Test_bleeveRepository_Index(t *testing.T) {
 				t.Errorf("bleeveRepository.Index()  error = %v", err)
 			}
 
-			if got != nil && !reflect.DeepEqual(got, tt.args.template) {
-				t.Errorf("bleeveRepository.FindTemplateByID() = %v, want %v", got, tt.args.template)
+			gotJ := testutils.Marshal(got, t)
+			wantJ := testutils.Marshal(tt.args.template, t)
+
+			if got != nil && (gotJ != wantJ) {
+				t.Errorf("bleeveRepository.FindTemplateByID() = \n%v, want \n%v", gotJ, wantJ)
 			}
 
 		})
@@ -130,6 +150,16 @@ func Test_bleeveRepository_Update(t *testing.T) {
 					Name:          "Updated name",
 					Description:   "Updated description",
 					DirectoryName: "test",
+					HomeURL:       "http://template.com",
+					AppVersion:    "0.1.0",
+					Sources: []string{
+						"https://github.com/ironman-project/ironman",
+						"https://ironman-project.io",
+					},
+					Mantainers: []*model.Mantainer{
+						&model.Mantainer{Name: "Otto Giron", Email: "otto"},
+						&model.Mantainer{Name: "Gepser Hoil", Email: "jepzer@gepser.com"},
+					},
 					Generators: []*model.Generator{
 						&model.Generator{
 							ID:            "test-generator",
@@ -209,6 +239,20 @@ func Test_bleeveRepository_Update(t *testing.T) {
 					if string(value) == "" || (value != tt.args.template.DirectoryName) {
 						t.Errorf("bleveRepository.Update() templateDirectoryName = %v want %v", value, tt.args.template.DirectoryName)
 					}
+				case "home":
+					if string(value) == "" || (value != tt.args.template.HomeURL) {
+						t.Errorf("bleveRepository.Update() templateHomeURL = %v want %v", value, tt.args.template.HomeURL)
+					}
+				case "app_version":
+					if string(value) == "" || (value != tt.args.template.AppVersion) {
+						t.Errorf("bleveRepository.Update() templateAppVersion = %v want %v", value, tt.args.template.AppVersion)
+					}
+				case "deprecated":
+					boolValue, _ := strconv.ParseBool(value)
+					if string(value) == "" || (boolValue != tt.args.template.Deprecated) {
+						t.Errorf("bleveRepository.Update() templateDeprecated = %v want %v", value, tt.args.template.Deprecated)
+					}
+
 				case "generators.id":
 					pos := field.ArrayPositions()[0]
 					expectedID := tt.args.template.Generators[pos].ID
@@ -238,6 +282,36 @@ func Test_bleeveRepository_Update(t *testing.T) {
 					expectedDirectoryName := tt.args.template.Generators[pos].DirectoryName
 					if value != expectedDirectoryName {
 						t.Errorf("bleveRepository.Update() template.Generators[%d].DirectoryName = %v want %v", pos, value, expectedDirectoryName)
+					}
+				case "generators.file_type_default_file":
+					pos := field.ArrayPositions()[0]
+					expectedFileTypeDefaultFile := tt.args.template.Generators[pos].FileTypeDefaultFile
+					if value != expectedFileTypeDefaultFile {
+						t.Errorf("bleveRepository.Update() template.Generators[%d].FileTypeDefaultFile = %v want %v", pos, value, expectedFileTypeDefaultFile)
+					}
+				case "sources":
+					expectedSource := tt.args.template.Sources[field.ArrayPositions()[0]]
+					if value != expectedSource {
+						t.Errorf("bleveRepository.Update() template.Sources[index].expectedSource = %v want %v", value, expectedSource)
+
+					}
+				case "mantainers.name":
+					expectedMantainerName := tt.args.template.Mantainers[field.ArrayPositions()[0]].Name
+					if value != expectedMantainerName {
+						t.Errorf("bleveRepository.Update() template.Sources[index].expectedMantainerName = %v want %v", value, expectedMantainerName)
+
+					}
+				case "mantainers.email":
+					expectedMantainerEmail := tt.args.template.Mantainers[field.ArrayPositions()[0]].Email
+					if value != expectedMantainerEmail {
+						t.Errorf("bleveRepository.Update() template.Sources[index].expectedMantainerEmail = %v want %v", value, expectedMantainerEmail)
+
+					}
+				case "mantainers.url":
+					expectedMantainerURL := tt.args.template.Mantainers[field.ArrayPositions()[0]].URL
+					if value != expectedMantainerURL {
+						t.Errorf("bleveRepository.Update() template.Sources[index].expectedMantainerURL = %v want %v", value, expectedMantainerURL)
+
 					}
 				default:
 					t.Error("doc.Fields should assert field", field.Name(), string(field.Value()))

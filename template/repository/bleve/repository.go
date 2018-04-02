@@ -1,6 +1,8 @@
 package bleve
 
 import (
+	"strconv"
+
 	"github.com/blevesearch/bleve"
 	"github.com/blevesearch/bleve/document"
 	//Registers the bleve keyword analyzer
@@ -124,8 +126,9 @@ func (r *bleeveRepository) FindTemplateByID(ID string) (*model.Template, error) 
 
 func deserialize(doc *document.Document) (*model.Template, error) {
 	template := &model.Template{}
-	var currGenerator *model.Generator
 	var generators []*model.Generator
+	var mantainers []*model.Mantainer
+	var sources []string
 	for _, field := range doc.Fields {
 		value := string(field.Value())
 		switch field.Name() {
@@ -141,23 +144,42 @@ func deserialize(doc *document.Document) (*model.Template, error) {
 			template.Description = value
 		case "directory_name":
 			template.DirectoryName = value
+		case "home":
+			template.HomeURL = value
+		case "sources":
+			sources = append(sources, value)
+		case "app_version":
+			template.AppVersion = value
+		case "deprecated":
+			template.Deprecated, _ = strconv.ParseBool(value)
 		case "generators.id":
-			currGenerator = &model.Generator{}
-			currGenerator.ID = value
+			generators = append(generators, &model.Generator{})
+			generators[field.ArrayPositions()[0]].ID = value
 		case "generators.type":
-			currGenerator.TType = model.GeneratorType(value)
+			generators[field.ArrayPositions()[0]].TType = model.GeneratorType(value)
 		case "generators.name":
-			currGenerator.Name = value
+			generators[field.ArrayPositions()[0]].Name = value
 		case "generators.description":
-			currGenerator.Description = value
+			generators[field.ArrayPositions()[0]].Description = value
 		case "generators.directory_name":
-			currGenerator.DirectoryName = value
-			generators = append(generators, currGenerator)
+			generators[field.ArrayPositions()[0]].DirectoryName = value
+		case "generators.file_type_default_file":
+			generators[field.ArrayPositions()[0]].FileTypeDefaultFile = value
+		case "mantainers.name":
+			mantainers = append(mantainers, &model.Mantainer{})
+			mantainers[field.ArrayPositions()[0]].Name = value
+		case "mantainers.email":
+			mantainers[field.ArrayPositions()[0]].Email = value
+		case "mantainers.url":
+			mantainers[field.ArrayPositions()[0]].URL = value
+
 		default:
 			return nil, errors.Errorf("Could not deserialize template from bleve document. Field %s must be explicitly processed", field.Name())
 		}
 	}
 	template.Generators = generators
+	template.Sources = sources
+	template.Mantainers = mantainers
 	return template, nil
 }
 
