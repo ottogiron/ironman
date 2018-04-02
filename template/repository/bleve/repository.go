@@ -144,6 +144,8 @@ func deserialize(doc *document.Document) (*model.Template, error) {
 		case "generators.id":
 			currGenerator = &model.Generator{}
 			currGenerator.ID = value
+		case "generators.type":
+			currGenerator.TType = model.GeneratorType(value)
 		case "generators.name":
 			currGenerator.Name = value
 		case "generators.description":

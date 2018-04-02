@@ -133,12 +133,14 @@ func Test_bleeveRepository_Update(t *testing.T) {
 					Generators: []*model.Generator{
 						&model.Generator{
 							ID:            "test-generator",
+							TType:         model.GeneratorTypeDirectory,
 							Name:          "Test generator",
 							Description:   "This is a test generator",
 							DirectoryName: "test",
 						},
 						&model.Generator{
 							ID:            "test-generator2",
+							TType:         model.GeneratorTypeFile,
 							Name:          "Test generator2",
 							Description:   "This is a test generator 2",
 							DirectoryName: "test2",
@@ -212,6 +214,12 @@ func Test_bleeveRepository_Update(t *testing.T) {
 					expectedID := tt.args.template.Generators[pos].ID
 					if value != expectedID {
 						t.Errorf("bleveRepository.Update() template.Generators[%d].ID = %v want %v", pos, value, expectedID)
+					}
+				case "generators.type":
+					pos := field.ArrayPositions()[0]
+					expectedType := tt.args.template.Generators[pos].TType
+					if model.GeneratorType(value) != expectedType {
+						t.Errorf("bleveRepository.Update() template.Generators[%d].Type = %v want %v", pos, value, expectedType)
 					}
 				case "generators.name":
 					pos := field.ArrayPositions()[0]
