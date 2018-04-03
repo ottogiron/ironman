@@ -281,10 +281,21 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 		return errors.Errorf("Generator %s does not exists", generatorID)
 	}
 
+	absGenerationPath, err := filepath.Abs(generationPath)
+
+	if err != nil {
+		return errors.Wrapf(err, "Failed to get absolute path for generation path %s", generationPath)
+	}
+
 	if genteratorModel.TType == model.GeneratorTypeFile {
 
-		fileName := filepath.Base(generationPath)
-		baseDir := filepath.Dir(generationPath)
+		baseDir := filepath.Dir(absGenerationPath)
+
+		if _, err := os.Stat(baseDir); os.IsNotExist(err) {
+			return errors.Errorf("directory %s does not exists", filepath.Dir(generationPath))
+		}
+
+		fileName := filepath.Base(absGenerationPath)
 		filePath := filepath.Join(baseDir, genteratorModel.FileTypeOptions.FileGenerationRelativePath, fileName)
 
 		if _, err := os.Stat(filePath); err == nil && !force {
@@ -293,19 +304,19 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 
 	} else {
 		//If template exists validate generation directory
-		err = os.Mkdir(generationPath, os.ModePerm)
+		err = os.Mkdir(absGenerationPath, os.ModePerm)
 
 		if os.IsPermission(err) {
-			return errors.Wrapf(err, "Failed to create generation path %s", generationPath)
+			return errors.Wrapf(err, "Failed to create generation path %s", absGenerationPath)
 		} else if os.IsExist(err) && !force {
-			empty, err := isDirEmpty(generationPath)
+			empty, err := isDirEmpty(absGenerationPath)
 
 			if err != nil {
 				return errors.Wrapf(err, "Failed to validate if generation path is empty", err)
 			}
 
 			if !empty {
-				return errors.Errorf("Generation path is not empty %s", generationPath)
+				return errors.Errorf("Generation path is not empty %s", absGenerationPath)
 			}
 
 		}
@@ -321,7 +332,7 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 
 	generator := template.NewGenerator(
 		generatorPath,
-		generationPath,
+		absGenerationPath,
 		data,
 		template.SetGeneratorOutput(i.output),
 	)
