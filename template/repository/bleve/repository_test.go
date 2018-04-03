@@ -287,13 +287,13 @@ func Test_bleeveRepository_Update(t *testing.T) {
 					if value != expectedDirectoryName {
 						t.Errorf("bleveRepository.Update() template.Generators[%d].DirectoryName = %v want %v", pos, value, expectedDirectoryName)
 					}
-				case "generators.filetypeOptions.defaultTemplateFile":
+				case "generators.fileTypeOptions.defaultTemplateFile":
 					pos := field.ArrayPositions()[0]
 					expectedFileTypeDefaultTemplateFile := tt.args.template.Generators[pos].FileTypeOptions.DefaultTemplateFile
 					if value != expectedFileTypeDefaultTemplateFile {
 						t.Errorf("bleveRepository.Update() template.Generators[%d].FileTypeDefaultTemplateFile = %v want %v", pos, value, expectedFileTypeDefaultTemplateFile)
 					}
-				case "generators.filetypeOptions.fileGenerationRelativePath":
+				case "generators.fileTypeOptions.fileGenerationRelativePath":
 					pos := field.ArrayPositions()[0]
 					expectedFileTypeFileGenerationRelativePath := tt.args.template.Generators[pos].FileTypeOptions.FileGenerationRelativePath
 					if value != expectedFileTypeFileGenerationRelativePath {

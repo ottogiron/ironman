@@ -230,10 +230,15 @@ func (g *generator) processFile(templatePathResult templatePathResult) ([]byte, 
 
 	data, err := ioutil.ReadFile(templatePathResult.path)
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to read template contents", templatePathResult.path)
+		return nil, errors.Wrapf(err, "Failed to read template contents %s", templatePathResult.path)
 	}
 	engine := g.engine()
 	tmpl, err := engine.Parse(string(data))
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "Failed to parse template %s ", err)
+	}
+
 	var buffer bytes.Buffer
 	err = tmpl.Execute(&buffer, g.data)
 

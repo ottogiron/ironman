@@ -203,7 +203,7 @@ func TestBaseManager_Link(t *testing.T) {
 				_ = os.Remove(createdLinkPath)
 			}()
 
-			if err := b.Link(tt.args.templatePath, tt.args.templateID); (err != nil) != tt.wantErr {
+			if _, err := b.Link(tt.args.templatePath, tt.args.templateID); (err != nil) != tt.wantErr {
 				t.Errorf("BaseManager.Link() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			} else if tt.wantErr {
@@ -261,7 +261,7 @@ func TestBaseManager_Unlink(t *testing.T) {
 			defer func() {
 				_ = os.Remove(createdLinkPath)
 			}()
-			_ = b.Link(tt.args.templatePath, tt.args.templateID)
+			_, _ = b.Link(tt.args.templatePath, tt.args.templateID)
 
 			if err := b.Unlink(tt.args.unlinkTemplateID); (err != nil) != tt.wantErr {
 				t.Errorf("BaseManager.Unlink() error = %v, wantErr %v", err, tt.wantErr)

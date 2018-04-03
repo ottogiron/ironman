@@ -35,6 +35,7 @@ func FileExists(path string) bool {
 	return false
 }
 
+//CopyDir copies a directory recursively to a destination directory
 func CopyDir(source string, dest string) (err error) {
 
 	// get properties of source dir
@@ -78,6 +79,7 @@ func CopyDir(source string, dest string) (err error) {
 	return
 }
 
+//CopyFile copies a source file to a destination file
 func CopyFile(source string, dest string) (err error) {
 	sourcefile, err := os.Open(source)
 	if err != nil {

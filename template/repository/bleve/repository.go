@@ -165,9 +165,9 @@ func deserialize(doc *document.Document) (*model.Template, error) {
 			generators[field.ArrayPositions()[0]].Description = value
 		case "generators.directoryName":
 			generators[field.ArrayPositions()[0]].DirectoryName = value
-		case "generators.filetypeOptions.defaultTemplateFile":
+		case "generators.fileTypeOptions.defaultTemplateFile":
 			generators[field.ArrayPositions()[0]].FileTypeOptions.DefaultTemplateFile = value
-		case "generators.filetypeOptions.fileGenerationRelativePath":
+		case "generators.fileTypeOptions.fileGenerationRelativePath":
 			generators[field.ArrayPositions()[0]].FileTypeOptions.FileGenerationRelativePath = value
 		case "mantainers.name":
 			mantainers = append(mantainers, &model.Mantainer{})

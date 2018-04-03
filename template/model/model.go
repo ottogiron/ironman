@@ -63,7 +63,7 @@ type Generator struct {
 	Name            string          `json:"name" yaml:"name"`
 	Description     string          `json:"description" yaml:"description"`
 	DirectoryName   string          `json:"directoryName,omitempty" yaml:"directoryName,omitempty"`
-	FileTypeOptions FileTypeOptions `json:"filetypeOptions" yaml:"filetypeOptions"`
+	FileTypeOptions FileTypeOptions `json:"fileTypeOptions" yaml:"fileTypeOptions"`
 }
 
 //Type Simple type serialization for generator model

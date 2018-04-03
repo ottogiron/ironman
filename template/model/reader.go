@@ -59,7 +59,11 @@ func (r *fsReader) Read(path string) (*Template, error) {
 		return nil, errors.Wrapf(err, "Failed to decode template information from %s", rootIronmanMetadataPath)
 	}
 
-	templateModel.DirectoryName = filepath.Base(path)
+	absolutePath, err := filepath.Abs(path)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Failed to get absolute path from template path %s", path)
+	}
+	templateModel.DirectoryName = filepath.Base(absolutePath)
 
 	generatorFiles, err := ioutil.ReadDir(path)
 

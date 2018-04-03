@@ -18,7 +18,7 @@ type Manager interface {
 	Find(templateID string) error
 	IsInstalled(templateID string) (bool, error)
 	Installed() ([]*template.Metadata, error)
-	Link(templatePath string, templateID string) error
+	Link(templatePath string, templateID string) (string, error)
 	Unlink(templateID string) error
 	TemplateLocation(templateID string) string
 }
@@ -99,29 +99,30 @@ func (b *BaseManager) Installed() ([]*template.Metadata, error) {
 }
 
 //Link links a template on a path to the manager
-func (b *BaseManager) Link(templatePath string, templateID string) error {
+func (b *BaseManager) Link(templatePath string, templateID string) (string, error) {
+
 	if err := validateTemplateID(templateID); err != nil {
-		return err
+		return "", err
 	}
 
 	linkPath := b.TemplateLocation(templateID)
 
 	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
-		return errors.Wrapf(err, "Failed to create symlink to ironman manager path should %s exists ", templatePath)
+		return "", errors.Wrapf(err, "Failed to create symlink to ironman manager path should %s exists ", templatePath)
 	}
 
 	absTemplatePath, err := filepath.Abs(templatePath)
 
 	if err != nil {
-		return errors.Wrapf(err, "Failed to create symlink to ironman manager for %s with ID %s", templatePath, templateID)
+		return "", errors.Wrapf(err, "Failed to create symlink to ironman manager for %s with ID %s", templatePath, templateID)
 	}
 
 	err = os.Symlink(absTemplatePath, linkPath)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to create symlink to ironman manager for %s with ID %s", templatePath, templateID)
+		return "", errors.Wrapf(err, "Failed to create symlink to ironman manager for %s with ID %s", templatePath, templateID)
 	}
 
-	return nil
+	return linkPath, nil
 }
 
 //Unlink unlinks a linked template
