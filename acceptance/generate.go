@@ -20,7 +20,7 @@ func aTemplateToGenerateInstalledWithURL(URL string) error {
 
 	testcli.Run(testutils.ExecutablePath(), "install", "--ironman-home="+ironmanTestDir, URL)
 	if !testcli.Success() {
-		return fmt.Errorf("Failed to install test template %s", URL)
+		return fmt.Errorf("failed to install test template %s", URL)
 	}
 	return nil
 }
@@ -53,7 +53,7 @@ func aFileUnderTheGeneratedPathShouldContain(file, contents string) error {
 	fileContent, err := ioutil.ReadFile(filePath)
 
 	if err != nil {
-		return fmt.Errorf("Failed to read file contents %s", err)
+		return fmt.Errorf("failed to read file contents %s", err)
 	}
 
 	if string(fileContent) != contents {
@@ -84,7 +84,7 @@ func theGenerateWithNonExistingIDOutputShouldCointain(expectedOutput string) err
 func aTemplateToGenerateAFileInstalledWithURL(URL string) error {
 	testcli.Run(testutils.ExecutablePath(), "install", "--ironman-home="+ironmanTestDir, URL)
 	if !testcli.Success() {
-		return fmt.Errorf("Failed to install test template %s", URL)
+		return fmt.Errorf("failed to install test template %s", URL)
 	}
 	return nil
 }
@@ -118,7 +118,7 @@ func aFileFromAFileGeneratorUnderTheGeneratedPathShouldContain(contents *gherkin
 	fileContent, err := ioutil.ReadFile(generateFilePath)
 
 	if err != nil {
-		return fmt.Errorf("Failed to read file contents %s", err)
+		return fmt.Errorf("failed to read file contents %s", err)
 	}
 
 	if string(fileContent) != contents.Content {

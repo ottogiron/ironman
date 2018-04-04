@@ -92,7 +92,7 @@ func (g *generator) Generate(ctx context.Context) error {
 		presult := templatePathResult{templateFilePath, false}
 		bytes, err := g.processFile(presult)
 		if err != nil {
-			return errors.Wrapf(err, "Failed to process generator %s for template %s", gdata.ID, templateFilePath)
+			return errors.Wrapf(err, "failed to process generator %s for template %s", gdata.ID, templateFilePath)
 		}
 
 		wr := g.writeFile(processResult{
@@ -146,7 +146,7 @@ func (g *generator) Generate(ctx context.Context) error {
 	err := <-errc
 
 	if err != nil {
-		return errors.Wrapf(err, "Failed to process generator path templates: %s", g.path)
+		return errors.Wrapf(err, "failed to process generator path templates: %s", g.path)
 	}
 
 	return nil
@@ -230,20 +230,20 @@ func (g *generator) processFile(templatePathResult templatePathResult) ([]byte, 
 
 	data, err := ioutil.ReadFile(templatePathResult.path)
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to read template contents %s", templatePathResult.path)
+		return nil, errors.Wrapf(err, "failed to read template contents %s", templatePathResult.path)
 	}
 	engine := g.engine()
 	tmpl, err := engine.Parse(string(data))
 
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to parse template %s ", err)
+		return nil, errors.Wrapf(err, "failed to parse template %s ", err)
 	}
 
 	var buffer bytes.Buffer
 	err = tmpl.Execute(&buffer, g.data)
 
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to execute template processing %s", templatePathResult.path)
+		return nil, errors.Wrapf(err, "failed to execute template processing %s", templatePathResult.path)
 	}
 	return buffer.Bytes(), nil
 }
@@ -296,7 +296,7 @@ func (g *generator) writeFile(presult processResult) writeResult {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		err := os.Mkdir(dir, os.ModePerm)
 		if err != nil {
-			return writeResult{err: errors.Wrap(err, "Failed to create generation directory")}
+			return writeResult{err: errors.Wrap(err, "failed to create generation directory")}
 		}
 	}
 

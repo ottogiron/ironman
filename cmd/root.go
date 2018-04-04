@@ -44,7 +44,7 @@ func Execute() {
 func initializeIronmanHome() {
 	err := ironman.InitIronmanHome(ironmanHome)
 	if err != nil {
-		fmt.Printf("Failed to create ironman home directory %s %s", ironmanHome, err)
+		fmt.Printf("failed to create ironman home directory %s %s", ironmanHome, err)
 		os.Exit(-1)
 	}
 
@@ -60,7 +60,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ironman.yaml)")
 	defaultHomeDir, err := homedir.Dir()
 	if err != nil {
-		fmt.Printf("Failed to get the current user home dir %s ", err)
+		fmt.Printf("failed to get the current user home dir %s ", err)
 		os.Exit(-1)
 	}
 	defaultIronmanHomeDir := filepath.Join(defaultHomeDir, ".ironman")

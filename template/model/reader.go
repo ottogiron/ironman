@@ -50,25 +50,25 @@ func (r *fsReader) Read(path string) (*Template, error) {
 			return nil, errors.Wrap(err, rootIronmanMetadataPath)
 		}
 
-		return nil, errors.Wrapf(err, "Failed to read metadata file %s", rootIronmanMetadataPath)
+		return nil, errors.Wrapf(err, "failed to read metadata file %s", rootIronmanMetadataPath)
 	}
 	var templateModel Template
 	err = r.decoder.Decode(&templateModel, rootIronmanTemplateFile)
 
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to decode template information from %s", rootIronmanMetadataPath)
+		return nil, errors.Wrapf(err, "failed to decode template information from %s", rootIronmanMetadataPath)
 	}
 
 	absolutePath, err := filepath.Abs(path)
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to get absolute path from template path %s", path)
+		return nil, errors.Wrapf(err, "failed to get absolute path from template path %s", path)
 	}
 	templateModel.DirectoryName = filepath.Base(absolutePath)
 
 	generatorFiles, err := ioutil.ReadDir(path)
 
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to read available generators for %s", path)
+		return nil, errors.Wrapf(err, "failed to read available generators for %s", path)
 	}
 
 	for _, generatorFile := range generatorFiles {
@@ -80,12 +80,12 @@ func (r *fsReader) Read(path string) (*Template, error) {
 					return nil, errors.Wrap(err, generatorMetadataPath)
 				}
 
-				return nil, errors.Wrapf(err, "Failed to read metadata file %s", rootIronmanMetadataPath)
+				return nil, errors.Wrapf(err, "failed to read metadata file %s", rootIronmanMetadataPath)
 			}
 			var generatorModel Generator
 			err = r.decoder.Decode(&generatorModel, generatorMetadataFile)
 			if err != nil {
-				return nil, errors.Wrapf(err, "Failed to decode generator information from %s", generatorMetadataPath)
+				return nil, errors.Wrapf(err, "failed to decode generator information from %s", generatorMetadataPath)
 			}
 			generatorModel.DirectoryName = generatorFile.Name()
 			templateModel.Generators = append(templateModel.Generators, &generatorModel)

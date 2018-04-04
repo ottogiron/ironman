@@ -11,7 +11,7 @@ func getTestingFile(name string, t *testing.T) *os.File {
 	path := filepath.Join("testing", name)
 	f, err := os.Open(path)
 	if err != nil {
-		t.Fatalf("Failed to open test file %s", path)
+		t.Fatalf("failed to open test file %s", path)
 	}
 	return f
 }

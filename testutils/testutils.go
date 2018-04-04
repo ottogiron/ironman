@@ -10,7 +10,7 @@ func Marshal(val interface{}, t *testing.T) string {
 	bytes, err := json.Marshal(val)
 
 	if err != nil {
-		t.Fatalf("Failed to marshal object %v", val)
+		t.Fatalf("failed to marshal object %v", val)
 	}
 	return string(bytes)
 }

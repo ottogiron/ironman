@@ -12,7 +12,7 @@ import (
 func theresALinkToWithID(templatePath, ID string) error {
 	testcli.Run(testutils.ExecutablePath(), "link", "--ironman-home="+ironmanTestDir, templatePath, ID)
 	if !testcli.Success() {
-		return fmt.Errorf("Failed to link test template %s %s", templatePath, testcli.Stderr())
+		return fmt.Errorf("failed to link test template %s %s", templatePath, testcli.Stderr())
 	}
 	return nil
 }
@@ -24,7 +24,7 @@ func unlinkRunsWithCorrectID(templateID string) error {
 
 func theUnlinkProcessStateShouldBeSuccess() error {
 	if !testcli.Success() {
-		return fmt.Errorf("Failed to unlink test template %s", testcli.Stderr())
+		return fmt.Errorf("failed to unlink test template %s", testcli.Stderr())
 	}
 	return nil
 }

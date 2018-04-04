@@ -41,11 +41,11 @@ type yamlDecoder struct {
 func (yr *yamlDecoder) Decode(model interface{}, reader io.Reader) error {
 	data, err := ioutil.ReadAll(reader)
 	if err != nil {
-		return errors.Wrap(err, "Failed to decode template model")
+		return errors.Wrap(err, "failed to decode template model")
 	}
 	err = yaml.Unmarshal(data, model)
 	if err != nil {
-		return errors.Wrap(err, "Failed to decode template model")
+		return errors.Wrap(err, "failed to decode template model")
 	}
 	return nil
 }

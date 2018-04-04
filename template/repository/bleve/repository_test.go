@@ -19,7 +19,7 @@ import (
 func tempIndexPath(t *testing.T) string {
 	dir, err := ioutil.TempDir("", "ironman-bleve-test")
 	if err != nil {
-		t.Fatal("Failed to create test bleve index directory", err)
+		t.Fatal("failed to create test bleve index directory", err)
 	}
 
 	indexPath := filepath.Join(dir, "index")
@@ -32,7 +32,7 @@ func newTestRepository(t *testing.T) (repository.Repository, bleve.Index, func()
 	index, err := BuildIndex(path)
 
 	if err != nil {
-		t.Fatalf("Failed to open test index %s", err)
+		t.Fatalf("failed to open test index %s", err)
 	}
 
 	r := New(SetIndex(index))
@@ -41,11 +41,11 @@ func newTestRepository(t *testing.T) (repository.Repository, bleve.Index, func()
 		err := index.Close()
 
 		if err != nil {
-			t.Fatal("Failed to close bleve index", err)
+			t.Fatal("failed to close bleve index", err)
 		}
 		err = os.RemoveAll(path)
 		if err != nil {
-			t.Fatal("Failed to clean bleve index", err)
+			t.Fatal("failed to clean bleve index", err)
 		}
 	}
 }
@@ -197,7 +197,7 @@ func Test_bleeveRepository_Update(t *testing.T) {
 			err := index.Index(id, tt.template)
 
 			if err != nil {
-				t.Error("Failed to index template to update", err)
+				t.Error("failed to index template to update", err)
 			}
 
 			if err := r.Update(tt.args.template); (err != nil) != tt.wantErr {
@@ -362,7 +362,7 @@ func Test_bleeveRepository_FindTemplateByID(t *testing.T) {
 			err := index.Index(uuid.NewV4().String(), tt.want)
 
 			if err != nil {
-				t.Errorf("Failed to index template model")
+				t.Errorf("failed to index template model")
 			}
 
 			got, err := r.FindTemplateByID(tt.args.ID)
@@ -411,7 +411,7 @@ func Test_bleeveRepository_Delete(t *testing.T) {
 			err := index.Index(id, templ)
 
 			if err != nil {
-				t.Error("Failed to index template to update", err)
+				t.Error("failed to index template to update", err)
 			}
 			got, err := r.Delete(tt.args.ID)
 			if (err != nil) != tt.wantErr {
@@ -452,7 +452,7 @@ func Test_bleeveRepository_List(t *testing.T) {
 				err := index.Index(templ.IID, templ)
 
 				if err != nil {
-					t.Error("Failed to index template to list", err)
+					t.Error("failed to index template to list", err)
 				}
 			}
 			got, err := r.List()
@@ -508,7 +508,7 @@ func Test_bleeveRepository_Exists(t *testing.T) {
 			err := index.Index(id, templ)
 
 			if err != nil {
-				t.Error("Failed to index template to verify existence", err)
+				t.Error("failed to index template to verify existence", err)
 			}
 			got, err := r.Exists(tt.args.ID)
 			if (err != nil) != tt.wantErr {

@@ -62,7 +62,7 @@ func (r *bleeveRepository) Index(template *model.Template) (string, error) {
 	template.IID = id.String()
 	err := r.index.Index(id.String(), template)
 	if err != nil {
-		return "", errors.Wrapf(err, "Failed to index template %s", template.ID)
+		return "", errors.Wrapf(err, "failed to index template %s", template.ID)
 	}
 	return id.String(), nil
 }
@@ -86,7 +86,7 @@ func (r *bleeveRepository) Update(template *model.Template) error {
 	err = r.index.Index(id, template)
 
 	if err != nil {
-		return errors.Errorf("Failed to update template %s", template.ID)
+		return errors.Errorf("failed to update template %s", template.ID)
 	}
 
 	return nil
@@ -111,7 +111,7 @@ func (r *bleeveRepository) FindTemplateByID(ID string) (*model.Template, error) 
 	doc, err := r.index.Document(match.ID)
 
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to get template document %s", ID)
+		return nil, errors.Wrapf(err, "failed to get template document %s", ID)
 	}
 
 	t, err := deserialize(doc)
@@ -190,7 +190,7 @@ func deserialize(doc *document.Document) (*model.Template, error) {
 func (r *bleeveRepository) Delete(ID string) (bool, error) {
 	t, err := r.FindTemplateByID(ID)
 	if err != nil {
-		return false, errors.Wrapf(err, "Failed to delete template %s", ID)
+		return false, errors.Wrapf(err, "failed to delete template %s", ID)
 	}
 
 	//It doesn't exists
@@ -201,7 +201,7 @@ func (r *bleeveRepository) Delete(ID string) (bool, error) {
 	err = r.index.Delete(t.IID)
 
 	if err != nil {
-		return false, errors.Wrapf(err, "Failed to delete template with id %s", ID)
+		return false, errors.Wrapf(err, "failed to delete template with id %s", ID)
 	}
 
 	return true, nil
@@ -215,7 +215,7 @@ func (r *bleeveRepository) List() ([]*model.Template, error) {
 	searchResults, err := r.index.Search(search)
 
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to list all the available templates")
+		return nil, errors.Wrap(err, "failed to list all the available templates")
 	}
 
 	if searchResults.Total > 0 {
@@ -223,13 +223,13 @@ func (r *bleeveRepository) List() ([]*model.Template, error) {
 			doc, err := r.index.Document(result.ID)
 
 			if err != nil {
-				return nil, errors.Wrapf(err, "Failed to retrieve template from document IID:%s", doc.ID)
+				return nil, errors.Wrapf(err, "failed to retrieve template from document IID:%s", doc.ID)
 			}
 
 			templ, err := deserialize(doc)
 
 			if err != nil {
-				return nil, errors.Wrapf(err, "Failed to deserialize template from document IID:%s", doc.ID)
+				return nil, errors.Wrapf(err, "failed to deserialize template from document IID:%s", doc.ID)
 			}
 			results = append(results, templ)
 		}
@@ -241,7 +241,7 @@ func (r *bleeveRepository) Exists(ID string) (bool, error) {
 	templ, err := r.FindTemplateByID(ID)
 
 	if err != nil {
-		return false, errors.Wrapf(err, "Failed to verify if template exists %s", ID)
+		return false, errors.Wrapf(err, "failed to verify if template exists %s", ID)
 	}
 
 	if templ != nil {

@@ -13,4 +13,4 @@ Feature: Install a template
   Scenario: Install a template with unreachable URL 
     When It runs with unreachable URL "http://hola"
     Then The process state should be failure
-    And The output should cointain "Failed to install template"
+    And The output should cointain "failed to install template"

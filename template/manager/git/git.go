@@ -42,7 +42,7 @@ func (r *Manager) Install(location string) (string, error) {
 	)
 
 	if err != nil {
-		return "", errors.Wrapf(err, "Failed to install template  %s", location)
+		return "", errors.Wrapf(err, "failed to install template  %s", location)
 	}
 	return id, nil
 }
@@ -55,14 +55,14 @@ func (r *Manager) Update(id string) error {
 	gitRepo, err := gogit.PlainOpen(templatePath)
 
 	if err != nil {
-		return errors.Wrapf(err, "Failed to open template Manager %s", id)
+		return errors.Wrapf(err, "failed to open template Manager %s", id)
 	}
 
 	// Get the working directory for the Manager
 	w, err := gitRepo.Worktree()
 
 	if err != nil {
-		return errors.Wrapf(err, "Failed to get template working tree %s", id)
+		return errors.Wrapf(err, "failed to get template working tree %s", id)
 	}
 
 	err = w.Pull(&gogit.PullOptions{
@@ -70,7 +70,7 @@ func (r *Manager) Update(id string) error {
 	})
 
 	if gogit.NoErrAlreadyUpToDate != err && err != nil {
-		return errors.Wrapf(err, "Failed to Update template  %s", id)
+		return errors.Wrapf(err, "failed to Update template  %s", id)
 	}
 	return nil
 }

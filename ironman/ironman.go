@@ -57,7 +57,7 @@ func New(home string, options ...Option) *Ironman {
 	var err error
 	ir.validationTempl, err = gtemplate.New("validationTemplate").Parse(validatoinTemplateText)
 	if err != nil {
-		ir.logger.Fatalf("Failed to initialize validation errors template %s", err)
+		ir.logger.Fatalf("failed to initialize validation errors template %s", err)
 	}
 
 	if ir.manager == nil {
@@ -69,7 +69,7 @@ func New(home string, options ...Option) *Ironman {
 		indexPath := filepath.Join(home, indexName)
 		index, err := buildIndex(indexPath)
 		if err != nil {
-			ir.logger.Fatal("Failed to create ironman templates index", err)
+			ir.logger.Fatal("failed to create ironman templates index", err)
 		}
 		ir.repository = brepository.New(
 			brepository.SetIndex(index),
@@ -125,7 +125,7 @@ func (i *Ironman) Install(templateLocator string) error {
 		valid, validationErr, err := validator.Validate(model)
 
 		if err != nil {
-			return errors.Wrap(err, "Failed to validate model")
+			return errors.Wrap(err, "failed to validate model")
 		}
 
 		if !valid {
@@ -133,7 +133,7 @@ func (i *Ironman) Install(templateLocator string) error {
 			err := i.validationTempl.Execute(&validationErrBuffer, validationErr)
 
 			if err != nil {
-				return errors.Wrap(err, "Failed to create validation error message")
+				return errors.Wrap(err, "failed to create validation error message")
 			}
 
 			return errors.New(validationErrBuffer.String())
@@ -195,7 +195,7 @@ func (i *Ironman) Uninstall(templateID string) error {
 	exists, err := i.repository.Exists(templateID)
 
 	if err != nil {
-		return errors.Wrapf(err, "Failed to validate if template exists %s", templateID)
+		return errors.Wrapf(err, "failed to validate if template exists %s", templateID)
 	}
 
 	if !exists {
@@ -240,7 +240,7 @@ func (i *Ironman) Update(templateID string) error {
 	exists, err := i.repository.Exists(templateID)
 
 	if err != nil {
-		return errors.Wrapf(err, "Failed to validate if template exists %s", templateID)
+		return errors.Wrapf(err, "failed to validate if template exists %s", templateID)
 	}
 
 	if !exists {
@@ -262,7 +262,7 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 	exists, err := i.repository.Exists(templateID)
 
 	if err != nil {
-		return errors.Wrapf(err, "Failed to validate if template exists %s", templateID)
+		return errors.Wrapf(err, "failed to validate if template exists %s", templateID)
 	}
 
 	if !exists {
@@ -284,7 +284,7 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 	absGenerationPath, err := filepath.Abs(generationPath)
 
 	if err != nil {
-		return errors.Wrapf(err, "Failed to get absolute path for generation path %s", generationPath)
+		return errors.Wrapf(err, "failed to get absolute path for generation path %s", generationPath)
 	}
 
 	if genteratorModel.TType == model.GeneratorTypeFile {
@@ -307,12 +307,12 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 		err = os.Mkdir(absGenerationPath, os.ModePerm)
 
 		if os.IsPermission(err) {
-			return errors.Wrapf(err, "Failed to create generation path %s", absGenerationPath)
+			return errors.Wrapf(err, "failed to create generation path %s", absGenerationPath)
 		} else if os.IsExist(err) && !force {
 			empty, err := isDirEmpty(absGenerationPath)
 
 			if err != nil {
-				return errors.Wrapf(err, "Failed to validate if generation path is empty", err)
+				return errors.Wrapf(err, "failed to validate if generation path is empty", err)
 			}
 
 			if !empty {
@@ -363,13 +363,13 @@ func InitIronmanHome(ironmanHome string) error {
 	if _, err := os.Stat(ironmanHome); os.IsNotExist(err) {
 		err := os.Mkdir(ironmanHome, os.ModePerm)
 		if err != nil {
-			return errors.Wrap(err, "Failed to initialize ironman home")
+			return errors.Wrap(err, "failed to initialize ironman home")
 		}
 
 		err = os.Mkdir(filepath.Join(ironmanHome, templatesDirectory), os.ModePerm)
 
 		if err != nil {
-			return errors.Wrap(err, "Failed to initialize ironman home")
+			return errors.Wrap(err, "failed to initialize ironman home")
 		}
 	}
 	return nil

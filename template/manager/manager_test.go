@@ -20,21 +20,21 @@ var (
 func createTestTemplate(t *testing.T, names ...string) (string, func()) {
 	tempManager, err := ioutil.TempDir("", "ironman-test-manager")
 	if err != nil {
-		t.Fatalf("Failed to create test manager %s", err)
+		t.Fatalf("failed to create test manager %s", err)
 	}
 	sourcePath := filepath.Join(testManagerPath, testTemplatesDirectory, "base")
 	for _, name := range names {
 		destPath := filepath.Join(tempManager, name)
 		err = testutils.CopyDir(sourcePath, destPath)
 		if err != nil {
-			t.Fatalf("Failed to create test template %s", err)
+			t.Fatalf("failed to create test template %s", err)
 		}
 	}
 
 	return tempManager, func() {
 		err := os.RemoveAll(tempManager)
 		if err != nil {
-			t.Fatalf("Failed to clean test manager %s", err)
+			t.Fatalf("failed to clean test manager %s", err)
 		}
 	}
 }

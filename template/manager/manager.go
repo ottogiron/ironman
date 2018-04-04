@@ -44,7 +44,7 @@ func (b *BaseManager) Uninstall(templateID string) error {
 	templatePath := b.TemplateLocation(templateID)
 	err := os.RemoveAll(templatePath)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to remove template %s", templateID)
+		return errors.Wrapf(err, "failed to remove template %s", templateID)
 	}
 	return nil
 }
@@ -87,7 +87,7 @@ func (b *BaseManager) Installed() ([]*template.Metadata, error) {
 
 	files, err := ioutil.ReadDir(b.templatesPath)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to list al the available templates")
+		return nil, errors.Wrap(err, "failed to list al the available templates")
 	}
 
 	var templatesList []*template.Metadata
@@ -108,18 +108,18 @@ func (b *BaseManager) Link(templatePath string, templateID string) (string, erro
 	linkPath := b.TemplateLocation(templateID)
 
 	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
-		return "", errors.Wrapf(err, "Failed to create symlink to ironman manager path should %s exists ", templatePath)
+		return "", errors.Wrapf(err, "failed to create symlink to ironman manager path should %s exists ", templatePath)
 	}
 
 	absTemplatePath, err := filepath.Abs(templatePath)
 
 	if err != nil {
-		return "", errors.Wrapf(err, "Failed to create symlink to ironman manager for %s with ID %s", templatePath, templateID)
+		return "", errors.Wrapf(err, "failed to create symlink to ironman manager for %s with ID %s", templatePath, templateID)
 	}
 
 	err = os.Symlink(absTemplatePath, linkPath)
 	if err != nil {
-		return "", errors.Wrapf(err, "Failed to create symlink to ironman manager for %s with ID %s", templatePath, templateID)
+		return "", errors.Wrapf(err, "failed to create symlink to ironman manager for %s with ID %s", templatePath, templateID)
 	}
 
 	return linkPath, nil
@@ -135,12 +135,12 @@ func (b *BaseManager) Unlink(templateID string) error {
 	templatePath := b.TemplateLocation(templateID)
 
 	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
-		return errors.Wrapf(err, "Failed to remove symlink for template ID %s", err)
+		return errors.Wrapf(err, "failed to remove symlink for template ID %s", err)
 	}
 
 	err := os.Remove(templatePath)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to remove symlink for template ID %s", templateID)
+		return errors.Wrapf(err, "failed to remove symlink for template ID %s", templateID)
 	}
 	return nil
 }
