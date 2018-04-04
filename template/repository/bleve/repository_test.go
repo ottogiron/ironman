@@ -207,11 +207,11 @@ func Test_bleeveRepository_Update(t *testing.T) {
 			doc, err := index.Document(id)
 
 			if doc == nil {
-				t.Error("failed to retreive indexed document with ID", id)
+				t.Error("failed to retrieve indexed document with ID", id)
 			}
 
 			if err != nil {
-				t.Error("failed to retreive indexed document", tt.template, err)
+				t.Error("failed to retrieve indexed document", tt.template, err)
 			}
 
 			for _, field := range doc.Fields {
