@@ -122,7 +122,7 @@ func aFileFromAFileGeneratorUnderTheGeneratedPathShouldContain(contents *gherkin
 	}
 
 	if string(fileContent) != contents.Content {
-		return fmt.Errorf("File content \n%s\n want \n%s\n", fileContent, contents.Content)
+		return fmt.Errorf("file content \n%s\n want \n%s", fileContent, contents.Content)
 	}
 	return nil
 }
