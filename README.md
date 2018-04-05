@@ -8,11 +8,17 @@
 [![GoDoc](https://godoc.org/github.com/ironman-project/ironman?status.svg)](https://godoc.org/github.com/ironman-project/ironman)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ironman-project/ironman)](https://goreportcard.com/report/github.com/ironman-project/ironman)
 
-**Ironman** is a CLI tool that provides an easy way to create and share project templates hosted in git repositories, for any programming language or document based project. Install and generate a new project based on an **Ironman Template** in seconds.  
+**Ironman** is a CLI tool that provides an easy way to create and share project templates hosted in git repositories for any regular document based project. Install and generate a new document based project using  **Ironman Templates** in seconds.
 
-## Why would I care?
+## Features 
 
-Let’s say you are about to start a new cool project, you need a common project directories structure, a few dozens of files,  every time you have to change README titles/subtitles, specific app identifiers, documentation URL’s and so on to get started.  What if you work with one or many teams and you want to provide an easy way to share common project templates and enforce common development good practices and standards.  How would you solve this repetitive task ? 
+  * Develop  Ironman based templates.
+  * Manage local Ironman templates from remote sources (install, uninstall, upgrade) (git repositories)
+  * Generate new projects based on ironman you or someone else created.
+
+## Motivation
+
+Let’s say you are about to start a new cool project, you need a common project directories structure, a few dozens of files,  every time you have to change README titles/subtitles, specific app identifiers, documentation URL’s and so on to get started with a new app.  What if you work with one or many teams and you want to provide an easy way to share common project templates and enforce common development good practices and standards.  How would you solve this repetitive task ? 
 
 A way could be keeping your project "templates" in a git repo so everyone can clone their own copy and make the necessary changes to adapt those changes to their needs. From my own experience that could lead to people not knowing what changes they need to do in order to get a custom “correct” project,  also rapidly outdated templates no one knows they even exists.
 
@@ -20,44 +26,21 @@ A way could be keeping your project "templates" in a git repo so everyone can cl
 
 **Ironman** provides an easy to use declarative framework for you to define **Ironman Templates**. **Ironman templates** can then be hosted in a git repository.
 
-**Ironman Templates** can be  administered (installed, updated, removed) using the **Ironman CLI**. Once a template is installed you can easily generate new projects based on that template as many times as you want in a repetitive and reliable way, then share them with anyone with an standard git URL. 
+**Ironman Templates** can be  administered (installed, upgraded, removed) using the **Ironman CLI**. Once a template is installed you can easily generate new projects based on that template as many times as you want in a repetitive and reliable way, then share them with anyone with an standard git URL. 
 
-## Installation
+## Install
 
-### MacOS
+Binary download is available for the following OS's
 
-```bash
-# add tap
-$ brew tap <TODO> <TODO>
+* Linux
+* OSX
+* Windows
 
-# Update
-$ brew update
+Download the your specific  binary from tar file from the [releases](https://github.com/ironman-project/ironman/releases) page
 
-# install
-brew install ironman
+Unpack the binary and add it to your PATH. 
 
-# verify
-$ ironman version
-```
 
-### Linux
+## Docs
 
-Download the linux tar file from the [releases](https://github.com/ironman-project/ironman/releases) page
-
-```
-# Extract the binary
-$ tar -xvf ironman.linux-amd64.tar.gz
-# move it somewhere in your PATH e.g.
-$ mv ironman /usr/local/bin
-# verify
-$ ironman version
-```
-
-## Usage Example 
- 
-### TODO
-
-```
-Ironman install <template_url>
-Ironman generate templante_name </project/path>
-```
+Get started with the [Quick Start guide](docs/quickstart.md) you can find all the additional documentation [here](docs)
