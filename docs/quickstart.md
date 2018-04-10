@@ -10,7 +10,8 @@ Download a binary release of Ironman from the [releases](https://github.com/iron
 
 In order to install an existing template, use the ```ironman install <template-id>``` command.
 
-We will install an template for creating the base project structure for a go [Cobra](https://github.com/spf13/cobra) CLI app. [Cobra](https://github.com/spf13/cobra) has already a CLI for doing this, but it is a good example of a general porpuse use of ironman.
+We will install an template for creating the base project structure for a  [Go HTTP](https://golang.org/pkg/net/http/) app.
+
 
 ### Install the Go HTTP Server example template
 
@@ -21,6 +22,18 @@ $ ironman install https://github.com/ironman-project/simple-gohttp-template.git
 ### Generate a new project based on the template
 
 ```bash
-$ ironman generate cobra-cli-template /path/to/generate/mycli --set cliName=mycli,projectName="My CLI",projectDescription="This is an example generated cobra cli project"
+$ ironman generate cobra-cli-template /path/to/generate/myhttp-app --set cliName=mycli,projectName="My CLI",projectDescription="This is an example generated cobra cli project"
 ```
+
+Your new project should be generated under the /path/to/generate/myhttp-app. Open the directory with your favorite editor and check the results.
+
+### Run the Go Application
+
+This step (and only this step) requires go to be installed (https://golang.org/), since the generated application is written in go. You could've created your own templates for different project types, languages, since Ironman is not limited to any specific language. 
+
+```bash
+$ go run /path/to/generate/myhttp-app/main.go #will run the http server
+```
+
+go to http://localhost:8080, and you should see the the message "Hello World"
 
