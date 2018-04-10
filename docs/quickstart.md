@@ -12,10 +12,10 @@ In order to install an existing template, use the ```ironman install <template-i
 
 We will install an template for creating the base project structure for a go [Cobra](https://github.com/spf13/cobra) CLI app. [Cobra](https://github.com/spf13/cobra) has already a CLI for doing this, but it is a good example of a general porpuse use of ironman.
 
-### Install the Cobra CLI library example template
+### Install the Go HTTP Server example template
 
 ```bash
-$ ironman install https://github.com/ironman-project/cobra-cli-template.git
+$ ironman install https://github.com/ironman-project/simple-gohttp-template.git
 ```
 
 ### Generate a new project based on the template
