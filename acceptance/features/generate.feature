@@ -37,4 +37,4 @@ func (c *MyControllerController) Handle(w http.ResponseWriter, r *http.Request) 
   Scenario: Generate a template with non existing ID
     When Generate with non existing ID runs with ID "template-example-dont-exists" generator ID "app"
     Then The generate with non existing ID process state should be failure
-    And The generate with non existing ID output should cointain "Template is not installed"
+    And The generate with non existing ID output should cointain "template is not installed"
