@@ -47,7 +47,7 @@ $ ironman version
 Ironman vv0.1.1-5d02c19 Build date: 20180411.034900
 ``` 
 
-Run ```ironman help``` or ```ironman help <command>``` for help about additional commands.
+Run ```ironman help``` or ```ironman help <command>``` to get help about additional commands.
 
 
 ## Docs
