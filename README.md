@@ -38,7 +38,16 @@ Binary download is available for the following OS's
 
 Download the your specific  binary from tar file from the [releases](https://github.com/ironman-project/ironman/releases) page
 
-Unpack the binary and add it to your PATH. 
+Unpack the binary and add it to your PATH.
+
+### Verify 
+
+```bash
+$ ironman version
+Ironman vv0.1.1-5d02c19 Build date: 20180411.034900
+``` 
+
+Run ```ironman help``` or ```ironman help <command>``` for help about additional commands.
 
 
 ## Docs

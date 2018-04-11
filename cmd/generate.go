@@ -48,28 +48,28 @@ var generateCmd = &cobra.Command{
 	Short: `Generates a new project based on an installed template using a template generator.
 			If no generator was given, it will use 'app' by default.
 			It will generate the project on the destination path received (it should not exists) and
-			if no destination path was given it will generate the project on the current directory (it should be empty).`,
+			if no destination path was given it will generate the project on the current directory.`,
 	Long: `Generates a new project based on an installed template using a template generator.
 If no generator was given, it will use 'app' by default.
 It will generate the project on the destination path received (it should not exists) and
-if no destination path was given it will generate the project on the current directory (it should be empty).
+if no destination path was given it will generate the project on the current directory.
 
 Example:
 
 # This generates a project based on template-example template, based on the 'app' controller since it is the default 
-# and it will generate the files on the current directory (it should be empty).
+# and it will generate the files on the current directory.
 ironman generate template-example
 
 # This generates a project based on template-example template, based on the 'controller' controller
-# and it will generate the files on the current directory (it should be empty).
-ironman generate template:example:controller
+# and it will generate the files on the current directory.
+ironman generate template-example:controller
 
 # This generates a project based on template-example template, based on the 'app' controller since it is the default 
 # and it will generate the files on the '~/mynewapp' directory (it should not exists since it will be created now).
 ironman generate template-example ~/mynewapp
 
 # This generates a project based on template-example template, based on the 'controller' controller
-# and it will generate the files on the '~/mynewapp' directory (it should not exists since it will be created now).
+# and it will generate the files on the '~/mynewapp' directory.
 ironman generate template:example:controller ~/mynewapp
 `,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
