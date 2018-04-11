@@ -2,13 +2,16 @@
 
 This guide covers how to get started using Ironman.
 
-## Usage
-
-You can get help by running ```ironman help``` and ```ironman help <command>```
 
 ## Install Ironman
 
 Download a binary release of Ironman from the [releases](https://github.com/ironman-project/ironman/releases) page for your OS and put it under a PATH directory.
+
+
+## Usage
+
+You can get help by running ```ironman help``` and ```ironman help <command>```
+
 
 ## Install an example template
 
@@ -37,7 +40,6 @@ Installed templates
 ```
 
 
-
 ### Generate a new project based on the template
 
 A template might have multiple generators. The default "app" generator will run if you don't specify one, normally this generator generates the base project.
@@ -49,6 +51,7 @@ $ ironman generate simple-gohttp /path/to/app --set projectName="Some project na
 Your new project should be generated under the /path/to/app. Open the directory with your favorite editor and check the results.
 
 You can check the template definition here https://github.com/ironman-project/simple-gohttp-template.
+
 
 #### Inline values and values files
 
@@ -78,6 +81,7 @@ You can also mix it with inline values, which have the higher precedence:
 ```bash
 $ ironman generate simple-gohttp /path/to/app -f /path/to/values.yaml --set projectName="Higher Precedence Project Name"
 ```
+
 
 #### Run the App
 
