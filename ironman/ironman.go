@@ -199,10 +199,16 @@ func (i *Ironman) Uninstall(templateID string) error {
 	}
 
 	if !exists {
-		return errors.Errorf("Template is not installed")
+		return errors.Errorf("template is not installed")
 	}
 
-	err = i.manager.Uninstall(templateID)
+	model, err := i.repository.FindTemplateByID(templateID)
+
+	if err != nil {
+		return errors.Wrapf(err, "failed to get template model %s", templateID)
+	}
+
+	err = i.manager.Uninstall(model.DirectoryName)
 
 	if err != nil {
 		return err
@@ -244,10 +250,16 @@ func (i *Ironman) Update(templateID string) error {
 	}
 
 	if !exists {
-		return errors.Errorf("Template is not installed")
+		return errors.Errorf("template is not installed")
 	}
 
-	err = i.manager.Update(templateID)
+	model, err := i.repository.FindTemplateByID(templateID)
+
+	if err != nil {
+		return errors.Wrapf(err, "failed to get template model %s", templateID)
+	}
+
+	err = i.manager.Update(model.DirectoryName)
 
 	if err != nil {
 		return err
@@ -266,19 +278,19 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 	}
 
 	if !exists {
-		return errors.Errorf("Template is not installed")
+		return errors.Errorf("template is not installed")
 	}
 
 	templateModel, err := i.repository.FindTemplateByID(templateID)
 
 	if err != nil {
-		return errors.Wrapf(err, "Could not find template by ID %s", templateID)
+		return errors.Wrapf(err, "could not find template by ID %s", templateID)
 	}
 
 	genteratorModel := templateModel.Generator(generatorID)
 
 	if genteratorModel == nil {
-		return errors.Errorf("Generator %s does not exists", generatorID)
+		return errors.Errorf("generator %s does not exists", generatorID)
 	}
 
 	absGenerationPath, err := filepath.Abs(generationPath)
@@ -299,7 +311,7 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 		filePath := filepath.Join(baseDir, genteratorModel.FileTypeOptions.FileGenerationRelativePath, fileName)
 
 		if _, err := os.Stat(filePath); err == nil && !force {
-			return errors.Errorf("File already exists %s ", filePath)
+			return errors.Errorf("file already exists %s ", filePath)
 		}
 
 	} else {

@@ -55,7 +55,7 @@ func (r *Manager) Update(id string) error {
 	gitRepo, err := gogit.PlainOpen(templatePath)
 
 	if err != nil {
-		return errors.Wrapf(err, "failed to open template Manager %s", id)
+		return errors.Wrapf(err, "failed to open repository %s", id)
 	}
 
 	// Get the working directory for the Manager
