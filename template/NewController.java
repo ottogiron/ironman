@@ -1,5 +1,0 @@
-/**
- * controller
- */
-public class  FooController {
-}
