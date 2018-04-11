@@ -22,7 +22,7 @@ $ ironman install https://github.com/ironman-project/simple-gohttp-template.git
 ### Generate a new project based on the template
 
 ```bash
-$ ironman generate cobra-cli-template /path/to/generate/myhttp-app --set cliName=mycli,projectName="My CLI",projectDescription="This is an example generated cobra cli project"
+$ ironman generate simple-gohttp /path/to/generate/myhttp-app --set cliName=mycli,projectName="My CLI",projectDescription="This is an example generated cobra cli project"
 ```
 
 Your new project should be generated under the /path/to/generate/myhttp-app. Open the directory with your favorite editor and check the results.
