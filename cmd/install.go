@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"net/url"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -14,10 +12,6 @@ var installCmd = &cobra.Command{
 		if len(args) < 1 {
 			return errors.New("url arg is required")
 		}
-		templateURL := args[0]
-		if _, err := url.Parse(args[0]); err != nil {
-			return errors.Wrapf(err, "Invalid URL %s", templateURL)
-		}
 		return nil
 	},
 	Short: "Installs a template using a git URL",
@@ -27,10 +21,10 @@ Example:
 iroman install https://github.com/ironman-project/template-example.git
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		templateURL := args[0]
+		templateLocator := args[0]
 
-		ilogger().Println("Installing template", templateURL, "...")
-		err := iironman().Install(templateURL)
+		ilogger().Println("Installing template", templateLocator, "...")
+		err := iironman().Install(templateLocator)
 		if err != nil {
 			return err
 		}
