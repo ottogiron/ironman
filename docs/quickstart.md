@@ -6,7 +6,7 @@ This guide covers how to get started using Ironman.
 
 Download a binary release of Ironman from the [releases](https://github.com/ironman-project/ironman/releases) page for your OS and put it under a PATH directory.
 
-## Install an example template
+## Install a example template
 
 In order to install an existing template, use the ```ironman install <template-id>``` command.
 
