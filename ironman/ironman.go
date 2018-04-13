@@ -27,6 +27,7 @@ import (
 const (
 	indexName          = "templates.index"
 	templatesDirectory = "templates"
+	generatorsPath     = "generators"
 )
 
 const validatoinTemplateText = ``
@@ -78,7 +79,7 @@ func New(home string, options ...Option) *Ironman {
 
 	if ir.modelReader == nil {
 		decoder := model.NewDecoder(model.DecoderTypeYAML)
-		modelReader := model.NewFSReader([]string{".git"}, model.MetadataFileExtensionYAML, decoder)
+		modelReader := model.NewFSReader([]string{".git"}, model.MetadataFileExtensionYAML, decoder, generatorsPath)
 		ir.modelReader = modelReader
 	}
 
@@ -117,7 +118,9 @@ func (i *Ironman) Install(templateLocator string) error {
 	model, err := i.modelReader.Read(templatePath)
 
 	if err != nil {
-		return err
+		//rollback manager installation
+		_ = i.manager.Uninstall(ID)
+		return errors.Wrap(err, "failed to read template model")
 	}
 
 	//validate model
@@ -334,7 +337,7 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 		}
 	}
 
-	generatorPath := filepath.Join(i.home, templatesDirectory, templateModel.DirectoryName, genteratorModel.DirectoryName)
+	generatorPath := filepath.Join(i.home, templatesDirectory, templateModel.DirectoryName, generatorsPath, genteratorModel.DirectoryName)
 
 	data := template.GeneratorData{
 		Template:  templateModel,

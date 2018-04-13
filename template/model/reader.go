@@ -26,20 +26,22 @@ type Reader interface {
 }
 
 //NewFSReader returns a new reader based on the type.
-func NewFSReader(ignoreFiles []string, fileExtension MetadataFileExtension, decoder Decoder) Reader {
+func NewFSReader(ignoreFiles []string, fileExtension MetadataFileExtension, decoder Decoder, generatorsPath string) Reader {
 	reader := &fsReader{
 		fileExtension,
 		decoder,
 		ignoreFiles,
+		generatorsPath,
 	}
 
 	return reader
 }
 
 type fsReader struct {
-	fileExtension MetadataFileExtension
-	decoder       Decoder
-	ignoreFiles   []string
+	fileExtension  MetadataFileExtension
+	decoder        Decoder
+	ignoreFiles    []string
+	generatorsPath string
 }
 
 func (r *fsReader) Read(path string) (*Template, error) {
@@ -64,8 +66,8 @@ func (r *fsReader) Read(path string) (*Template, error) {
 		return nil, errors.Wrapf(err, "failed to get absolute path from template path %s", path)
 	}
 	templateModel.DirectoryName = filepath.Base(absolutePath)
-
-	generatorFiles, err := ioutil.ReadDir(path)
+	generatorsPath := filepath.Join(path, r.generatorsPath)
+	generatorFiles, err := ioutil.ReadDir(generatorsPath)
 
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to read available generators for %s", path)
@@ -73,7 +75,7 @@ func (r *fsReader) Read(path string) (*Template, error) {
 
 	for _, generatorFile := range generatorFiles {
 		if generatorFile.IsDir() && !r.ignore(generatorFile.Name()) {
-			generatorMetadataPath := filepath.Join(path, generatorFile.Name(), meatadataFileName+"."+string(r.fileExtension))
+			generatorMetadataPath := filepath.Join(generatorsPath, generatorFile.Name(), meatadataFileName+"."+string(r.fileExtension))
 			generatorMetadataFile, err := os.Open(generatorMetadataPath)
 			if err != nil {
 				if os.IsNotExist(err) {
