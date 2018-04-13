@@ -41,7 +41,6 @@ type generator struct {
 	data           GeneratorData
 	engine         engine.Factory
 	logger         *log.Logger
-	mu             sync.Mutex
 }
 
 //NewGenerator returns a new instance of a generator
@@ -295,10 +294,9 @@ func (g *generator) writeFile(presult processResult) writeResult {
 	//Create directory
 	dir := filepath.Dir(toPath)
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		g.mu.Lock()
-		defer g.mu.Unlock()
+
 		err := os.Mkdir(dir, os.ModePerm)
-		if err != nil {
+		if err != nil && !os.IsExist(err) {
 			return writeResult{err: errors.Wrap(err, "failed to create generation directory")}
 		}
 
