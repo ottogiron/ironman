@@ -10,10 +10,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/ironman-project/ironman/template/engine"
-	"github.com/ironman-project/ironman/template/engine/goengine"
-	"github.com/ironman-project/ironman/template/model"
-	"github.com/ironman-project/ironman/template/values"
+	"github.com/ironman-project/ironman/pkg/template/engine"
+	"github.com/ironman-project/ironman/pkg/template/engine/goengine"
+	"github.com/ironman-project/ironman/pkg/template/model"
+	"github.com/ironman-project/ironman/pkg/template/values"
 	"github.com/pkg/errors"
 )
 

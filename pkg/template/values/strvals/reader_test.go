@@ -4,8 +4,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/ironman-project/ironman/template/values"
-	"github.com/ironman-project/ironman/testutils"
+	"github.com/ironman-project/ironman/pkg/template/values"
+	"github.com/ironman-project/ironman/pkg/testutils"
 )
 
 func Test_reader_Read(t *testing.T) {

@@ -10,17 +10,17 @@ import (
 	"path/filepath"
 	gtemplate "text/template"
 
-	"github.com/ironman-project/ironman/template"
-	"github.com/ironman-project/ironman/template/values"
+	"github.com/ironman-project/ironman/pkg/template"
+	"github.com/ironman-project/ironman/pkg/template/values"
 
-	"github.com/ironman-project/ironman/template/validator"
+	"github.com/ironman-project/ironman/pkg/template/validator"
 
 	"github.com/blevesearch/bleve"
-	"github.com/ironman-project/ironman/template/manager"
-	"github.com/ironman-project/ironman/template/manager/git"
-	"github.com/ironman-project/ironman/template/model"
-	"github.com/ironman-project/ironman/template/repository"
-	brepository "github.com/ironman-project/ironman/template/repository/bleve"
+	"github.com/ironman-project/ironman/pkg/template/manager"
+	"github.com/ironman-project/ironman/pkg/template/manager/git"
+	"github.com/ironman-project/ironman/pkg/template/model"
+	"github.com/ironman-project/ironman/pkg/template/repository"
+	brepository "github.com/ironman-project/ironman/pkg/template/repository/bleve"
 	"github.com/pkg/errors"
 )
 

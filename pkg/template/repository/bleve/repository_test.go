@@ -8,11 +8,11 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/ironman-project/ironman/testutils"
+	"github.com/ironman-project/ironman/pkg/testutils"
 
 	"github.com/blevesearch/bleve"
-	"github.com/ironman-project/ironman/template/model"
-	"github.com/ironman-project/ironman/template/repository"
+	"github.com/ironman-project/ironman/pkg/template/model"
+	"github.com/ironman-project/ironman/pkg/template/repository"
 	uuid "github.com/satori/go.uuid"
 )
 

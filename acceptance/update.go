@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/DATA-DOG/godog"
-	"github.com/ironman-project/ironman/testutils"
+	"github.com/ironman-project/ironman/pkg/testutils"
 	"github.com/rendon/testcli"
 )
 

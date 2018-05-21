@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ironman-project/ironman/template/values/strvals"
+	"github.com/ironman-project/ironman/pkg/template/values/strvals"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	yaml "gopkg.in/yaml.v2"

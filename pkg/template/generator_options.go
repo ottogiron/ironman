@@ -4,7 +4,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/ironman-project/ironman/template/engine"
+	"github.com/ironman-project/ironman/pkg/template/engine"
 )
 
 //GeneratorOption represents a generatorOption setter

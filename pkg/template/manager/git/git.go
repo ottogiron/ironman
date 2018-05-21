@@ -6,7 +6,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/ironman-project/ironman/template/manager"
+	"github.com/ironman-project/ironman/pkg/template/manager"
 	"github.com/pkg/errors"
 	gogit "gopkg.in/src-d/go-git.v4"
 )

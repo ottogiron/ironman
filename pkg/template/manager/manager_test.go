@@ -7,8 +7,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/ironman-project/ironman/template"
-	"github.com/ironman-project/ironman/testutils"
+	"github.com/ironman-project/ironman/pkg/template"
+	"github.com/ironman-project/ironman/pkg/testutils"
 )
 
 var (

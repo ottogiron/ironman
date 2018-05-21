@@ -1,6 +1,6 @@
 package repository
 
-import "github.com/ironman-project/ironman/template/model"
+import "github.com/ironman-project/ironman/pkg/template/model"
 
 //Repository defines basic operations for a template model
 type Repository interface {

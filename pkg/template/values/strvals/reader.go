@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ironman-project/ironman/template/values"
+	"github.com/ironman-project/ironman/pkg/template/values"
 	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v2"
 	"k8s.io/helm/pkg/strvals"

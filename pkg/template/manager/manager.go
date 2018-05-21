@@ -6,7 +6,7 @@ import (
 
 	"io/ioutil"
 
-	"github.com/ironman-project/ironman/template"
+	"github.com/ironman-project/ironman/pkg/template"
 	"github.com/pkg/errors"
 )
 

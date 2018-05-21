@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/ironman-project/ironman/ironman"
+	"github.com/ironman-project/ironman/pkg/ironman"
 	"github.com/mitchellh/go-homedir"
 
 	"github.com/spf13/cobra"

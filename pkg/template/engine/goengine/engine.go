@@ -5,7 +5,7 @@ import (
 	gtemplate "text/template"
 
 	"github.com/Masterminds/sprig"
-	"github.com/ironman-project/ironman/template/engine"
+	"github.com/ironman-project/ironman/pkg/template/engine"
 	"k8s.io/helm/pkg/chartutil"
 )
 

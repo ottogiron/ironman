@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/ironman-project/ironman/testutils"
+	"github.com/ironman-project/ironman/pkg/testutils"
 
-	"github.com/ironman-project/ironman/template/manager"
+	"github.com/ironman-project/ironman/pkg/template/manager"
 )
 
 func newTestGitManager() manager.Manager {

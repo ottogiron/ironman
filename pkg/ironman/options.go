@@ -4,9 +4,9 @@ import (
 	"io"
 	"log"
 
-	"github.com/ironman-project/ironman/template/manager"
-	"github.com/ironman-project/ironman/template/repository"
-	"github.com/ironman-project/ironman/template/validator"
+	"github.com/ironman-project/ironman/pkg/template/manager"
+	"github.com/ironman-project/ironman/pkg/template/repository"
+	"github.com/ironman-project/ironman/pkg/template/validator"
 )
 
 //Option represents an ironman options

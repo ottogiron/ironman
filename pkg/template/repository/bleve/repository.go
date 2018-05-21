@@ -7,8 +7,8 @@ import (
 	"github.com/blevesearch/bleve/document"
 	//Registers the bleve keyword analyzer
 	_ "github.com/blevesearch/bleve/analysis/analyzer/keyword"
-	"github.com/ironman-project/ironman/template/model"
-	"github.com/ironman-project/ironman/template/repository"
+	"github.com/ironman-project/ironman/pkg/template/model"
+	"github.com/ironman-project/ironman/pkg/template/repository"
 	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
 )
