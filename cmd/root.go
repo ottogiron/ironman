@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 
 	"github.com/ironman-project/ironman/pkg/ironman"
-	"github.com/mitchellh/go-homedir"
+	homedir "github.com/mitchellh/go-homedir"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -20,37 +19,40 @@ var cfgFile string
 var ironmanHome string
 var verbose bool
 
-// RootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:           "ironman",
-	Short:         "`Template manager and engine",
-	Long:          `Template manager and engine`,
-	SilenceUsage:  true,
-	SilenceErrors: true,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		initializeIronmanHome()
-	},
-}
+type commandFactory func(client *ironman.Ironman, out io.Writer) *cobra.Command
 
-// Execute adds all child commands to the root command sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, "There was an error", err)
-		os.Exit(-1)
-	}
-}
+func newRootCmd() *cobra.Command {
 
-func initializeIronmanHome() {
-	err := ironman.InitIronmanHome(ironmanHome)
-	if err != nil {
-		fmt.Printf("failed to create ironman home directory %s %s", ironmanHome, err)
-		os.Exit(-1)
+	// RootCmd represents the base command when called without any subcommands
+	var rootCmd = &cobra.Command{
+		Use:           "ironman",
+		Short:         "`Template manager and engine",
+		Long:          `Template manager and engine`,
+		SilenceUsage:  true,
+		SilenceErrors: true,
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			ironman.EnsureIronmanHome(ironmanHome)
+		},
 	}
 
-}
+	//Add the command factory here
+	commandFactories := []commandFactory{
+		newGenerateCommand,
+		newInstallCommand,
+		newLinkCmd,
+		newListCmd,
+		newUninstallCmd,
+		newUnlinkCmd,
+		newUpdateCmd,
+	}
 
-func init() {
+	//add all commands
+	for _, cmdFactory := range commandFactories {
+		rootCmd.AddCommand(cmdFactory(nil, nil))
+	}
+
+	rootCmd.AddCommand(newVersionCmd(os.Stdout))
+
 	cobra.OnInitialize(initConfig)
 
 	// Here you will define your flags and configuration settings.
@@ -66,6 +68,17 @@ func init() {
 	defaultIronmanHomeDir := filepath.Join(defaultHomeDir, ".ironman")
 	rootCmd.PersistentFlags().StringVar(&ironmanHome, "ironman-home", defaultIronmanHomeDir, "ironman home directory")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", true, "verbose output e.g --verbose false")
+	return rootCmd
+}
+
+// Execute adds all child commands to the root command sets flags appropriately.
+// This is called by main.main(). It only needs to happen once to the rootCmd.
+func Execute() {
+	rootCmd := newRootCmd()
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Fprintln(os.Stderr, "There was an error", err)
+		os.Exit(-1)
+	}
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -84,23 +97,27 @@ func initConfig() {
 	}
 }
 
-var thman *ironman.Ironman
-
-func iironman() *ironman.Ironman {
-	if thman == nil {
-		thman = ironman.New(ironmanHome, ironman.SetOutput(ironmanOutput()))
-	}
-
-	return thman
+func ensureIronmanClientAndOutput(client *ironman.Ironman, out io.Writer) (*ironman.Ironman, io.Writer) {
+	return ensureIronmanClient(client), ensureIronmanOutput(out)
 }
 
-var logger *log.Logger
-
-func ilogger() *log.Logger {
-	if logger == nil {
-		logger = log.New(ironmanOutput(), "", 0)
+func ensureIronmanClient(client *ironman.Ironman) *ironman.Ironman {
+	if client == nil {
+		return ironman.New(ironmanHome)
 	}
-	return logger
+	return client
+}
+
+func ensureIronmanOutput(out io.Writer) io.Writer {
+	if out == nil {
+		return ironmanOutput()
+	}
+	return out
+}
+
+func iironman(home string, out io.Writer) *ironman.Ironman {
+	thman := ironman.New(home, ironman.SetOutput(out))
+	return thman
 }
 
 func ironmanOutput() io.Writer {

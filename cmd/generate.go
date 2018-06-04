@@ -3,9 +3,12 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"strings"
+
+	"github.com/ironman-project/ironman/pkg/ironman"
 
 	"github.com/ironman-project/ironman/pkg/template/values/strvals"
 	"github.com/pkg/errors"
@@ -31,25 +34,37 @@ func (v *valueFiles) Set(value string) error {
 	return nil
 }
 
-var values []string
-var stringValues []string
-var forceGeneration bool
-var valFiles valueFiles
+type generateCmd struct {
+	out             io.Writer
+	client          *ironman.Ironman
+	templateID      string
+	generatorID     string
+	path            string
+	values          []string
+	stringValues    []string
+	forceGeneration bool
+	valFiles        valueFiles
+}
 
-// generateCmd represents the generate command
-var generateCmd = &cobra.Command{
-	Use: "generate <template>:<generator> <destination_path>",
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			return errors.New("template ID arg is required")
-		}
-		return nil
-	},
-	Short: `Generates a new project based on an installed template using a template generator.
+func newGenerateCommand(client *ironman.Ironman, out io.Writer) *cobra.Command {
+	generate := &generateCmd{
+		out:    out,
+		client: client,
+	}
+	// generateCmd represents the generate command
+	var generateCmd = &cobra.Command{
+		Use: "generate <template>:<generator> <destination_path>",
+		Args: func(cmd *cobra.Command, args []string) error {
+			if len(args) < 1 {
+				return errors.New("template ID arg is required")
+			}
+			return nil
+		},
+		Short: `Generates a new project based on an installed template using a template generator.
 			If no generator was given, it will use 'app' by default.
 			It will generate the project on the destination path received (it should not exists) and
 			if no destination path was given it will generate the project on the current directory.`,
-	Long: `Generates a new project based on an installed template using a template generator.
+		Long: `Generates a new project based on an installed template using a template generator.
 If no generator was given, it will use 'app' by default.
 It will generate the project on the destination path received (it should not exists) and
 if no destination path was given it will generate the project on the current directory.
@@ -72,71 +87,76 @@ ironman generate template-example ~/mynewapp
 # and it will generate the files on the '~/mynewapp' directory.
 ironman generate template:example:controller ~/mynewapp
 `,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		//TODO: validate we can create the project folder and if exists it should be empty
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			//TODO: validate we can create the project folder and if exists it should be empty
 
-		//We need a destination path variable (defaults to current folder)
-		//If we use current folder, then it should be empty
+			//We need a destination path variable (defaults to current folder)
+			//If we use current folder, then it should be empty
 
-		//If destination path was given:
-		//It should not exists or
-		//It can exists but it should be empty (?)
+			//If destination path was given:
+			//It should not exists or
+			//It can exists but it should be empty (?)
 
-		//Find template
+			//Find template
 
-		//Load template
+			//Load template
 
-		//Gatter user input
+			//Gatter user input
 
-	},
-	PreRun: func(cmd *cobra.Command, args []string) {
-		//TODO: we need to run the "pre generate" commands
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		templateTokens := strings.Split(args[0], ":")
-		templateID := templateTokens[0]
-		generatorID := "app"
-		path := "."
-		if len(templateTokens) > 2 {
-			return errors.Errorf("The generator format should be <template>:<generator>")
-		}
+		},
+		PreRun: func(cmd *cobra.Command, args []string) {
+			//TODO: we need to run the "pre generate" commands
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
 
-		if len(templateTokens) == 2 {
-			generatorID = templateTokens[1]
-		}
+			templateTokens := strings.Split(args[0], ":")
+			templateID := templateTokens[0]
+			generatorID := "app"
+			path := "."
+			if len(templateTokens) > 2 {
+				return errors.Errorf("The generator format should be <template>:<generator>")
+			}
 
-		if len(args) == 2 {
-			path = args[1]
-		}
+			if len(templateTokens) == 2 {
+				generatorID = templateTokens[1]
+			}
 
-		valuesReader := strvals.New(valFiles, values)
-		values, err := valuesReader.Read()
+			if len(args) == 2 {
+				path = args[1]
+			}
 
-		if err != nil {
-			return err
-		}
+			generate.templateID = templateID
+			generate.generatorID = generatorID
+			generate.path = path
+			generate.client, generate.out = ensureIronmanClientAndOutput(generate.client, generate.out)
+			return generate.run()
+		},
+		PostRun: func(cmd *cobra.Command, args []string) {
+			//TODO: we need to run the "post generate" commands
+		},
+	}
 
-		ilogger().Println("Running template generator", generatorID)
-		err = iironman().Generate(context.Background(), templateID, generatorID, path, values, forceGeneration)
-		if err != nil {
-			return err
-		}
-		ilogger().Println("Done")
+	f := generateCmd.Flags()
+	f.StringArrayVar(&generate.values, "set", []string{}, "set values on the command line (can specify multiple or separate values with commas: key1=val1,key2=val2)")
+	f.VarP(&generate.valFiles, "values", "f", "specify values in a YAML file (can specify multiple)")
+	f.BoolVar(&generate.forceGeneration, "force", false, "Forces generation even if directory or file exists. e.g ironman generate --force template /generation/path")
 
-		return nil
-	},
-	PostRun: func(cmd *cobra.Command, args []string) {
-		//TODO: we need to run the "post generate" commands
-	},
+	return generateCmd
 }
 
-func init() {
-	rootCmd.AddCommand(generateCmd)
-	f := generateCmd.Flags()
-	f.StringArrayVar(&values, "set", []string{}, "set values on the command line (can specify multiple or separate values with commas: key1=val1,key2=val2)")
-	f.VarP(&valFiles, "values", "f", "specify values in a YAML file (can specify multiple)")
-	f.BoolVar(&forceGeneration, "force", false, "Forces generation even if directory or file exists. e.g ironman generate --force template /generation/path")
-
+func (g *generateCmd) run() error {
+	valuesReader := strvals.New(g.valFiles, g.values)
+	values, err := valuesReader.Read()
+	if err != nil {
+		return err
+	}
+	fmt.Fprintln(g.out, "Running template generator", g.generatorID)
+	err = g.client.Generate(context.Background(), g.templateID, g.generatorID, g.path, values, g.forceGeneration)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintln(g.out, "Done")
+	return nil
 }
 
 // vals merges values from files specified via -f/--values and

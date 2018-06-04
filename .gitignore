@@ -33,5 +33,5 @@ build/dist
 debug
 coverage.html
 template/manager/git/testing/templates
-test-template
+test-gen
 debug

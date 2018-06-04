@@ -1,7 +1,6 @@
 package testutils
 
 import (
-	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -36,19 +35,19 @@ func FileExists(path string) bool {
 }
 
 //CopyDir copies a directory recursively to a destination directory
-func CopyDir(source string, dest string) (err error) {
+func CopyDir(source string, dest string, t *testing.T) {
 
 	// get properties of source dir
 	sourceinfo, err := os.Stat(source)
 	if err != nil {
-		return err
+		t.Fatal(err)
 	}
 
 	// create dest dir
 
 	err = os.MkdirAll(dest, sourceinfo.Mode())
 	if err != nil {
-		return err
+		t.Fatal(err)
 	}
 
 	directory, _ := os.Open(source)
@@ -63,16 +62,11 @@ func CopyDir(source string, dest string) (err error) {
 
 		if obj.IsDir() {
 			// create sub-directories - recursively
-			err = CopyDir(sourcefilepointer, destinationfilepointer)
-			if err != nil {
-				fmt.Println(err)
-			}
+			CopyDir(sourcefilepointer, destinationfilepointer, t)
+
 		} else {
 			// perform copy
-			err = CopyFile(sourcefilepointer, destinationfilepointer)
-			if err != nil {
-				fmt.Println(err)
-			}
+			CopyFile(sourcefilepointer, destinationfilepointer, t)
 		}
 
 	}
@@ -80,17 +74,17 @@ func CopyDir(source string, dest string) (err error) {
 }
 
 //CopyFile copies a source file to a destination file
-func CopyFile(source string, dest string) (err error) {
+func CopyFile(source string, dest string, t *testing.T) {
 	sourcefile, err := os.Open(source)
 	if err != nil {
-		return err
+		t.Fatal(err)
 	}
 
 	defer sourcefile.Close()
 
 	destfile, err := os.Create(dest)
 	if err != nil {
-		return err
+		t.Fatal(err)
 	}
 
 	defer destfile.Close()
