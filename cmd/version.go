@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"fmt"
+	"io"
+
 	"github.com/spf13/cobra"
 )
 
@@ -10,16 +13,19 @@ var (
 	buildDate    string
 )
 
-// versionCmd represents the version command
-var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Print the version number of Ironman",
-	Long:  `All software has versions. This is Ironman's.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		ilogger().Printf("Ironman %s-%s Build date: %s\n", buildVersion, buildCommit, buildDate)
-	},
+type versionCmd struct {
 }
 
-func init() {
-	rootCmd.AddCommand(versionCmd)
+func newVersionCmd(out io.Writer) *cobra.Command {
+	// versionCmd represents the version command
+	var versionCmd = &cobra.Command{
+		Use:   "version",
+		Short: "Print the version number of Ironman",
+		Long:  `All software has versions. This is Ironman's.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Fprintf(out, "Ironman %s-%s Build date: %s\n", buildVersion, buildCommit, buildDate)
+		},
+	}
+	return versionCmd
+
 }

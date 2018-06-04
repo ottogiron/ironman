@@ -47,6 +47,7 @@ type Ironman struct {
 
 //New returns a new instance of ironman
 func New(home string, options ...Option) *Ironman {
+
 	logger := log.New(os.Stdout, "", 0)
 
 	ir := &Ironman{home: home, logger: logger, output: os.Stdout}
@@ -54,7 +55,6 @@ func New(home string, options ...Option) *Ironman {
 	for _, option := range options {
 		option(ir)
 	}
-
 	var err error
 	ir.validationTempl, err = gtemplate.New("validationTemplate").Parse(validatoinTemplateText)
 	if err != nil {
@@ -68,6 +68,7 @@ func New(home string, options ...Option) *Ironman {
 
 	if ir.repository == nil {
 		indexPath := filepath.Join(home, indexName)
+
 		index, err := buildIndex(indexPath)
 		if err != nil {
 			ir.logger.Fatal("failed to create ironman templates index", err)
@@ -202,7 +203,7 @@ func (i *Ironman) Uninstall(templateID string) error {
 	}
 
 	if !exists {
-		return errors.Errorf("template is not installed")
+		return errors.Errorf("template %s is not installed")
 	}
 
 	model, err := i.repository.FindTemplateByID(templateID)
@@ -253,7 +254,7 @@ func (i *Ironman) Update(templateID string) error {
 	}
 
 	if !exists {
-		return errors.Errorf("template is not installed")
+		return errors.Errorf("template '%s' is not installed", templateID)
 	}
 
 	model, err := i.repository.FindTemplateByID(templateID)
@@ -281,7 +282,7 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 	}
 
 	if !exists {
-		return errors.Errorf("template is not installed")
+		return errors.Errorf("template '%s' is not installed", templateID)
 	}
 
 	templateModel, err := i.repository.FindTemplateByID(templateID)
@@ -373,8 +374,25 @@ func isDirEmpty(name string) (bool, error) {
 	return false, err // Either not empty or error, suits both cases
 }
 
-//InitIronmanHome inits the ironman home directory
-func InitIronmanHome(ironmanHome string) error {
+//EnsureIronmanHome ensures the ironman home directory
+func (i *Ironman) EnsureIronmanHome() error {
+	if _, err := os.Stat(i.home); os.IsNotExist(err) {
+		err := os.Mkdir(i.home, os.ModePerm)
+		if err != nil {
+			return errors.Wrapf(err, "failed to initialize ironman home '%s'", i.home)
+		}
+
+		err = os.Mkdir(filepath.Join(i.home, templatesDirectory), os.ModePerm)
+
+		if err != nil {
+			return errors.Wrapf(err, "failed to initialize ironman home '%s'", i.home)
+		}
+	}
+	return nil
+}
+
+//EnsureIronmanHome inits the ironman home directory
+func EnsureIronmanHome(ironmanHome string) error {
 	if _, err := os.Stat(ironmanHome); os.IsNotExist(err) {
 		err := os.Mkdir(ironmanHome, os.ModePerm)
 		if err != nil {

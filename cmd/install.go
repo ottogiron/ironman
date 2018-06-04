@@ -1,48 +1,55 @@
 package cmd
 
 import (
+	"fmt"
+	"io"
+
+	"github.com/ironman-project/ironman/pkg/ironman"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
-// installCmd represents the install command
-var installCmd = &cobra.Command{
-	Use: "install <url>",
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			return errors.New("url arg is required")
-		}
-		return nil
-	},
-	Short: "Installs a template using a git URL",
-	Long: `Installs a template using a git URL:
+type installCmd struct {
+	out             io.Writer
+	client          *ironman.Ironman
+	templateLocator string
+}
+
+func newInstallCommand(client *ironman.Ironman, out io.Writer) *cobra.Command {
+	install := &installCmd{
+		out:    out,
+		client: client,
+	}
+	// installCmd represents the install command
+	var installCmd = &cobra.Command{
+		Use: "install <url>",
+		Args: func(cmd *cobra.Command, args []string) error {
+			if len(args) < 1 {
+				return errors.New("url arg is required")
+			}
+			return nil
+		},
+		Short: "Installs a template using a git URL",
+		Long: `Installs a template using a git URL:
 
 Example:
 iroman install https://github.com/ironman-project/template-example.git
 `,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		templateLocator := args[0]
-
-		ilogger().Println("Installing template", templateLocator, "...")
-		err := iironman().Install(templateLocator)
-		if err != nil {
-			return err
-		}
-		ilogger().Println("Done")
-		return nil
-	},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			install.templateLocator = args[0]
+			install.client, install.out = ensureIronmanClientAndOutput(install.client, install.out)
+			return install.run()
+		},
+	}
+	return installCmd
 }
 
-func init() {
-	rootCmd.AddCommand(installCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// installCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// installCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func (i *installCmd) run() error {
+	fmt.Fprintln(i.out, "Installing template", i.templateLocator, "...")
+	err := i.client.Install(i.templateLocator)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintln(i.out, "Done")
+	return nil
 }
