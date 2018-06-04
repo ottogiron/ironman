@@ -32,7 +32,7 @@ func TestGenerateCmd(t *testing.T) {
 			[]string{"valid", "test-gen"},
 			[]string{""},
 			"",
-			false,
+			true,
 		},
 	}
 	runCmdTests(t, tests, func(client *ironman.Ironman, out io.Writer) *cobra.Command {
