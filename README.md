@@ -1,5 +1,5 @@
 <p align="center">
-  <img style="float: right;" src="ironman.png" alt="Ironman logo"/>
+ <img style="float: right;" src="ironman.png" alt="Ironman logo"/>
 </p>
 
 # Ironman 
@@ -8,25 +8,24 @@
 [![GoDoc](https://godoc.org/github.com/ironman-project/ironman?status.svg)](https://godoc.org/github.com/ironman-project/ironman)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ironman-project/ironman)](https://goreportcard.com/report/github.com/ironman-project/ironman)
 
-**Ironman** is a CLI tool that provides an easy way to create and share project templates hosted in git repositories for any regular document based project. Install and generate a new document based project using  **Ironman Templates** in seconds.
+**Ironman**  is CLI tool that provides a way to define and share project templates hosted in git repositories. Install and generate a new document based project using  **Ironman Templates** in seconds.
 
 ## Features 
 
-  * Develop  Ironman based templates.
-  * Manage local Ironman templates from remote sources (install, uninstall, upgrade) (git repositories)
-  * Generate new projects based on ironman you or someone else created.
+ * Develop  Ironman based templates.
+ * Manage local Ironman templates from remote sources (install, uninstall, upgrade) (git repositories)
+ * Generate new projects based on ironman you or someone else created.
 
 ## Motivation
 
-Let’s say you are about to start a new cool project, you need a common project directories structure, a few dozens of files,  every time you have to change README titles/subtitles, specific app identifiers, documentation URL’s and so on to get started with a new app.  What if you work with one or many teams and you want to provide an easy way to share common project templates and enforce common development good practices and standards.  How would you solve this repetitive task ? 
-
-A way could be keeping your project "templates" in a git repo so everyone can clone their own copy and make the necessary changes to adapt those changes to their needs. From my own experience that could lead to people not knowing what changes they need to do in order to get a custom “correct” project,  also rapidly outdated templates no one knows they even exists.
-
+You are about to start a new project, with a common project structure, and few dozens of files.  Every time you have to change titles/subtitles, app identifiers, docs URL’s to get started. If you work with one or more teams, how do you enforce common standards?.  This is a repetitive task, how would you solve it?
+ 
+An option is a git repo, everyone can clone their own copy and make the necessary to adapt it to their needs. From my experience that can lead to people not knowing the changes, they need to do to get a custom “correct” project. Also, outdated templates no one knows they even exist.
 ## Here comes the hero 
 
-**Ironman** provides an easy to use declarative framework for you to define **Ironman Templates**. **Ironman templates** can then be hosted in a git repository.
+**Ironman** provides a declarative framework for you to define **Ironman Templates**. You can host **Ironman templates** in a git repository.
 
-**Ironman Templates** can be  administered (installed, upgraded, removed) using the **Ironman CLI**. Once a template is installed you can easily generate new projects based on that template as many times as you want in a repetitive and reliable way, then share them with anyone with an standard git URL. 
+**Ironman Templates** can be managed (installed, upgraded, removed) using the **Ironman CLI**. With an installed template you can generate new projects many times as you want in a repetitive and reliable way. Share a template using a standard git URL.
 
 ## Install
 
@@ -36,7 +35,7 @@ Binary download is available for the following OS's
 * OSX
 * Windows
 
-Download the your specific  binary from tar file from the [releases](https://github.com/ironman-project/ironman/releases) page
+Download your specific  binary from tar file from the [releases](https://github.com/ironman-project/ironman/releases) page
 
 Unpack the binary and add it to your PATH.
 
@@ -47,7 +46,8 @@ $ ironman version
 Ironman vv0.1.1-5d02c19 Build date: 20180411.034900
 ``` 
 
-Run ```ironman help``` or ```ironman help <command>``` to get help about additional commands.
+Run ```ironman help``` or ```ironman help <command>``` to get help about more commands.
+
 
 
 ## Docs
