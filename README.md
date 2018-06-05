@@ -43,7 +43,7 @@ Unpack the binary and add it to your PATH.
 
 ```bash
 $ ironman version
-Ironman vv0.1.1-5d02c19 Build date: 20180411.034900
+Ironman v0.1.1-5d02c19 Build date: 20180411.034900
 ``` 
 
 Run ```ironman help``` or ```ironman help <command>``` to get help about more commands.

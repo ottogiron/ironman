@@ -3,9 +3,11 @@
 This guide covers how to get started using Ironman.
 
 
+
 ## Install Ironman
 
 Download a binary release of Ironman from the [releases](https://github.com/ironman-project/ironman/releases) page for your OS and put it under a PATH directory.
+
 
 
 ## Usage
@@ -13,11 +15,13 @@ Download a binary release of Ironman from the [releases](https://github.com/iron
 You can get help by running ```ironman help``` and ```ironman help <command>```
 
 
+
 ## Install an example template
 
-In order to install an existing template, use the ```ironman install <template-id>``` command.
+To install an existing template, use the ```ironman install <template-id>``` command.
 
-We will install an template in order to create the base project structure for a  [Go HTTP](https://golang.org/pkg/net/http/) app.
+We will install a template to create the base project structure for a  [Go HTTP](https://golang.org/pkg/net/http/) app.
+
 
 
 ### Install the Go HTTP Server example template
@@ -35,22 +39,24 @@ Installed templates
 |      ID       |          NAME           |          DESCRIPTION           |
 +---------------+-------------------------+--------------------------------+
 | simple-gohttp | Simple Go HTTP Template | A simple HTTP Go library       |
-|               |                         | template                       |
+| | | template                       |
 +---------------+-------------------------+--------------------------------+
 ```
 
 
+
 ### Generate a new project based on the template
 
-A template might have multiple generators. The default "app" generator will run if you don't specify one, normally this generator generates the base project.
+A template might have many generators. The default "app" generator will run if you don't specify one. The app generator generates the base project within this template.
 
 ```bash
 $ ironman generate simple-gohttp /path/to/app --set projectName="Some project name",projectDescription="Some project description"
 ```
 
-Your new project should be generated under the /path/to/app. Open the directory with your favorite editor and check the results.
+The generated project will be under the /path/to/app. Open the directory with your favorite editor and check the results.
 
 You can check the template definition here https://github.com/ironman-project/simple-gohttp-template.
+
 
 
 #### Inline values and values files
@@ -83,9 +89,10 @@ $ ironman generate simple-gohttp /path/to/app -f /path/to/values.yaml --set proj
 ```
 
 
+
 #### Run the App
 
-This step (and only this step) requires go to be installed (https://golang.org/), since the generated application is written in go. You could've created your own templates for different project types/languages, since Ironman is not limited to any specific language. 
+Go is necessary for this step (https://golang.org/), given the generated application is Go app. 
 
 ```bash
 cd /path/to/app
@@ -93,7 +100,8 @@ go build
 $ ./app #will run the http server
 ```
 
-go to http://localhost:8080, and you should see the the message "Hello World"
+go to http://localhost:8080, and you should see the message "Hello World"
+
 
 
 ### Generate a new endpoint file using the template "endpoint" generator
@@ -114,5 +122,3 @@ $ ./app #will run the http server
 ```
 
 You should be able to reach your new endpoint http://localhost:8080/myendpoint
-
-
