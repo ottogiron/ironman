@@ -49,11 +49,7 @@ func runCmdTests(t *testing.T, tests []cmdTestCase, cmdFactory testCmdFactory) {
 			testutils.CopyDir("testing/ihome", tempHome, t)
 			client := ironman.New(tempHome)
 			defer func() {
-				err := os.RemoveAll(tempHome)
-				if err != nil {
-					t.Fatal("Failed to remove test ironman home", err)
-				}
-
+				_ = os.RemoveAll(tempHome)
 			}()
 			cmd := cmdFactory(client, &buf)
 			cmd.ParseFlags(tt.flags)
