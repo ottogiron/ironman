@@ -92,7 +92,7 @@ $ ironman generate simple-gohttp /path/to/app -f /path/to/values.yaml --set proj
 
 #### Run the App
 
-Go is necessary for this step (https://golang.org/), given the generated application is Go app. 
+Go is necessary for this step (https://golang.org/), given the generated application is a Go app. 
 
 ```bash
 cd /path/to/app
