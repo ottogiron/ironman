@@ -47,7 +47,7 @@ Installed templates
 
 ### Generate a new project based on the template
 
-A template might have many generators. The default "app" generator will run if you don't specify one. The app generator of this template  generates the base project.
+A template might have many generators. The default "app" generator will run if you don't specify one. The app generator of this template generates the base project.
 
 ```bash
 $ ironman generate simple-gohttp /path/to/app --set projectName="Some project name",projectDescription="Some project description"
