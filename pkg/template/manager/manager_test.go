@@ -25,10 +25,8 @@ func createTestTemplate(t *testing.T, names ...string) (string, func()) {
 	sourcePath := filepath.Join(testManagerPath, testTemplatesDirectory, "base")
 	for _, name := range names {
 		destPath := filepath.Join(tempManager, name)
-		err = testutils.CopyDir(sourcePath, destPath)
-		if err != nil {
-			t.Fatalf("failed to create test template %s", err)
-		}
+		testutils.CopyDir(sourcePath, destPath, t)
+
 	}
 
 	return tempManager, func() {
