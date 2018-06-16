@@ -108,18 +108,18 @@ func (b *BaseManager) Link(templatePath string, templateID string) (string, erro
 	linkPath := b.TemplateLocation(templateID)
 
 	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
-		return "", errors.Wrapf(err, " 1 failed to create symlink to ironman manager path should %s exists ", templatePath)
+		return "", errors.Wrapf(err, "failed to create symlink to ironman manager path should %s exists ", templatePath)
 	}
 
 	absTemplatePath, err := filepath.Abs(templatePath)
 
 	if err != nil {
-		return "", errors.Wrapf(err, "2 failed to create symlink to ironman manager for %s with ID %s", templatePath, templateID)
+		return "", errors.Wrapf(err, "failed to create symlink to ironman manager for %s with ID %s", templatePath, templateID)
 	}
 
 	err = os.Symlink(absTemplatePath, linkPath)
 	if err != nil {
-		return "", errors.Wrapf(err, "3 failed to create symlink to ironman manager for %s with ID %s", templatePath, templateID)
+		return "", errors.Wrapf(err, "failed to create symlink to ironman manager for %s with ID %s", templatePath, templateID)
 	}
 
 	return linkPath, nil

@@ -4,55 +4,47 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"path/filepath"
 	"testing"
 
-	"github.com/spf13/cobra"
-
-	"github.com/ironman-project/ironman/pkg/ironman"
-
 	testhelpers "github.com/ironman-project/ironman/cmd/testing"
+	"github.com/ironman-project/ironman/pkg/ironman"
 	"github.com/ironman-project/ironman/pkg/testutils"
+	"github.com/spf13/cobra"
 )
 
 //Pre-installs a template for running tests
-func setUpGenerateCmd(t *testing.T, client *ironman.Ironman, testCase testhelpers.CmdTestCase) {
+func setUpUninstallCmd(t *testing.T, client *ironman.Ironman, testCase testhelpers.CmdTestCase) {
 	installCmd := newInstallCommand(client, ioutil.Discard)
 	//equivalent to "ironman install https://github.com/ironman-project/template-example.git"
 	args := []string{"https://github.com/ironman-project/template-example.git"}
 	testhelpers.RunTestCmd(installCmd, t, args, nil)
 }
 
-func TestGenerateCmd(t *testing.T) {
+func TestUninstallCmd(t *testing.T) {
 	tempGenerateDir := testutils.CreateTempDir("temp-generate", t)
 	defer func() {
 		_ = os.RemoveAll(tempGenerateDir)
 	}()
+
+	//Tests with pre installed template
 	tests := []testhelpers.CmdTestCase{
 		{
-			Name:     "successful generate",
-			Args:     []string{"template-example", filepath.Join(tempGenerateDir, "test-gen")},
+			Name:     "Uninstall existing templates",
+			Args:     []string{"template-example"},
 			Flags:    []string{""},
-			Expected: "Running template generator app\nDone\n",
+			Expected: "Uninstalling template template-example",
 			Err:      false,
 		},
 		{
-			Name:     "successful generate with parameters",
-			Args:     []string{"template-example", filepath.Join(tempGenerateDir, "test-gen-with-parameters")},
-			Flags:    []string{"--set", "key=value"},
-			Expected: "Running template generator app\nDone\n",
-			Err:      false,
-		},
-		{
-			Name:     "template id required",
+			Name:     "Uninstall non existing ID",
 			Args:     []string{},
-			Flags:    []string{},
-			Expected: "",
+			Flags:    []string{""},
+			Expected: "Template ID is required",
 			Err:      true,
 		},
 	}
 	testhelpers.RunCmdTests(t, tests, func(client *ironman.Ironman, out io.Writer) *cobra.Command {
-		return newGenerateCommand(client, out)
-	}, setUpGenerateCmd, nil)
+		return newUninstallCmd(client, out)
+	}, setUpUninstallCmd, nil)
 
 }

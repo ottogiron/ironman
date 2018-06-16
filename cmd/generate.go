@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
-	"os"
 	"strings"
 
 	"github.com/ironman-project/ironman/pkg/ironman"
@@ -13,8 +11,6 @@ import (
 	"github.com/ironman-project/ironman/pkg/template/values/strvals"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	yaml "gopkg.in/yaml.v2"
-	helmstrvals "k8s.io/helm/pkg/strvals"
 )
 
 type valueFiles []string
@@ -87,26 +83,6 @@ ironman generate template-example ~/mynewapp
 # and it will generate the files on the '~/mynewapp' directory.
 ironman generate template:example:controller ~/mynewapp
 `,
-		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			//TODO: validate we can create the project folder and if exists it should be empty
-
-			//We need a destination path variable (defaults to current folder)
-			//If we use current folder, then it should be empty
-
-			//If destination path was given:
-			//It should not exists or
-			//It can exists but it should be empty (?)
-
-			//Find template
-
-			//Load template
-
-			//Gatter user input
-
-		},
-		PreRun: func(cmd *cobra.Command, args []string) {
-			//TODO: we need to run the "pre generate" commands
-		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			templateTokens := strings.Split(args[0], ":")
@@ -131,9 +107,6 @@ ironman generate template:example:controller ~/mynewapp
 			generate.client, generate.out = ensureIronmanClientAndOutput(generate.client, generate.out)
 			return generate.run()
 		},
-		PostRun: func(cmd *cobra.Command, args []string) {
-			//TODO: we need to run the "post generate" commands
-		},
 	}
 
 	f := generateCmd.Flags()
@@ -157,79 +130,4 @@ func (g *generateCmd) run() error {
 	}
 	fmt.Fprintln(g.out, "Done")
 	return nil
-}
-
-// vals merges values from files specified via -f/--values and
-// directly via --set, marshaling them to YAML
-func vals(valueFiles valueFiles, values []string) ([]byte, error) {
-	base := map[string]interface{}{}
-
-	// User specified a values files via -f/--values
-	for _, filePath := range valueFiles {
-		currentMap := map[string]interface{}{}
-
-		var bytes []byte
-		var err error
-		if strings.TrimSpace(filePath) == "-" {
-			bytes, err = ioutil.ReadAll(os.Stdin)
-		} else {
-			bytes, err = readFile(filePath)
-		}
-
-		if err != nil {
-			return []byte{}, err
-		}
-
-		if err := yaml.Unmarshal(bytes, &currentMap); err != nil {
-			return []byte{}, fmt.Errorf("failed to parse %s: %s", filePath, err)
-		}
-		// Merge with the previous map
-		base = mergeValues(base, currentMap)
-	}
-
-	// User specified a value via --set
-	for _, value := range values {
-		if err := helmstrvals.ParseInto(value, base); err != nil {
-			return []byte{}, fmt.Errorf("failed parsing --set data: %s", err)
-		}
-	}
-
-	return yaml.Marshal(base)
-}
-
-//readFile load a file from the local directory or a remote file with a url.
-func readFile(filePath string) ([]byte, error) {
-	return ioutil.ReadFile(filePath)
-}
-
-// Merges source and destination map, preferring values from the source map
-func mergeValues(dest map[string]interface{}, src map[string]interface{}) map[string]interface{} {
-	for k, v := range src {
-		// If the key doesn't exist already, then just set the key to that value
-		if _, exists := dest[k]; !exists {
-			dest[k] = v
-			continue
-		}
-		nextMap, ok := v.(map[string]interface{})
-		// If it isn't another map, overwrite the value
-		if !ok {
-			dest[k] = v
-			continue
-		}
-		// If the key doesn't exist already, then just set the key to that value
-		if _, exists := dest[k]; !exists {
-			dest[k] = nextMap
-			continue
-		}
-		// Edge case: If the key exists in the destination, but isn't a map
-		destMap, isMap := dest[k].(map[string]interface{})
-		// If the source map has a map for this key, prefer it
-		if !isMap {
-			dest[k] = v
-			continue
-		}
-		// If we got to this point, it is a map in both, so merge them
-		dest[k] = mergeValues(destMap, nextMap)
-	}
-	return dest
 }

@@ -14,6 +14,12 @@ import (
 	"github.com/spf13/viper"
 )
 
+var (
+	buildVersion string
+	buildCommit  string
+	buildDate    string
+)
+
 //Commands global variables
 var cfgFile string
 var ironmanHome string
@@ -51,7 +57,8 @@ func newRootCmd() *cobra.Command {
 		rootCmd.AddCommand(cmdFactory(nil, nil))
 	}
 
-	rootCmd.AddCommand(newVersionCmd(os.Stdout))
+	//Version command special case
+	rootCmd.AddCommand(newVersionCmd(buildVersion, buildCommit, buildDate, os.Stdout))
 
 	cobra.OnInitialize(initConfig)
 

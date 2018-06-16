@@ -39,7 +39,6 @@ type Ironman struct {
 	repository             repository.Repository
 	home                   string
 	validators             []validator.Validator
-	logger                 *log.Logger
 	output                 io.Writer
 	validationTempl        *gtemplate.Template
 	validationTemplateText string
@@ -48,9 +47,7 @@ type Ironman struct {
 //New returns a new instance of ironman
 func New(home string, options ...Option) *Ironman {
 
-	logger := log.New(os.Stdout, "", 0)
-
-	ir := &Ironman{home: home, logger: logger, output: os.Stdout}
+	ir := &Ironman{home: home, output: os.Stdout}
 
 	for _, option := range options {
 		option(ir)
@@ -58,7 +55,7 @@ func New(home string, options ...Option) *Ironman {
 	var err error
 	ir.validationTempl, err = gtemplate.New("validationTemplate").Parse(validatoinTemplateText)
 	if err != nil {
-		ir.logger.Fatalf("failed to initialize validation errors template %s", err)
+		log.Fatalf("failed to initialize validation errors template %s", err)
 	}
 
 	if ir.manager == nil {
@@ -71,7 +68,7 @@ func New(home string, options ...Option) *Ironman {
 
 		index, err := buildIndex(indexPath)
 		if err != nil {
-			ir.logger.Fatal("failed to create ironman templates index", err)
+			log.Fatal("failed to create ironman templates index", err)
 		}
 		ir.repository = brepository.New(
 			brepository.SetIndex(index),

@@ -26,7 +26,7 @@ func newUninstallCmd(client *ironman.Ironman, out io.Writer) *cobra.Command {
 		Use: "uninstall <template_ID>",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) < 1 {
-				return errors.New("ID arg is required")
+				return errors.New("Template ID is required")
 			}
 
 			return nil

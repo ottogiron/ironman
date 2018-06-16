@@ -17,6 +17,14 @@ func CreateTempDir(prefix string, t *testing.T) string {
 	return name
 }
 
+//CreateDir Creates a directory in the path
+func CreateDir(name string, t *testing.T) {
+	err := os.Mkdir(name, os.ModePerm)
+	if err != nil {
+		t.Fatalf("Could not create temp directory %s %s", err, name)
+	}
+}
+
 //ReadFile reads a fixture from  a "fixtures" directory relative to the current file
 func ReadFile(t *testing.T, path ...string) string {
 	b, err := ioutil.ReadFile(filepath.Join(path...))

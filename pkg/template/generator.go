@@ -3,8 +3,9 @@ package template
 import (
 	"bytes"
 	"context"
+	"fmt"
+	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -40,7 +41,7 @@ type generator struct {
 	ignore         []string
 	data           GeneratorData
 	engine         engine.Factory
-	logger         *log.Logger
+	out            io.Writer
 }
 
 //NewGenerator returns a new instance of a generator
@@ -54,7 +55,7 @@ func NewGenerator(path string, generationPath string, data GeneratorData, option
 		engine: func() engine.Engine {
 			return goengine.New("ironman")
 		},
-		logger: log.New(os.Stdout, "", 0),
+		out: os.Stdout,
 	}
 
 	for _, option := range options {
@@ -289,7 +290,7 @@ func (g *generator) writeFile(presult processResult) writeResult {
 		return writeResult{pathFrom: presult.templatePathResult.path, pathTo: toPath}
 	}
 
-	g.logger.Print("Writing... ", toPath)
+	fmt.Fprint(g.out, "Writing... ", toPath)
 
 	//Create directory
 	dir := filepath.Dir(toPath)

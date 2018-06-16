@@ -2,7 +2,6 @@ package template
 
 import (
 	"io"
-	"log"
 
 	"github.com/ironman-project/ironman/pkg/template/engine"
 )
@@ -11,9 +10,9 @@ import (
 type GeneratorOption func(*generator)
 
 //SetGeneratorOutput sets the generator logger
-func SetGeneratorOutput(output io.Writer) GeneratorOption {
+func SetGeneratorOutput(out io.Writer) GeneratorOption {
 	return func(generator *generator) {
-		generator.logger = log.New(output, "", 0)
+		generator.out = out
 	}
 }
 
