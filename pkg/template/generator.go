@@ -19,7 +19,7 @@ import (
 )
 
 //arbitrary number
-const noGeneratorWorkers = 1
+const noGeneratorWorkers = 20
 
 //GeneratorData represents the data to be passed to each generator file template
 type GeneratorData struct {
