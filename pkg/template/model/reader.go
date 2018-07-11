@@ -47,6 +47,7 @@ type fsReader struct {
 func (r *fsReader) Read(path string) (*Template, error) {
 	rootIronmanMetadataPath := filepath.Join(path, meatadataFileName+"."+string(r.fileExtension))
 	rootIronmanTemplateFile, err := os.Open(rootIronmanMetadataPath)
+
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, errors.Wrap(err, rootIronmanMetadataPath)
@@ -54,6 +55,8 @@ func (r *fsReader) Read(path string) (*Template, error) {
 
 		return nil, errors.Wrapf(err, "failed to read metadata file %s", rootIronmanMetadataPath)
 	}
+	defer rootIronmanTemplateFile.Close()
+
 	var templateModel Template
 	err = r.decoder.Decode(&templateModel, rootIronmanTemplateFile)
 
@@ -84,6 +87,7 @@ func (r *fsReader) Read(path string) (*Template, error) {
 
 				return nil, errors.Wrapf(err, "failed to read metadata file %s", rootIronmanMetadataPath)
 			}
+			defer generatorMetadataFile.Close()
 			var generatorModel Generator
 			err = r.decoder.Decode(&generatorModel, generatorMetadataFile)
 			if err != nil {
