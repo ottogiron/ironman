@@ -19,7 +19,7 @@ import (
 )
 
 //arbitrary number
-const noGeneratorWorkers = 20
+const noGeneratorWorkers = 1
 
 //GeneratorData represents the data to be passed to each generator file template
 type GeneratorData struct {
@@ -237,7 +237,7 @@ func (g *generator) processFile(templatePathResult templatePathResult) ([]byte, 
 	tmpl, err := engine.Parse(string(data))
 
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to parse template %s ", err)
+		return nil, errors.Wrapf(err, "failed to parse template %s %s ", templatePathResult.path, err)
 	}
 
 	var buffer bytes.Buffer
@@ -290,13 +290,13 @@ func (g *generator) writeFile(presult processResult) writeResult {
 		return writeResult{pathFrom: presult.templatePathResult.path, pathTo: toPath}
 	}
 
-	fmt.Fprint(g.out, "Writing... ", toPath)
+	fmt.Fprintln(g.out, "Writing... ", toPath)
 
 	//Create directory
 	dir := filepath.Dir(toPath)
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 
-		err := os.Mkdir(dir, os.ModePerm)
+		err := os.MkdirAll(dir, os.ModePerm)
 		if err != nil && !os.IsExist(err) {
 			return writeResult{err: errors.Wrap(err, "failed to create generation directory")}
 		}
