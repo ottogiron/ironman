@@ -200,7 +200,7 @@ func (i *Ironman) Uninstall(templateID string) error {
 	}
 
 	if !exists {
-		return errors.Errorf("template %s is not installed")
+		return errors.Errorf("template %s is not installed", templateID)
 	}
 
 	model, err := i.repository.FindTemplateByID(templateID)
