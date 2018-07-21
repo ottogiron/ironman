@@ -25,7 +25,7 @@ func newLinkCmd(client *ironman.Ironman, out io.Writer) *cobra.Command {
 	var linkCmd = &cobra.Command{
 		Use: "link <template_path> <template_ID>",
 		Args: func(cmd *cobra.Command, args []string) error {
-			if len(args) < 2 {
+			if len(args) != 2 {
 				return errors.New("template path and symlink name are required")
 			}
 
@@ -52,7 +52,7 @@ If you run "ironman list" you should see the symlink of your template created.
 
 func (l *linkCmd) run() error {
 
-	fmt.Fprintf(l.out, "Linking template to repository with ID %s...", l.templateID)
+	fmt.Fprintf(l.out, "Linking template to repository with ID %s...\n", l.templateID)
 	err := l.client.Link(l.templatePath, l.templateID)
 	if err != nil {
 		return err

@@ -27,6 +27,11 @@ func newInstallCommand(client *ironman.Ironman, out io.Writer) *cobra.Command {
 			if len(args) < 1 {
 				return errors.New("url arg is required")
 			}
+
+			if len(args) > 1 {
+				return errors.New("Invalid number of arguments")
+			}
+
 			return nil
 		},
 		Short: "Installs a template using a git URL",

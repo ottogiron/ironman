@@ -269,6 +269,16 @@ func (i *Ironman) Update(templateID string) error {
 	return nil
 }
 
+//Create creates a new template based on the name and path
+func (i *Ironman) Create(templatePath string) error {
+	err := template.Create(templatePath, nil)
+	if err != nil {
+		return errors.Wrapf(err, "failed to create template %s", templatePath)
+	}
+
+	return nil
+}
+
 //Generate generates a new file or directory based on a generator
 func (i *Ironman) Generate(context context.Context, templateID string, generatorID string, generationPath string, values values.Values, force bool) error {
 	//First validate if template exists

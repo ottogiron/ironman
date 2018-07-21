@@ -29,6 +29,10 @@ func newUninstallCmd(client *ironman.Ironman, out io.Writer) *cobra.Command {
 				return errors.New("Template ID is required")
 			}
 
+			if len(args) > 1 {
+				return errors.New("Invalid number of arguments")
+			}
+
 			return nil
 		},
 		Short: "Uninstalls a template by ID",

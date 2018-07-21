@@ -34,4 +34,5 @@ debug
 coverage.html
 template/manager/git/testing/templates
 test-gen
+template-test
 debug

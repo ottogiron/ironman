@@ -52,4 +52,5 @@ Run ```ironman help``` or ```ironman help <command>``` to get help about more co
 
 ## Docs
 
-Get started with the [Quick Start guide](docs/quickstart.md) you can find all the additional documentation [here](docs)
+* [Quick Start guide](docs/quickstart.md).
+* [Developing Templates](docs/developing_templates.md)

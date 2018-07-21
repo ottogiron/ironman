@@ -28,6 +28,10 @@ func newUpdateCmd(client *ironman.Ironman, out io.Writer) *cobra.Command {
 				return errors.New("ID arg is required")
 			}
 
+			if len(args) > 1 {
+				return errors.New("Invalid number of arguments")
+			}
+
 			return nil
 		},
 		Short: "Updates a template given an ID",

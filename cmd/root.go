@@ -50,6 +50,7 @@ func newRootCmd() *cobra.Command {
 		newUninstallCmd,
 		newUnlinkCmd,
 		newUpdateCmd,
+		newCreateCmd,
 	}
 
 	//add all commands

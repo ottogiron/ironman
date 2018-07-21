@@ -54,6 +54,11 @@ func newGenerateCommand(client *ironman.Ironman, out io.Writer) *cobra.Command {
 			if len(args) < 1 {
 				return errors.New("template ID arg is required")
 			}
+
+			if len(args) > 2 {
+				return errors.New("Invalid number of arguments")
+			}
+
 			return nil
 		},
 		Short: `Generates a new project based on an installed template using a template generator.
