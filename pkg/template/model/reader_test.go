@@ -38,7 +38,7 @@ func Test_fsReader_Read(t *testing.T) {
 						DirectoryName: "generator",
 					},
 					&Generator{
-						ID:            "file_generator",
+						ID:            "controller",
 						TType:         GeneratorTypeFile,
 						Name:          "File Generator",
 						Description:   "This is a test generator",
@@ -69,6 +69,11 @@ func Test_fsReader_Read(t *testing.T) {
 
 			for _, generator := range tt.want.Generators {
 				gotGenerator := got.Generator(generator.ID)
+
+				if gotGenerator == nil {
+					t.Errorf("fsReader.Read() generator with ID %s should not be nil", generator.ID)
+					return
+				}
 
 				if generator.DirectoryName != gotGenerator.DirectoryName {
 					t.Errorf("fsReader.Read() generator directory_name = %s want %s", gotGenerator.DirectoryName, generator.DirectoryName)

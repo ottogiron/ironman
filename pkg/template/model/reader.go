@@ -94,6 +94,11 @@ func (r *fsReader) Read(path string) (*Template, error) {
 				return nil, errors.Wrapf(err, "failed to decode generator information from %s", generatorMetadataPath)
 			}
 			generatorModel.DirectoryName = generatorFile.Name()
+			//Make the generator id optional. Use the directory ID if the .ironman.yaml doesn't contain an ID
+			if generatorModel.ID == "" {
+				generatorModel.ID = generatorFile.Name()
+			}
+
 			templateModel.Generators = append(templateModel.Generators, &generatorModel)
 		}
 	}

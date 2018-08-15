@@ -85,7 +85,7 @@ The .ironman.yaml files contain the information that defines the generator.
 
 #### .ironman.yaml properties
 
-* id(mandatory): unique identifier of the generator
+* id: Unique identifier for the generator. If not set, it will be infered from the directory name.
 * name(mandatory): A human readable name for the generator
 * description(mandatory):A description for the generator
 * type: The generator type (file | directory)
