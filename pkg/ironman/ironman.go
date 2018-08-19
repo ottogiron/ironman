@@ -113,7 +113,7 @@ func (i *Ironman) Install(templateLocator string) error {
 
 	templatePath := i.manager.TemplateLocation(ID)
 
-	model, err := i.modelReader.Read(templatePath)
+	templateModel, err := i.modelReader.Read(templatePath)
 
 	if err != nil {
 		//rollback manager installation
@@ -123,7 +123,7 @@ func (i *Ironman) Install(templateLocator string) error {
 
 	//validate model
 	for _, validator := range i.validators {
-		valid, validationErr, err := validator.Validate(model)
+		valid, validationErr, err := validator.Validate(templateModel)
 
 		if err != nil {
 			return errors.Wrap(err, "failed to validate model")
@@ -141,7 +141,9 @@ func (i *Ironman) Install(templateLocator string) error {
 		}
 	}
 
-	_, err = i.repository.Index(model)
+	//Set the installation type
+	templateModel.SourceType = model.SourceTypeURL
+	_, err = i.repository.Index(templateModel)
 
 	if err != nil {
 		//rollback manager installation
@@ -161,16 +163,16 @@ func (i *Ironman) Link(templatePath, templateID string) error {
 		return err
 	}
 
-	model, err := i.modelReader.Read(linkPath)
+	templateModel, err := i.modelReader.Read(linkPath)
 
 	if err != nil {
 		_ = i.manager.Unlink(templateID)
 		return err
 	}
 
-	model.ID = templateID
-
-	_, err = i.repository.Index(model)
+	templateModel.ID = templateID
+	templateModel.SourceType = model.SourceTypeLink
+	_, err = i.repository.Index(templateModel)
 
 	if err != nil {
 		_ = i.manager.Unlink(templateID)
@@ -276,6 +278,11 @@ func (i *Ironman) Create(templatePath string) error {
 		return errors.Wrapf(err, "failed to create template %s", templatePath)
 	}
 
+	return nil
+}
+
+//UpdateTemplateMetadata updates the template metadata based on an ID
+func (i *Ironman) UpdateTemplateMetadata(templateID string) error {
 	return nil
 }
 

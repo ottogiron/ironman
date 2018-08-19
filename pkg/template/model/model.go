@@ -1,5 +1,15 @@
 package model
 
+//SourceType represents how the template has been installed
+type SourceType string
+
+const (
+	//SourceTypeURL the template has been installed from a remote source
+	SourceTypeURL SourceType = "URL"
+	//SourceTypeLink the template has been installed as a file system link
+	SourceTypeLink = "Link"
+)
+
 //Mantainer  type for a template mantainer
 type Mantainer struct {
 	Name  string `json:"name" yaml:"name"`
@@ -10,8 +20,9 @@ type Mantainer struct {
 //Template template metadata definition
 type Template struct {
 	//IID internal database ID
-	IID string `json:"iid,omitempty" yaml:"iid,omitempty"`
-	ID  string `json:"id" yaml:"id"`
+	IID        string     `json:"iid,omitempty" yaml:"iid,omitempty"`
+	SourceType SourceType `json:"sourceType,omitempty" yaml:"sourceType,omitempty"`
+	ID         string     `json:"id" yaml:"id"`
 
 	Version       string       `json:"version" yaml:"version"`
 	Name          string       `json:"name" yaml:"name"`

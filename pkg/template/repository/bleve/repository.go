@@ -5,6 +5,7 @@ import (
 
 	"github.com/blevesearch/bleve"
 	"github.com/blevesearch/bleve/document"
+
 	//Registers the bleve keyword analyzer
 	_ "github.com/blevesearch/bleve/analysis/analyzer/keyword"
 	"github.com/ironman-project/ironman/pkg/template/model"
@@ -134,6 +135,8 @@ func deserialize(doc *document.Document) (*model.Template, error) {
 		switch field.Name() {
 		case "iid":
 			template.IID = value
+		case "sourceType":
+			template.SourceType = model.SourceType(value)
 		case "id":
 			template.ID = value
 		case "version":

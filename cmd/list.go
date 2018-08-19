@@ -59,10 +59,10 @@ func (l *listCmd) run() error {
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"ID", "Name", "Description"})
+	table.SetHeader([]string{"ID", "Name", "Description", "Source Type"})
 
 	for _, installed := range installedList {
-		table.Append([]string{installed.ID, installed.Name, installed.Description})
+		table.Append([]string{installed.ID, installed.Name, installed.Description, string(installed.SourceType)})
 	}
 	table.Render() // Send output
 	return nil

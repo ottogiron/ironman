@@ -65,6 +65,7 @@ func Test_bleeveRepository_Index(t *testing.T) {
 			args{
 				&model.Template{
 					ID:          "test-template",
+					SourceType:  model.SourceTypeURL,
 					Name:        "Test template",
 					Description: "This is a test template",
 					HomeURL:     "https://ironman-project.io",
@@ -146,6 +147,7 @@ func Test_bleeveRepository_Update(t *testing.T) {
 			args{
 				&model.Template{
 					ID:            "template-id",
+					SourceType:    model.SourceTypeLink,
 					Version:       "0.1.0",
 					Name:          "Updated name",
 					Description:   "Updated description",
@@ -221,6 +223,10 @@ func Test_bleeveRepository_Update(t *testing.T) {
 				case "iid":
 					if string(value) == "" || (value != id) {
 						t.Errorf("bleveRepository.Update() IID = %v want %v", value, id)
+					}
+				case "sourceType":
+					if string(value) == "" || (value != string(tt.args.template.SourceType)) {
+						t.Errorf("bleveRepository.Update() sourceType = %v want %v", value, id)
 					}
 				case "id":
 					if string(value) == "" || (value != tt.args.template.ID) {
