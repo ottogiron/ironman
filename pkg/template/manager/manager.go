@@ -16,8 +16,6 @@ type Manager interface {
 	Update(templateID string) error
 	Uninstall(templateID string) error
 	Find(templateID string) error
-	IsInstalled(templateID string) (bool, error)
-	Installed() ([]*template.Metadata, error)
 	Link(templatePath string, templateID string) (string, error)
 	Unlink(templateID string) error
 	TemplateLocation(templateID string) string
@@ -54,22 +52,6 @@ func (b *BaseManager) Find(templateID string) error {
 	panic("not implemented")
 }
 
-//IsInstalled verifies if template is installed
-func (b *BaseManager) IsInstalled(templateID string) (bool, error) {
-	if err := validateTemplateID(templateID); err != nil {
-		return false, err
-	}
-	templatePath := b.TemplateLocation(templateID)
-	_, err := os.Stat(templatePath)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return false, nil
-		}
-		return false, errors.Wrapf(err, "verifying template installation ID: %s", templateID)
-	}
-	return true, nil
-}
-
 func validateTemplateID(templateID string) error {
 	if templateID == "" {
 		return errors.Errorf("a templateID cannot be empty")
@@ -78,8 +60,8 @@ func validateTemplateID(templateID string) error {
 }
 
 //TemplateLocation returns the file system path of a template based on the ID
-func (b *BaseManager) TemplateLocation(templateID string) string {
-	return filepath.Join(b.path, b.templatesDirectory, templateID)
+func (b *BaseManager) TemplateLocation(templateDirectory string) string {
+	return filepath.Join(b.path, b.templatesDirectory, templateDirectory)
 }
 
 //Installed returns a lists of installed templates

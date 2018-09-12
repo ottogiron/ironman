@@ -105,19 +105,19 @@ func buildIndex(path string) (bleve.Index, error) {
 //Install installs a new template based on a template locator
 func (i *Ironman) Install(templateLocator string) error {
 
-	ID, err := i.manager.Install(templateLocator)
+	templateDirectory, err := i.manager.Install(templateLocator)
 
 	if err != nil {
 		return err
 	}
 
-	templatePath := i.manager.TemplateLocation(ID)
+	templatePath := i.manager.TemplateLocation(templateDirectory)
 
 	templateModel, err := i.modelReader.Read(templatePath)
 
 	if err != nil {
 		//rollback manager installation
-		_ = i.manager.Uninstall(ID)
+		_ = i.manager.Uninstall(templateDirectory)
 		return errors.Wrap(err, "failed to read template model")
 	}
 
@@ -147,7 +147,7 @@ func (i *Ironman) Install(templateLocator string) error {
 
 	if err != nil {
 		//rollback manager installation
-		_ = i.manager.Uninstall(ID)
+		_ = i.manager.Uninstall(templateDirectory)
 		return err
 	}
 
@@ -311,6 +311,21 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 		return errors.Errorf("generator %s does not exists", generatorID)
 	}
 
+	if updateMetadata {
+
+		templatePath := i.manager.TemplateLocation(templateModel.DirectoryName)
+		templateModel, err := i.modelReader.Read(templatePath)
+
+		if err != nil {
+			return errors.Wrapf(err, "failed to update metadata for template %s", templateID)
+		}
+
+		err = i.index.Update(templateModel)
+
+		if err != nil {
+			return errors.Wrapf(err, "Failed to update metadata for template %s", templateID)
+		}
+	}
 	absGenerationPath, err := filepath.Abs(generationPath)
 
 	if err != nil {

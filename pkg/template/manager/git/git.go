@@ -11,7 +11,7 @@ import (
 	gogit "gopkg.in/src-d/go-git.v4"
 )
 
-var _ manager.Manager = (*Manager)(nil)
+var templateID_ manager.Manager = (*Manager)(nil)
 
 //Manager represents an implementation of a ironman Manager
 type Manager struct {
