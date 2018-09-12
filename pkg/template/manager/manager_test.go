@@ -102,36 +102,6 @@ func TestBaseManager_Find(t *testing.T) {
 	}
 }
 
-func TestBaseManager_IsInstalled(t *testing.T) {
-	type args struct {
-		templateID string
-	}
-	tests := []struct {
-		name        string
-		managerPath string
-		args        args
-		want        bool
-		wantErr     bool
-	}{
-		{"Template is installed", testManagerPath, args{"valid"}, true, false},
-		{"Template is not installed", testManagerPath, args{"not_installed"}, false, false},
-		{"Template invalid empty name", testManagerPath, args{""}, false, true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			b := NewBaseManager(tt.managerPath, testTemplatesDirectory)
-			got, err := b.IsInstalled(tt.args.templateID)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("BaseManager.IsInstalled() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("BaseManager.IsInstalled() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestBaseManager_Installed(t *testing.T) {
 	tests := []struct {
 		name        string
