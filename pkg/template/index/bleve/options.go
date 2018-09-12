@@ -5,11 +5,11 @@ import (
 )
 
 //Option defines a bleeve repository option
-type Option func(*bleeveRepository)
+type Option func(*bleeveIndex)
 
 //SetIndex sets the index name for the repository
 func SetIndex(index bleve.Index) Option {
-	return func(r *bleeveRepository) {
+	return func(r *bleeveIndex) {
 		r.index = index
 	}
 }

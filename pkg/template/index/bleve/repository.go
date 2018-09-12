@@ -8,8 +8,8 @@ import (
 
 	//Registers the bleve keyword analyzer
 	_ "github.com/blevesearch/bleve/analysis/analyzer/keyword"
+	iindex "github.com/ironman-project/ironman/pkg/template/index"
 	"github.com/ironman-project/ironman/pkg/template/model"
-	"github.com/ironman-project/ironman/pkg/template/repository"
 	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
 )
@@ -18,15 +18,15 @@ const (
 	idKey = "id"
 )
 
-var _ repository.Repository = (*bleeveRepository)(nil)
+var _ iindex.Index = (*bleeveIndex)(nil)
 
-type bleeveRepository struct {
+type bleeveIndex struct {
 	index bleve.Index
 }
 
-//New creates a new instance of a bleeve repository
-func New(options ...Option) repository.Repository {
-	r := &bleeveRepository{}
+//New creates a new instance of a bleeve index
+func New(options ...Option) iindex.Index {
+	r := &bleeveIndex{}
 	for _, option := range options {
 		option(r)
 	}
@@ -58,21 +58,21 @@ func BuildIndex(path string) (bleve.Index, error) {
 	return index, nil
 }
 
-func (r *bleeveRepository) Index(template *model.Template) (string, error) {
+func (i *bleeveIndex) Index(template *model.Template) (string, error) {
 	id := uuid.NewV4()
 	template.IID = id.String()
-	err := r.index.Index(id.String(), template)
+	err := i.index.Index(id.String(), template)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to index template %s", template.ID)
 	}
 	return id.String(), nil
 }
 
-func (r *bleeveRepository) Update(template *model.Template) error {
+func (i *bleeveIndex) Update(template *model.Template) error {
 	query := bleve.NewTermQuery(template.ID)
 	query.SetField(idKey)
 	search := bleve.NewSearchRequest(query)
-	searchResults, err := r.index.Search(search)
+	searchResults, err := i.index.Search(search)
 
 	if err != nil {
 		return errors.Wrapf(err, "Search for template failed id: %s")
@@ -84,7 +84,7 @@ func (r *bleeveRepository) Update(template *model.Template) error {
 
 	id := searchResults.Hits[0].ID
 	template.IID = id
-	err = r.index.Index(id, template)
+	err = i.index.Index(id, template)
 
 	if err != nil {
 		return errors.Errorf("failed to update template %s", template.ID)
@@ -93,12 +93,12 @@ func (r *bleeveRepository) Update(template *model.Template) error {
 	return nil
 }
 
-func (r *bleeveRepository) FindTemplateByID(ID string) (*model.Template, error) {
+func (i *bleeveIndex) FindTemplateByID(ID string) (*model.Template, error) {
 	query := bleve.NewTermQuery(ID)
 	query.SetField(idKey)
 	search := bleve.NewSearchRequest(query)
 
-	searchResults, err := r.index.Search(search)
+	searchResults, err := i.index.Search(search)
 
 	if err != nil {
 		return nil, errors.Wrapf(err, "Search for template failed id: %s")
@@ -109,7 +109,7 @@ func (r *bleeveRepository) FindTemplateByID(ID string) (*model.Template, error) 
 	}
 
 	match := searchResults.Hits[0]
-	doc, err := r.index.Document(match.ID)
+	doc, err := i.index.Document(match.ID)
 
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to get template document %s", ID)
@@ -190,8 +190,8 @@ func deserialize(doc *document.Document) (*model.Template, error) {
 	return template, nil
 }
 
-func (r *bleeveRepository) Delete(ID string) (bool, error) {
-	t, err := r.FindTemplateByID(ID)
+func (i *bleeveIndex) Delete(ID string) (bool, error) {
+	t, err := i.FindTemplateByID(ID)
 	if err != nil {
 		return false, errors.Wrapf(err, "failed to delete template %s", ID)
 	}
@@ -201,7 +201,7 @@ func (r *bleeveRepository) Delete(ID string) (bool, error) {
 		return false, nil
 	}
 
-	err = r.index.Delete(t.IID)
+	err = i.index.Delete(t.IID)
 
 	if err != nil {
 		return false, errors.Wrapf(err, "failed to delete template with id %s", ID)
@@ -210,12 +210,12 @@ func (r *bleeveRepository) Delete(ID string) (bool, error) {
 	return true, nil
 }
 
-func (r *bleeveRepository) List() ([]*model.Template, error) {
+func (i *bleeveIndex) List() ([]*model.Template, error) {
 	var results []*model.Template
 	query := bleve.NewMatchAllQuery()
 	search := bleve.NewSearchRequest(query)
 
-	searchResults, err := r.index.Search(search)
+	searchResults, err := i.index.Search(search)
 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to list all the available templates")
@@ -223,7 +223,7 @@ func (r *bleeveRepository) List() ([]*model.Template, error) {
 
 	if searchResults.Total > 0 {
 		for _, result := range searchResults.Hits {
-			doc, err := r.index.Document(result.ID)
+			doc, err := i.index.Document(result.ID)
 
 			if err != nil {
 				return nil, errors.Wrapf(err, "failed to retrieve template from document IID:%s", doc.ID)
@@ -240,8 +240,8 @@ func (r *bleeveRepository) List() ([]*model.Template, error) {
 	return results, nil
 }
 
-func (r *bleeveRepository) Exists(ID string) (bool, error) {
-	templ, err := r.FindTemplateByID(ID)
+func (i *bleeveIndex) Exists(ID string) (bool, error) {
+	templ, err := i.FindTemplateByID(ID)
 
 	if err != nil {
 		return false, errors.Wrapf(err, "failed to verify if template exists %s", ID)

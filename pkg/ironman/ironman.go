@@ -11,16 +11,16 @@ import (
 	gtemplate "text/template"
 
 	"github.com/ironman-project/ironman/pkg/template"
+	"github.com/ironman-project/ironman/pkg/template/index"
 	"github.com/ironman-project/ironman/pkg/template/values"
 
 	"github.com/ironman-project/ironman/pkg/template/validator"
 
 	"github.com/blevesearch/bleve"
+	brepository "github.com/ironman-project/ironman/pkg/template/index/bleve"
 	"github.com/ironman-project/ironman/pkg/template/manager"
 	"github.com/ironman-project/ironman/pkg/template/manager/git"
 	"github.com/ironman-project/ironman/pkg/template/model"
-	"github.com/ironman-project/ironman/pkg/template/repository"
-	brepository "github.com/ironman-project/ironman/pkg/template/repository/bleve"
 	"github.com/pkg/errors"
 )
 
@@ -36,7 +36,7 @@ const validatoinTemplateText = ``
 type Ironman struct {
 	manager                manager.Manager
 	modelReader            model.Reader
-	repository             repository.Repository
+	index                  index.Index
 	home                   string
 	validators             []validator.Validator
 	output                 io.Writer
@@ -63,14 +63,14 @@ func New(home string, options ...Option) *Ironman {
 		ir.manager = manager
 	}
 
-	if ir.repository == nil {
+	if ir.index == nil {
 		indexPath := filepath.Join(home, indexName)
 
 		index, err := buildIndex(indexPath)
 		if err != nil {
 			log.Fatal("failed to create ironman templates index", err)
 		}
-		ir.repository = brepository.New(
+		ir.index = brepository.New(
 			brepository.SetIndex(index),
 		)
 	}
@@ -143,7 +143,7 @@ func (i *Ironman) Install(templateLocator string) error {
 
 	//Set the installation type
 	templateModel.SourceType = model.SourceTypeURL
-	_, err = i.repository.Index(templateModel)
+	_, err = i.index.Index(templateModel)
 
 	if err != nil {
 		//rollback manager installation
@@ -172,7 +172,7 @@ func (i *Ironman) Link(templatePath, templateID string) error {
 
 	templateModel.ID = templateID
 	templateModel.SourceType = model.SourceTypeLink
-	_, err = i.repository.Index(templateModel)
+	_, err = i.index.Index(templateModel)
 
 	if err != nil {
 		_ = i.manager.Unlink(templateID)
@@ -184,7 +184,7 @@ func (i *Ironman) Link(templatePath, templateID string) error {
 
 //List returns a list of all the installed ironman templates
 func (i *Ironman) List() ([]*model.Template, error) {
-	results, err := i.repository.List()
+	results, err := i.index.List()
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +195,7 @@ func (i *Ironman) List() ([]*model.Template, error) {
 //Uninstall uninstalls an ironman template
 func (i *Ironman) Uninstall(templateID string) error {
 
-	exists, err := i.repository.Exists(templateID)
+	exists, err := i.index.Exists(templateID)
 
 	if err != nil {
 		return errors.Wrapf(err, "failed to validate if template exists %s", templateID)
@@ -205,7 +205,7 @@ func (i *Ironman) Uninstall(templateID string) error {
 		return errors.Errorf("template %s is not installed", templateID)
 	}
 
-	model, err := i.repository.FindTemplateByID(templateID)
+	model, err := i.index.FindTemplateByID(templateID)
 
 	if err != nil {
 		return errors.Wrapf(err, "failed to get template model %s", templateID)
@@ -217,7 +217,7 @@ func (i *Ironman) Uninstall(templateID string) error {
 		return err
 	}
 
-	_, err = i.repository.Delete(templateID)
+	_, err = i.index.Delete(templateID)
 
 	if err != nil {
 		return err
@@ -235,7 +235,7 @@ func (i *Ironman) Unlink(templateID string) error {
 		return err
 	}
 
-	_, err = i.repository.Delete(templateID)
+	_, err = i.index.Delete(templateID)
 
 	if err != nil {
 		return err
@@ -246,7 +246,7 @@ func (i *Ironman) Unlink(templateID string) error {
 
 //Update updates an iroman template
 func (i *Ironman) Update(templateID string) error {
-	exists, err := i.repository.Exists(templateID)
+	exists, err := i.index.Exists(templateID)
 
 	if err != nil {
 		return errors.Wrapf(err, "failed to validate if template exists %s", templateID)
@@ -256,7 +256,7 @@ func (i *Ironman) Update(templateID string) error {
 		return errors.Errorf("template '%s' is not installed", templateID)
 	}
 
-	model, err := i.repository.FindTemplateByID(templateID)
+	model, err := i.index.FindTemplateByID(templateID)
 
 	if err != nil {
 		return errors.Wrapf(err, "failed to get template model %s", templateID)
@@ -287,9 +287,9 @@ func (i *Ironman) UpdateTemplateMetadata(templateID string) error {
 }
 
 //Generate generates a new file or directory based on a generator
-func (i *Ironman) Generate(context context.Context, templateID string, generatorID string, generationPath string, values values.Values, force bool) error {
+func (i *Ironman) Generate(context context.Context, templateID string, generatorID string, generationPath string, values values.Values, force bool, updateMetadata bool) error {
 	//First validate if template exists
-	exists, err := i.repository.Exists(templateID)
+	exists, err := i.index.Exists(templateID)
 
 	if err != nil {
 		return errors.Wrapf(err, "failed to validate if template exists %s", templateID)
@@ -299,7 +299,7 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 		return errors.Errorf("template '%s' is not installed", templateID)
 	}
 
-	templateModel, err := i.repository.FindTemplateByID(templateID)
+	templateModel, err := i.index.FindTemplateByID(templateID)
 
 	if err != nil {
 		return errors.Wrapf(err, "could not find template by ID %s", templateID)

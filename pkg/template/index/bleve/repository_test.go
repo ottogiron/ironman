@@ -11,8 +11,8 @@ import (
 	"github.com/ironman-project/ironman/pkg/testutils"
 
 	"github.com/blevesearch/bleve"
+	iindex "github.com/ironman-project/ironman/pkg/template/index"
 	"github.com/ironman-project/ironman/pkg/template/model"
-	"github.com/ironman-project/ironman/pkg/template/repository"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -26,7 +26,7 @@ func tempIndexPath(t *testing.T) string {
 	return indexPath
 }
 
-func newTestRepository(t *testing.T) (repository.Repository, bleve.Index, func()) {
+func newTestIndex(t *testing.T) (iindex.Index, bleve.Index, func()) {
 	path := tempIndexPath(t)
 
 	index, err := BuildIndex(path)
@@ -50,7 +50,7 @@ func newTestRepository(t *testing.T) (repository.Repository, bleve.Index, func()
 	}
 }
 
-func Test_bleeveRepository_Index(t *testing.T) {
+func Test_bleeveIndex_Index(t *testing.T) {
 
 	type args struct {
 		template *model.Template
@@ -96,42 +96,42 @@ func Test_bleeveRepository_Index(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r, index, clean := newTestRepository(t)
+			r, index, clean := newTestIndex(t)
 			defer clean()
 			var id string
 			var err error
 			if id, err = r.Index(tt.args.template); (err != nil) != tt.wantErr {
-				t.Errorf("bleeveRepository.Index() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("bleeveIndex.Index() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			doc, err := index.Document(id)
 
 			if err != nil {
-				t.Errorf("bleeveRepository.Index() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("bleeveIndex.Index() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
 			if doc == nil {
-				t.Errorf("bleeveRepository.Index() nil , want %v", tt.args.template)
+				t.Errorf("bleeveIndex.Index() nil , want %v", tt.args.template)
 			}
 
 			got, err := deserialize(doc)
 
 			if err != nil {
-				t.Errorf("bleeveRepository.Index()  error = %v", err)
+				t.Errorf("bleeveIndex.Index()  error = %v", err)
 			}
 
 			gotJ := testutils.Marshal(got, t)
 			wantJ := testutils.Marshal(tt.args.template, t)
 
 			if got != nil && (gotJ != wantJ) {
-				t.Errorf("bleeveRepository.FindTemplateByID() = \n%v, want \n%v", gotJ, wantJ)
+				t.Errorf("bleeveIndex.FindTemplateByID() = \n%v, want \n%v", gotJ, wantJ)
 			}
 
 		})
 	}
 }
 
-func Test_bleeveRepository_Update(t *testing.T) {
+func Test_bleeveIndex_Update(t *testing.T) {
 
 	type args struct {
 		template *model.Template
@@ -192,7 +192,7 @@ func Test_bleeveRepository_Update(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r, index, clean := newTestRepository(t)
+			r, index, clean := newTestIndex(t)
 			defer clean()
 			id := uuid.NewV4().String()
 			tt.template.IID = id
@@ -203,7 +203,7 @@ func Test_bleeveRepository_Update(t *testing.T) {
 			}
 
 			if err := r.Update(tt.args.template); (err != nil) != tt.wantErr {
-				t.Errorf("bleeveRepository.Update() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("bleeveIndex.Update() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
 			doc, err := index.Document(id)
@@ -222,111 +222,111 @@ func Test_bleeveRepository_Update(t *testing.T) {
 				switch field.Name() {
 				case "iid":
 					if string(value) == "" || (value != id) {
-						t.Errorf("bleveRepository.Update() IID = %v want %v", value, id)
+						t.Errorf("bleveIndex.Update() IID = %v want %v", value, id)
 					}
 				case "sourceType":
 					if string(value) == "" || (value != string(tt.args.template.SourceType)) {
-						t.Errorf("bleveRepository.Update() sourceType = %v want %v", value, id)
+						t.Errorf("bleveIndex.Update() sourceType = %v want %v", value, id)
 					}
 				case "id":
 					if string(value) == "" || (value != tt.args.template.ID) {
-						t.Errorf("bleveRepository.Update() templateID = %v want %v", value, tt.args.template.ID)
+						t.Errorf("bleveIndex.Update() templateID = %v want %v", value, tt.args.template.ID)
 					}
 				case "version":
 					if string(value) == "" || (value != tt.args.template.Version) {
-						t.Errorf("bleveRepository.Update() templateVersion = %v want %v", value, tt.args.template.Version)
+						t.Errorf("bleveIndex.Update() templateVersion = %v want %v", value, tt.args.template.Version)
 					}
 
 				case "name":
 					if string(value) == "" || (value != tt.args.template.Name) {
-						t.Errorf("bleveRepository.Update() templateName = %v want %v", value, tt.args.template.Name)
+						t.Errorf("bleveIndex.Update() templateName = %v want %v", value, tt.args.template.Name)
 					}
 				case "description":
 					if string(value) == "" || (value != tt.args.template.Description) {
-						t.Errorf("bleveRepository.Update() templateDescription = %v want %v", value, tt.args.template.Description)
+						t.Errorf("bleveIndex.Update() templateDescription = %v want %v", value, tt.args.template.Description)
 					}
 				case "directoryName":
 					if string(value) == "" || (value != tt.args.template.DirectoryName) {
-						t.Errorf("bleveRepository.Update() templateDirectoryName = %v want %v", value, tt.args.template.DirectoryName)
+						t.Errorf("bleveIndex.Update() templateDirectoryName = %v want %v", value, tt.args.template.DirectoryName)
 					}
 				case "home":
 					if string(value) == "" || (value != tt.args.template.HomeURL) {
-						t.Errorf("bleveRepository.Update() templateHomeURL = %v want %v", value, tt.args.template.HomeURL)
+						t.Errorf("bleveIndex.Update() templateHomeURL = %v want %v", value, tt.args.template.HomeURL)
 					}
 				case "appVersion":
 					if string(value) == "" || (value != tt.args.template.AppVersion) {
-						t.Errorf("bleveRepository.Update() templateAppVersion = %v want %v", value, tt.args.template.AppVersion)
+						t.Errorf("bleveIndex.Update() templateAppVersion = %v want %v", value, tt.args.template.AppVersion)
 					}
 				case "deprecated":
 					boolValue, _ := strconv.ParseBool(value)
 					if string(value) == "" || (boolValue != tt.args.template.Deprecated) {
-						t.Errorf("bleveRepository.Update() templateDeprecated = %v want %v", value, tt.args.template.Deprecated)
+						t.Errorf("bleveIndex.Update() templateDeprecated = %v want %v", value, tt.args.template.Deprecated)
 					}
 
 				case "generators.id":
 					pos := field.ArrayPositions()[0]
 					expectedID := tt.args.template.Generators[pos].ID
 					if value != expectedID {
-						t.Errorf("bleveRepository.Update() template.Generators[%d].ID = %v want %v", pos, value, expectedID)
+						t.Errorf("bleveIndex.Update() template.Generators[%d].ID = %v want %v", pos, value, expectedID)
 					}
 				case "generators.type":
 					pos := field.ArrayPositions()[0]
 					expectedType := tt.args.template.Generators[pos].TType
 					if model.GeneratorType(value) != expectedType {
-						t.Errorf("bleveRepository.Update() template.Generators[%d].Type = %v want %v", pos, value, expectedType)
+						t.Errorf("bleveIndex.Update() template.Generators[%d].Type = %v want %v", pos, value, expectedType)
 					}
 				case "generators.name":
 					pos := field.ArrayPositions()[0]
 					expectedName := tt.args.template.Generators[pos].Name
 					if value != expectedName {
-						t.Errorf("bleveRepository.Update() template.Generators[%d].Name = %v want %v", pos, value, expectedName)
+						t.Errorf("bleveIndex.Update() template.Generators[%d].Name = %v want %v", pos, value, expectedName)
 					}
 				case "generators.description":
 					pos := field.ArrayPositions()[0]
 					expectedDescription := tt.args.template.Generators[pos].Description
 					if value != expectedDescription {
-						t.Errorf("bleveRepository.Update() template.Generators[%d].Description = %v want %v", pos, value, expectedDescription)
+						t.Errorf("bleveIndex.Update() template.Generators[%d].Description = %v want %v", pos, value, expectedDescription)
 					}
 				case "generators.directoryName":
 					pos := field.ArrayPositions()[0]
 					expectedDirectoryName := tt.args.template.Generators[pos].DirectoryName
 					if value != expectedDirectoryName {
-						t.Errorf("bleveRepository.Update() template.Generators[%d].DirectoryName = %v want %v", pos, value, expectedDirectoryName)
+						t.Errorf("bleveIndex.Update() template.Generators[%d].DirectoryName = %v want %v", pos, value, expectedDirectoryName)
 					}
 				case "generators.fileTypeOptions.defaultTemplateFile":
 					pos := field.ArrayPositions()[0]
 					expectedFileTypeDefaultTemplateFile := tt.args.template.Generators[pos].FileTypeOptions.DefaultTemplateFile
 					if value != expectedFileTypeDefaultTemplateFile {
-						t.Errorf("bleveRepository.Update() template.Generators[%d].FileTypeDefaultTemplateFile = %v want %v", pos, value, expectedFileTypeDefaultTemplateFile)
+						t.Errorf("bleveIndex.Update() template.Generators[%d].FileTypeDefaultTemplateFile = %v want %v", pos, value, expectedFileTypeDefaultTemplateFile)
 					}
 				case "generators.fileTypeOptions.fileGenerationRelativePath":
 					pos := field.ArrayPositions()[0]
 					expectedFileTypeFileGenerationRelativePath := tt.args.template.Generators[pos].FileTypeOptions.FileGenerationRelativePath
 					if value != expectedFileTypeFileGenerationRelativePath {
-						t.Errorf("bleveRepository.Update() template.Generators[%d].FileTypeFileGenerationRelativePath = %v want %v", pos, value, expectedFileTypeFileGenerationRelativePath)
+						t.Errorf("bleveIndex.Update() template.Generators[%d].FileTypeFileGenerationRelativePath = %v want %v", pos, value, expectedFileTypeFileGenerationRelativePath)
 					}
 				case "sources":
 					expectedSource := tt.args.template.Sources[field.ArrayPositions()[0]]
 					if value != expectedSource {
-						t.Errorf("bleveRepository.Update() template.Sources[index].expectedSource = %v want %v", value, expectedSource)
+						t.Errorf("bleveIndex.Update() template.Sources[index].expectedSource = %v want %v", value, expectedSource)
 
 					}
 				case "mantainers.name":
 					expectedMantainerName := tt.args.template.Mantainers[field.ArrayPositions()[0]].Name
 					if value != expectedMantainerName {
-						t.Errorf("bleveRepository.Update() template.Sources[index].expectedMantainerName = %v want %v", value, expectedMantainerName)
+						t.Errorf("bleveIndex.Update() template.Sources[index].expectedMantainerName = %v want %v", value, expectedMantainerName)
 
 					}
 				case "mantainers.email":
 					expectedMantainerEmail := tt.args.template.Mantainers[field.ArrayPositions()[0]].Email
 					if value != expectedMantainerEmail {
-						t.Errorf("bleveRepository.Update() template.Sources[index].expectedMantainerEmail = %v want %v", value, expectedMantainerEmail)
+						t.Errorf("bleveIndex.Update() template.Sources[index].expectedMantainerEmail = %v want %v", value, expectedMantainerEmail)
 
 					}
 				case "mantainers.url":
 					expectedMantainerURL := tt.args.template.Mantainers[field.ArrayPositions()[0]].URL
 					if value != expectedMantainerURL {
-						t.Errorf("bleveRepository.Update() template.Sources[index].expectedMantainerURL = %v want %v", value, expectedMantainerURL)
+						t.Errorf("bleveIndex.Update() template.Sources[index].expectedMantainerURL = %v want %v", value, expectedMantainerURL)
 
 					}
 				default:
@@ -338,7 +338,7 @@ func Test_bleeveRepository_Update(t *testing.T) {
 	}
 }
 
-func Test_bleeveRepository_FindTemplateByID(t *testing.T) {
+func Test_bleeveIndex_FindTemplateByID(t *testing.T) {
 
 	type args struct {
 		ID string
@@ -363,7 +363,7 @@ func Test_bleeveRepository_FindTemplateByID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r, index, clean := newTestRepository(t)
+			r, index, clean := newTestIndex(t)
 			defer clean()
 			err := index.Index(uuid.NewV4().String(), tt.want)
 
@@ -374,18 +374,18 @@ func Test_bleeveRepository_FindTemplateByID(t *testing.T) {
 			got, err := r.FindTemplateByID(tt.args.ID)
 
 			if (err != nil) != tt.wantErr {
-				t.Errorf("bleeveRepository.FindTemplateByID() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("bleeveIndex.FindTemplateByID() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
 			if got != nil && !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("bleeveRepository.FindTemplateByID() = %v, want %v", got, tt.want)
+				t.Errorf("bleeveIndex.FindTemplateByID() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_bleeveRepository_Delete(t *testing.T) {
+func Test_bleeveIndex_Delete(t *testing.T) {
 
 	type args struct {
 		ID string
@@ -407,7 +407,7 @@ func Test_bleeveRepository_Delete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r, index, clean := newTestRepository(t)
+			r, index, clean := newTestIndex(t)
 			defer clean()
 			id := uuid.NewV4().String()
 			templ := &model.Template{
@@ -421,17 +421,17 @@ func Test_bleeveRepository_Delete(t *testing.T) {
 			}
 			got, err := r.Delete(tt.args.ID)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("bleeveRepository.Delete() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("bleeveIndex.Delete() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("bleeveRepository.Delete() = %v, want %v", got, tt.want)
+				t.Errorf("bleeveIndex.Delete() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_bleeveRepository_List(t *testing.T) {
+func Test_bleeveIndex_List(t *testing.T) {
 
 	tests := []struct {
 		name    string
@@ -450,7 +450,7 @@ func Test_bleeveRepository_List(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r, index, clean := newTestRepository(t)
+			r, index, clean := newTestIndex(t)
 			defer clean()
 
 			for _, templ := range tt.want {
@@ -463,13 +463,13 @@ func Test_bleeveRepository_List(t *testing.T) {
 			}
 			got, err := r.List()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("bleeveRepository.List() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("bleeveIndex.List() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
 			for _, templ := range got {
 				if !containsTemplate(templ, got) {
-					t.Errorf("bleeveRepository.List() = %v, want %v", got, templ)
+					t.Errorf("bleeveIndex.List() = %v, want %v", got, templ)
 				}
 
 			}
@@ -487,7 +487,7 @@ func containsTemplate(templ *model.Template, templates []*model.Template) bool {
 	return false
 }
 
-func Test_bleeveRepository_Exists(t *testing.T) {
+func Test_bleeveIndex_Exists(t *testing.T) {
 
 	type args struct {
 		ID string
@@ -504,7 +504,7 @@ func Test_bleeveRepository_Exists(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r, index, clean := newTestRepository(t)
+			r, index, clean := newTestIndex(t)
 			defer clean()
 			id := uuid.NewV4().String()
 			templ := &model.Template{
@@ -518,11 +518,11 @@ func Test_bleeveRepository_Exists(t *testing.T) {
 			}
 			got, err := r.Exists(tt.args.ID)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("bleeveRepository.Exists() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("bleeveIndex.Exists() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("bleeveRepository.Exists() = %v, want %v", got, tt.want)
+				t.Errorf("bleeveIndex.Exists() = %v, want %v", got, tt.want)
 			}
 		})
 	}

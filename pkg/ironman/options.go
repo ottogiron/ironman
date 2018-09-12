@@ -3,8 +3,8 @@ package ironman
 import (
 	"io"
 
+	"github.com/ironman-project/ironman/pkg/template/index"
 	"github.com/ironman-project/ironman/pkg/template/manager"
-	"github.com/ironman-project/ironman/pkg/template/repository"
 	"github.com/ironman-project/ironman/pkg/template/validator"
 )
 
@@ -18,10 +18,10 @@ func SetTemplateManager(manager manager.Manager) Option {
 	}
 }
 
-//SetTemplateRepository sets the ironman template repository
-func SetTemplateRepository(repository repository.Repository) Option {
+//SetTemplateIndex sets the ironman template index
+func SetTemplateIndex(index index.Index) Option {
 	return func(i *Ironman) {
-		i.repository = repository
+		i.index = index
 	}
 }
 

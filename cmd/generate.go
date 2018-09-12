@@ -130,7 +130,7 @@ func (g *generateCmd) run() error {
 		return err
 	}
 	fmt.Fprintln(g.out, "Running template generator", g.generatorID)
-	err = g.client.Generate(context.Background(), g.templateID, g.generatorID, g.path, values, g.forceGeneration)
+	err = g.client.Generate(context.Background(), g.templateID, g.generatorID, g.path, values, g.forceGeneration, g.updateMetadata)
 	if err != nil {
 		return err
 	}
