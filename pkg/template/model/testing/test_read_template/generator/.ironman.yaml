@@ -1,3 +1,9 @@
 id: generator
 name: Test Generator
 description: This is a test generator
+hooks:
+        pre_generate:
+                - name: "echo"
+                  args: ["-n", "Hello World"]
+                  
+

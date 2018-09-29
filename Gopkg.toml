@@ -34,10 +34,6 @@
   version = "2.14.1"
 
 [[constraint]]
-  name = "github.com/blevesearch/bleve"
-  version = "0.7.0"
-
-[[constraint]]
   branch = "master"
   name = "github.com/mitchellh/go-homedir"
 
@@ -52,10 +48,6 @@
 [[constraint]]
   branch = "master"
   name = "github.com/rendon/testcli"
-
-[[constraint]]
-  name = "github.com/satori/go.uuid"
-  version = "1.2.0"
 
 [[constraint]]
   name = "github.com/spf13/cobra"

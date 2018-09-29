@@ -1,6 +1,7 @@
 package template
 
 import (
+	"bytes"
 	"context"
 	"io/ioutil"
 	"os"
@@ -164,6 +165,117 @@ func Test_generator_Generate(t *testing.T) {
 					t.Errorf("Generator.Generate() \ncontents\n %s\n want \n%s\n", string(file), wantFile.contents)
 				}
 			}
+		})
+	}
+}
+
+func Test_generator_runHooks(t *testing.T) {
+	type fields struct {
+		data GeneratorData
+	}
+	type args struct {
+		name  string
+		hooks []*model.Command
+	}
+	tests := []struct {
+		name       string
+		fields     fields
+		args       args
+		wantOutput string
+		wantErr    bool
+	}{
+		{
+			name: "Run Hooks Including templates",
+			fields: fields{
+				data: GeneratorData{
+					Template: &model.Template{
+						ID:      "test",
+						Version: "1.0",
+						Name:    "test",
+					},
+					Generator: &model.Generator{
+						ID: "gen-test",
+					},
+					Values: map[string]interface{}{
+						"somevalue": "value",
+					},
+				},
+			},
+			args: args{
+				name: "pre-generate",
+				hooks: []*model.Command{
+					&model.Command{
+						Name: "echo",
+						Args: []string{
+							"-n",
+							"Template {{.Template.ID}} Version {{.Template.Version}} Generator {{.Generator.ID}} with values with some-value {{.Values.somevalue}}",
+						},
+					},
+				},
+			},
+			wantOutput: "Running pre-generate hooks\nTemplate test Version 1.0 Generator gen-test with values with some-value value\n...Running pre-generate hooks done\n",
+			wantErr:    false,
+		},
+		{
+			name: "Failed command",
+			fields: fields{
+				data: GeneratorData{},
+			},
+			args: args{
+				name: "nonexistingcommand",
+				hooks: []*model.Command{
+					&model.Command{},
+				},
+			},
+			wantOutput: "Running nonexistingcommand hooks\n",
+			wantErr:    true,
+		},
+		{
+			name: "Empty Command",
+			fields: fields{
+				data: GeneratorData{},
+			},
+			args: args{
+				name: "",
+				hooks: []*model.Command{
+					&model.Command{},
+				},
+			},
+			wantOutput: "Running  hooks\n",
+			wantErr:    true,
+		},
+		{
+			name: "Empty Hooks",
+			fields: fields{
+				data: GeneratorData{},
+			},
+			args: args{
+				name:  "echo",
+				hooks: nil,
+			},
+			wantOutput: "",
+			wantErr:    false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			var output bytes.Buffer
+			g := &generator{
+				data:          tt.fields.data,
+				engineFactory: engineFactory,
+				out:           &output,
+			}
+
+			if err := g.runHooks(tt.args.name, tt.args.hooks); (err != nil) != tt.wantErr {
+				t.Errorf("generator.runHooks() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if gotOutput := output.String(); gotOutput != tt.wantOutput {
+				t.Errorf("generator.runHooks() = %v, want %v", gotOutput, tt.wantOutput)
+			}
+
 		})
 	}
 }

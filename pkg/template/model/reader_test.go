@@ -2,6 +2,8 @@ package model
 
 import (
 	"testing"
+
+	"github.com/ironman-project/ironman/pkg/testutils"
 )
 
 func Test_fsReader_Read(t *testing.T) {
@@ -33,9 +35,18 @@ func Test_fsReader_Read(t *testing.T) {
 				Generators: []*Generator{
 					&Generator{
 						ID:            "generator",
+						TType:         "",
 						Name:          "Test Generator",
 						Description:   "This is a test generator",
 						DirectoryName: "generator",
+						Hooks: &GeneratorHooks{
+							PreGenerate: []*Command{
+								&Command{
+									Name: "echo",
+									Args: []string{"-n", "Hello World"},
+								},
+							},
+						},
 					},
 					&Generator{
 						ID:            "controller",
@@ -77,6 +88,14 @@ func Test_fsReader_Read(t *testing.T) {
 
 				if generator.DirectoryName != gotGenerator.DirectoryName {
 					t.Errorf("fsReader.Read() generator directory_name = %s want %s", gotGenerator.DirectoryName, generator.DirectoryName)
+					return
+				}
+
+				//lets marshall the objects in order to tests if they are equal
+				generatorMarshaled := testutils.Marshal(generator, t)
+				gotGeneratorMarshaled := testutils.Marshal(gotGenerator, t)
+				if generatorMarshaled != gotGeneratorMarshaled {
+					t.Errorf("fsReader.Reader() generator.Hooks = %s want %s", generatorMarshaled, gotGeneratorMarshaled)
 					return
 				}
 

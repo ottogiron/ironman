@@ -1,3 +1,7 @@
 id: test-read-template
 name: Test Read Template
 description: This is a test template
+hooks:
+        preGenerate:
+                - name: "echo"
+                  args: ["-n", "Hello World"]

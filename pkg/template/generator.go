@@ -20,6 +20,10 @@ import (
 
 //arbitrary number
 const noGeneratorWorkers = 20
+const (
+	preGenerateLabel  = "pre-generate"
+	postGenerateLabel = "post-generate"
+)
 
 //GeneratorData represents the data to be passed to each generator file template
 type GeneratorData struct {
@@ -36,12 +40,14 @@ type Generator interface {
 }
 
 type generator struct {
-	path           string
-	generationPath string
-	ignore         []string
-	data           GeneratorData
-	engine         engine.Factory
-	out            io.Writer
+	path                  string
+	generationPath        string
+	ignore                []string
+	data                  GeneratorData
+	engineFactory         engine.Factory
+	out                   io.Writer
+	withPreGenerateHooks  bool
+	withPostGenerateHooks bool
 }
 
 //NewGenerator returns a new instance of a generator
@@ -52,10 +58,12 @@ func NewGenerator(path string, generationPath string, data GeneratorData, option
 		generationPath: generationPath,
 		data:           data,
 		ignore:         []string{".ironman.yaml"},
-		engine: func() engine.Engine {
+		engineFactory: func() engine.Engine {
 			return goengine.New("ironman")
 		},
-		out: os.Stdout,
+		out:                   os.Stdout,
+		withPreGenerateHooks:  true,
+		withPostGenerateHooks: true,
 	}
 
 	for _, option := range options {
@@ -84,6 +92,14 @@ type templatePathResult struct {
 
 func (g *generator) Generate(ctx context.Context) error {
 	gdata := g.data.Generator
+
+	if g.withPreGenerateHooks {
+		err := g.runPreGenerateHooks()
+		if err != nil {
+			return errors.Errorf("failed to run %s hooks", preGenerateLabel)
+		}
+	}
+
 	//Generate a file only if the generator type is file
 	if g.data.Generator.TType == model.GeneratorTypeFile {
 		if gdata.FileTypeOptions.DefaultTemplateFile == "" {
@@ -148,6 +164,13 @@ func (g *generator) Generate(ctx context.Context) error {
 
 	if err != nil {
 		return errors.Wrapf(err, "failed to process generator path templates: %s", g.path)
+	}
+
+	if g.withPostGenerateHooks {
+		err := g.runPostGenerateHooks()
+		if err != nil {
+			return errors.Errorf("faield to run %s hooks", postGenerateLabel)
+		}
 	}
 
 	return nil
@@ -233,7 +256,7 @@ func (g *generator) processFile(templatePathResult templatePathResult) ([]byte, 
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to read template contents %s", templatePathResult.path)
 	}
-	engine := g.engine()
+	engine := g.engineFactory()
 	tmpl, err := engine.Parse(string(data))
 
 	if err != nil {
@@ -309,4 +332,79 @@ func (g *generator) writeFile(presult processResult) writeResult {
 		return writeResult{err: err}
 	}
 	return writeResult{pathFrom: presult.templatePathResult.path, pathTo: toPath}
+}
+
+func (g *generator) runPreGenerateHooks() error {
+	hooks := g.data.Generator.Hooks
+	if hooks != nil {
+		return g.runHooks(preGenerateLabel, hooks.PreGenerate)
+	}
+	return nil
+}
+
+func (g *generator) runPostGenerateHooks() error {
+	hooks := g.data.Generator.Hooks
+	if hooks != nil {
+		return g.runHooks(postGenerateLabel, hooks.PostGenerate)
+	}
+	return nil
+}
+
+func (g *generator) runHooks(name string, hooks []*model.Command) error {
+
+	if len(hooks) < 1 { //if it doesn't have at least one hook
+		return nil // do nothing
+	}
+
+	fmt.Fprintf(g.out, "Running %s hooks\n", name)
+	for _, hookCommand := range hooks {
+		if err := g.executeCommand(hookCommand); err != nil {
+			return errors.Errorf("failed to execute %s hook %s %s", name, hookCommand.Name, err)
+		}
+	}
+	fmt.Fprintf(g.out, "\n...Running %s hooks done\n", name)
+
+	return nil
+}
+
+func (g *generator) executeCommand(command *model.Command) error {
+
+	engine := g.engineFactory()
+	nameTmpl, err := engine.Parse(command.Name)
+	if err != nil {
+		return errors.Errorf("failed to parse command hook name template %s", command.Name)
+	}
+
+	var buffer bytes.Buffer
+	if err := nameTmpl.Execute(&buffer, g.data); err != nil {
+		return errors.Errorf("failed to execute template for command hook name %s", command.Name)
+	}
+
+	command.Name = buffer.String() //extract the parsed command name
+
+	//now do the same for each argument
+	var cmdArgs []string
+
+	for _, argument := range command.Args {
+
+		argTmpl, err := engine.Parse(argument)
+		if err != nil {
+			return errors.Errorf("failed to parse command hook argument template %s, %s", argument, err)
+		}
+
+		buffer.Reset() // reset the buffer to store the new parsed template
+		if err := argTmpl.Execute(&buffer, g.data); err != nil {
+			return errors.Errorf("failed to execute template for command hook argument %s %s", argument, err)
+		}
+
+		cmdArg := buffer.String()
+		cmdArgs = append(cmdArgs, cmdArg)
+	}
+
+	command.Args = cmdArgs
+
+	if err := ExecuteCommand(command, g.out); err != nil {
+		return err // not wrapping just return the original error an wrap in the calling function above
+	}
+	return nil
 }

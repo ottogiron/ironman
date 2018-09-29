@@ -1,6 +1,6 @@
 language: go
 go:
-- 1.10.1
+- 1.11.1
 deploy:
   provider: releases
   file:
@@ -10,6 +10,6 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    go: 1.10.1
+    go: 1.11.1
   api-key:
     secure: RLBdSfDW/qxkHDLUCY8l8/7i4y2MZQfD4yasH8Ji0MP2SkG59hkh54LOJXy2l/V9QnRvDIyqh9jrAu+0tnrJdj0bnFwqkiSEVM6sc0yxKFxWoGknrrq9rR8iWoGkVcsh5VWreSsQGdWw8Cp2sYGfGfckQ65yCCIqfW68f9iBLJN1uzkuN2GUQgTCxTDkcv5AvxuvnhV3AoEsmwJ55fcGrYhZHcmC1T5HNNYsNs4fELZeO0zZsK+VFOaYqOplHA4PntVOpgN0XwdCiqoXyrQjMoRm0gW+Wf7ja+eRhq7ujIfDX1xk/00YQ8QLgb6LcroZJuq5GQD7MhF+7xdqPiD3Q7iMUJ0vG4iE0LYB1Dz3NHfUA8k0/ABRHEs0cZbXmyU/IfWncE/6SNdwJpjyj5WnBsR1wTzXxaTgLRMCHfeTZlTam7MzdlQMN49U0hgaDptBSVLaWueYx1yr3xFi2H9aOenbrjhsP4spAxboL7tOT3XRN1zB2BvfcWhs3xCgYhOZFmsFUhPLWythQMoF+Np9GZKGr5xb1vidU19UMnL5VHfheW1lRwbWqv6piymUH2zLlgWam0wu195c9f+8JhVtjS5/NufGotyy0G3dLpaxw8z3gysLxXpeEK2YcG8vCfnTKv65EJUch7d/6OqENVF2ymnhEEo9vxmxey03yxA7s7o=

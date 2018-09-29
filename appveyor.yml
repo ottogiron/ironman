@@ -1,40 +1,26 @@
-version: build-{build}.{branch}
-
 clone_folder: C:\gopath\src\github.com\ironman-project\ironman
 shallow_clone: true # for startup speed
 
 environment:
   GOPATH: C:\gopath
-  GOVERSION: 1.10.1
   GOOS: windows 
-  CGO_ENABLED: 1 
   GOARCH: amd64
+  CGO_ENABLED: 1
 
-init:
-  - git config --global core.autocrlf input  
-
-platform:
-  - x64
+stack: go 1.11
 
 install:
-  # Install the specific Go version.
-  - rmdir c:\go /s /q
-  - appveyor DownloadFile https://storage.googleapis.com/golang/go%GOVERSION%.windows-amd64.msi
-  - msiexec /i go%GOVERSION%.windows-amd64.msi /q
-  - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
-  - go get github.com/DATA-DOG/godog/cmd/godog
+  - set PATH=%GOPATH%\bin;c:\go\bin;C:\tools\mingw64\bin;%PATH%
+  - choco install mingw
   - go version
   - go env
-
 
 test_script:
   - go fmt ./...
   - go vet ./...
   - go test -v ./... -cover -bench . -race
-  - godog acceptance/features
   
 build_script:
-
   - go build -o build/dist/windows/ironman.exe
 
 deploy: false

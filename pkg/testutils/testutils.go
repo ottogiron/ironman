@@ -7,7 +7,7 @@ import (
 
 //Marshal marshals the value to a string representation
 func Marshal(val interface{}, t *testing.T) string {
-	bytes, err := json.Marshal(val)
+	bytes, err := json.MarshalIndent(val, "", "    ")
 
 	if err != nil {
 		t.Fatalf("failed to marshal object %v", val)

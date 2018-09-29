@@ -36,3 +36,4 @@ template/manager/git/testing/templates
 test-gen
 template-test
 debug
+*.swp

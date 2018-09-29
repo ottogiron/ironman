@@ -33,14 +33,14 @@ func TestGenerateCmd(t *testing.T) {
 			Name:     "successful generate",
 			Args:     []string{"template-example", filepath.Join(tempGenerateDir, "test-gen")},
 			Flags:    []string{""},
-			Expected: "Running template generator app\nDone\n",
+			Expected: "Running template generator app",
 			Err:      false,
 		},
 		{
 			Name:     "successful generate with parameters",
 			Args:     []string{"template-example", filepath.Join(tempGenerateDir, "test-gen-with-parameters")},
 			Flags:    []string{"--set", "key=value"},
-			Expected: "Running template generator app\nDone\n",
+			Expected: "Running template generator app",
 			Err:      false,
 		},
 		{
@@ -49,6 +49,13 @@ func TestGenerateCmd(t *testing.T) {
 			Flags:    []string{},
 			Expected: "",
 			Err:      true,
+		},
+		{
+			Name:     "successful generate with hooks",
+			Args:     []string{"template-example:with_hooks", filepath.Join(tempGenerateDir, "test-gen-hooks")},
+			Flags:    []string{""},
+			Expected: "Running template generator with_hooks\nRunning pre-generate hooks",
+			Err:      false,
 		},
 	}
 	testhelpers.RunCmdTests(t, tests, func(client *ironman.Ironman, out io.Writer) *cobra.Command {

@@ -336,7 +336,7 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 			empty, err := isDirEmpty(absGenerationPath)
 
 			if err != nil {
-				return errors.Wrapf(err, "failed to validate if generation path is empty", err)
+				return errors.Wrapf(err, "failed to validate if generation path is empty %s", err)
 			}
 
 			if !empty {

@@ -19,7 +19,7 @@ func SetGeneratorOutput(out io.Writer) GeneratorOption {
 //SetGeneratorEngine sets the generator template engine
 func SetGeneratorEngine(engine engine.Factory) GeneratorOption {
 	return func(generator *generator) {
-		generator.engine = engine
+		generator.engineFactory = engine
 	}
 }
 
@@ -27,5 +27,18 @@ func SetGeneratorEngine(engine engine.Factory) GeneratorOption {
 func SetGeneratorIgnoreList(ignoreList []string) GeneratorOption {
 	return func(generator *generator) {
 		generator.ignore = ignoreList
+	}
+}
+
+//SetWithPregenerateHooks  whether run the generate command with pre-generate hooks
+func SetWithPregenerateHooks(withHooks bool) GeneratorOption {
+	return func(generator *generator) {
+		generator.withPreGenerateHooks = withHooks
+	}
+}
+
+func SetWithPostGenerateHooks(withHooks bool) GeneratorOption {
+	return func(generator *generator) {
+		generator.withPostGenerateHooks = withHooks
 	}
 }

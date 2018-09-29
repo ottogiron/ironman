@@ -175,13 +175,13 @@ func createTemplateDirectories(templatePath string) error {
 	appGeneratorPath := filepath.Join(templatePath, "generators", "app")
 	err = os.MkdirAll(appGeneratorPath, os.ModePerm)
 	if err != nil {
-		return errors.Wrapf(err, "failed to create template app generator directory in path", appGeneratorPath)
+		return errors.Wrapf(err, "failed to create template app generator directory in path %s", appGeneratorPath)
 	}
 
 	singleFileGeneratorPath := filepath.Join(templatePath, "generators", "single")
 	err = os.MkdirAll(singleFileGeneratorPath, os.ModePerm)
 	if err != nil {
-		return errors.Wrapf(err, "failed to create template single file generator directory in templatePath", appGeneratorPath)
+		return errors.Wrapf(err, "failed to create template single file generator directory in templatePath %s", appGeneratorPath)
 	}
 
 	return nil
