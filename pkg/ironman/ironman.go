@@ -16,8 +16,6 @@ import (
 
 	"github.com/ironman-project/ironman/pkg/template/validator"
 
-	"github.com/blevesearch/bleve"
-	brepository "github.com/ironman-project/ironman/pkg/template/index/bleve"
 	"github.com/ironman-project/ironman/pkg/template/index/storm"
 	"github.com/ironman-project/ironman/pkg/template/manager"
 	"github.com/ironman-project/ironman/pkg/template/manager/git"
@@ -81,20 +79,6 @@ func New(home string, options ...Option) *Ironman {
 	}
 
 	return ir
-}
-
-func buildIndex(path string) (bleve.Index, error) {
-	// open the index
-	index, err := bleve.Open(path)
-	if err == bleve.ErrorIndexPathDoesNotExist {
-		index, err = brepository.BuildIndex(path)
-		if err != nil {
-			return nil, err
-		}
-	} else if err != nil {
-		return nil, err
-	}
-	return index, nil
 }
 
 //Install installs a new template based on a template locator

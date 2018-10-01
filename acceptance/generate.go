@@ -74,7 +74,7 @@ func theGenerateWithNonExistingIDProcessStateShouldBeFailure() error {
 	return nil
 }
 
-func theGenerateWithNonExistingIDOutputShouldCointain(expectedOutput string) error {
+func theGenerateWithNonExistingIDOutputShouldContain(expectedOutput string) error {
 	if !strings.Contains(testcli.Stderr(), expectedOutput) {
 		return fmt.Errorf("output => %s", testcli.Stderr())
 	}
@@ -137,8 +137,7 @@ func GenerateContext(s *godog.Suite) {
 
 	s.Step(`^Generate with non existing ID runs with ID "([^"]*)" generator ID "([^"]*)"$`, generateWithNonExistingIDRunsWithIDGeneratorID)
 	s.Step(`^The generate with non existing ID process state should be failure$`, theGenerateWithNonExistingIDProcessStateShouldBeFailure)
-	s.Step(`^The generate with non existing ID output should cointain "([^"]*)"$`, theGenerateWithNonExistingIDOutputShouldCointain)
-
+	s.Step(`^The generate with non existing ID output should contain "([^"]*)"$`, theGenerateWithNonExistingIDOutputShouldContain)
 	s.Step(`^A template to generate a file installed with URL "([^"]*)"$`, aTemplateToGenerateAFileInstalledWithURL)
 	s.Step(`^Generate file runs with ID "([^"]*)" generator ID "([^"]*)"  and fileName "([^"]*)"  and flags "([^"]*)"$`, generateFileRunsWithIDGeneratorIDAndFileNameAndFlags)
 	s.Step(`^The generate file process state should be success$`, theGenerateFileProcessStateShouldBeSuccess)

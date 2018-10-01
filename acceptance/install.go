@@ -50,7 +50,7 @@ func theProcessStateShouldBeFailure() error {
 	return nil
 }
 
-func theOutputShouldCointain(expectedOutput string) error {
+func theOutputShouldContain(expectedOutput string) error {
 	if !strings.Contains(testcli.Stderr(), expectedOutput) {
 		return fmt.Errorf("output => %s", testcli.Stderr())
 	}
@@ -65,6 +65,6 @@ func InstallContext(s *godog.Suite) {
 	s.Step(`^The output should contain "([^"]*)" and "([^"]*)"$`, theOutputShouldContainAnd)
 	s.Step(`^It runs with unreachable URL "([^"]*)"$`, itRunsWithUnreachableURL)
 	s.Step(`^The process state should be failure$`, theProcessStateShouldBeFailure)
-	s.Step(`^The output should cointain "([^"]*)"$`, theOutputShouldCointain)
+	s.Step(`^The output should contain "([^"]*)"$`, theOutputShouldContain)
 
 }
