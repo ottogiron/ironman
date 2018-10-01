@@ -1319,7 +1319,7 @@ type SmallRect struct {
 	Bottom int16
 }
 
-// Used with GetConsoleScreenBuffer to retrieve information about a console
+// Used with GetConsoleScreenBuffer to retreive information about a console
 // screen buffer. See
 // https://docs.microsoft.com/en-us/windows/console/console-screen-buffer-info-str
 // for details.
