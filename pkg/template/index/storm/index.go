@@ -111,7 +111,7 @@ func (i *Index) FindTemplateByID(ID string) (*model.Template, error) {
 func (i *Index) Exists(ID string) (bool, error) {
 
 	if _, err := i.FindTemplateByID(ID); err != nil {
-		return false, errors.Errorf("failed to verify if teplate exists %s %s", ID, err)
+		return false, errors.Errorf("failed to verify if template exists %s %s", ID, err)
 	}
 	return true, nil
 }
