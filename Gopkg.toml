@@ -80,3 +80,7 @@
 [prune]
   go-tests = true
   unused-packages = true
+
+[[constraint]]
+  name = "github.com/asdine/storm"
+  version = "2.1.2"

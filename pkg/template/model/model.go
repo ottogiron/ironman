@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 //SourceType represents how the template has been installed
 type SourceType string
 
@@ -22,7 +24,7 @@ type Template struct {
 	//IID internal database ID
 	IID        string     `json:"iid,omitempty" yaml:"iid,omitempty"`
 	SourceType SourceType `json:"sourceType,omitempty" yaml:"sourceType,omitempty"`
-	ID         string     `json:"id" yaml:"id"`
+	ID         string     `json:"id" yaml:"id" storm:"id"` //contains an special storm annotation
 
 	Version       string       `json:"version" yaml:"version"`
 	Name          string       `json:"name" yaml:"name"`
@@ -34,6 +36,7 @@ type Template struct {
 	Mantainers    []*Mantainer `json:"mantainers" yaml:"mantainers"`
 	AppVersion    string       `json:"appVersion" yaml:"appVersion"`
 	Deprecated    bool         `json:"deprecated" yaml:"deprecated"`
+	CreatedAt     time.Time    `json:"created_at" yaml:"created_at"`
 }
 
 //Type Simple type serialization for template model
