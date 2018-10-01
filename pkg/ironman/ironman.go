@@ -18,6 +18,7 @@ import (
 
 	"github.com/blevesearch/bleve"
 	brepository "github.com/ironman-project/ironman/pkg/template/index/bleve"
+	"github.com/ironman-project/ironman/pkg/template/index/storm"
 	"github.com/ironman-project/ironman/pkg/template/manager"
 	"github.com/ironman-project/ironman/pkg/template/manager/git"
 	"github.com/ironman-project/ironman/pkg/template/model"
@@ -65,14 +66,8 @@ func New(home string, options ...Option) *Ironman {
 
 	if ir.index == nil {
 		indexPath := filepath.Join(home, indexName)
-
-		index, err := buildIndex(indexPath)
-		if err != nil {
-			log.Fatal("failed to create ironman templates index", err)
-		}
-		ir.index = brepository.New(
-			brepository.SetIndex(index),
-		)
+		index := storm.New(storm.DefaultDBFactory(indexPath))
+		ir.index = index
 	}
 
 	if ir.modelReader == nil {
