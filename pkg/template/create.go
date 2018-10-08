@@ -17,14 +17,19 @@ const ironmanConfigFileName = ".ironman.yaml"
 
 var rootIronmanYamlTmpl = `
 version: 1.0.0
-id: template-example
 name: Template Example
 description: This is an example of a valid template.
 `
 
 var appGeneratorYamlTmpl = `
-id: app
 description: Application Generator
+hooks:
+    pre_generate: 
+        - name: "echo"
+          args: ["-n", "Hello pre-generate"]
+    post_generate:
+        - name: "echo"
+          args: ["-n", "Hello post-generate"]
 `
 
 var appGeneratorReadmeTmpl = `
