@@ -1,6 +1,6 @@
 # Meta info
 NAME := ironman
-VERSION := v0.3.0
+VERSION := v0.4.0
 MAINTAINER := "Otto Giron <ottog2486@gmail.com"
 SOURCE_URL := https://github.com/ironman-project/ironman.git
 DATE := $(shell date -u +%Y%m%d.%H%M%S)
