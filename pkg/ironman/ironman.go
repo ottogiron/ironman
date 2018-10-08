@@ -260,13 +260,8 @@ func (i *Ironman) Create(templatePath string) error {
 	return nil
 }
 
-//UpdateTemplateMetadata updates the template metadata based on an ID
-func (i *Ironman) UpdateTemplateMetadata(templateID string) error {
-	return nil
-}
-
 //Generate generates a new file or directory based on a generator
-func (i *Ironman) Generate(context context.Context, templateID string, generatorID string, generationPath string, values values.Values, force bool, updateMetadata bool) error {
+func (i *Ironman) Generate(context context.Context, templateID string, generatorID string, generationPath string, values values.Values, force bool) error {
 	//First validate if template exists
 	exists, err := i.index.Exists(templateID)
 
@@ -279,32 +274,34 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 	}
 
 	templateModel, err := i.index.FindTemplateByID(templateID)
-
 	if err != nil {
 		return errors.Wrapf(err, "could not find template by ID %s", templateID)
 	}
 
-	genteratorModel := templateModel.Generator(generatorID)
-
-	if genteratorModel == nil {
-		return errors.Errorf("generator %s does not exists", generatorID)
-	}
-
-	if updateMetadata {
-
+	//Update metadata of the template automatically if the template type is a link
+	if templateModel.SourceType == model.SourceTypeLink {
 		templatePath := i.manager.TemplateLocation(templateModel.DirectoryName)
-		templateModel, err := i.modelReader.Read(templatePath)
-
+		templateModel, err = i.modelReader.Read(templatePath)
 		if err != nil {
 			return errors.Wrapf(err, "failed to update metadata for template %s", templateID)
 		}
-
+		//reset the template ID  and SourceType since a linked template has a custom ID and SourceType are not the one defined in metadata
+		templateModel.ID = templateID
+		templateModel.SourceType = model.SourceTypeLink
 		err = i.index.Update(templateModel)
 
 		if err != nil {
 			return errors.Wrapf(err, "Failed to update metadata for template %s", templateID)
 		}
 	}
+
+	//Get the generator after all the valitations to the template have been made
+	genteratorModel := templateModel.Generator(generatorID)
+
+	if genteratorModel == nil {
+		return errors.Errorf("generator %s does not exists", generatorID)
+	}
+
 	absGenerationPath, err := filepath.Abs(generationPath)
 
 	if err != nil {

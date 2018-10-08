@@ -21,8 +21,6 @@ type Mantainer struct {
 
 //Template template metadata definition
 type Template struct {
-	//IID internal database ID
-	IID        string     `json:"iid,omitempty" yaml:"iid,omitempty"`
 	SourceType SourceType `json:"sourceType,omitempty" yaml:"sourceType,omitempty"`
 	ID         string     `json:"id" yaml:"id" storm:"id"` //contains an special storm annotation
 

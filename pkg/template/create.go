@@ -16,6 +16,7 @@ import (
 const ironmanConfigFileName = ".ironman.yaml"
 
 var rootIronmanYamlTmpl = `
+id: template-example
 version: 1.0.0
 name: Template Example
 description: This is an example of a valid template.

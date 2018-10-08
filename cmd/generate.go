@@ -39,7 +39,6 @@ type generateCmd struct {
 	values          []string
 	stringValues    []string
 	forceGeneration bool
-	updateMetadata  bool
 	valFiles        valueFiles
 }
 
@@ -119,7 +118,6 @@ ironman generate template:example:controller ~/mynewapp
 	f.StringArrayVar(&generate.values, "set", []string{}, "set values on the command line (can specify multiple or separate values with commas: key1=val1,key2=val2)")
 	f.VarP(&generate.valFiles, "values", "f", "specify values in a YAML file (can specify multiple)")
 	f.BoolVar(&generate.forceGeneration, "force", false, "Forces generation even if directory or file exists. e.g ironman generate --force template /generation/path")
-	f.BoolVar(&generate.updateMetadata, "update-metadata", false, "Updates the template and generators metadata. This can be useful for development purposes, when a metadata file is changed and the template already linked or intalled")
 	return generateCmd
 }
 
@@ -130,7 +128,7 @@ func (g *generateCmd) run() error {
 		return err
 	}
 	fmt.Fprintln(g.out, "Running template generator", g.generatorID)
-	err = g.client.Generate(context.Background(), g.templateID, g.generatorID, g.path, values, g.forceGeneration, g.updateMetadata)
+	err = g.client.Generate(context.Background(), g.templateID, g.generatorID, g.path, values, g.forceGeneration)
 	if err != nil {
 		return err
 	}
