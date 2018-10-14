@@ -22,8 +22,8 @@ type Generator struct {
 	TType           GeneratorType   `json:"type" yaml:"type"`
 	Name            string          `json:"name" yaml:"name"`
 	Description     string          `json:"description" yaml:"description"`
-	DirectoryName   string          `json:"-" yaml:"-"`
-	FileTypeOptions FileTypeOptions `json:"-" yaml:"-"`
+	DirectoryName   string          `json:"directoryName" yaml:"-"`
+	FileTypeOptions FileTypeOptions `json:"fileTypeOptions,omitempty" yaml:"fileTypeOptions,omitempty"`
 	Hooks           *GeneratorHooks `json:"hooks,omitempty" yaml:"hooks,omitempty"`
 }
 
