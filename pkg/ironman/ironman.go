@@ -3,7 +3,9 @@ package ironman
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
+	"strings"
 
 	"log"
 	"os"
@@ -13,6 +15,7 @@ import (
 	"github.com/ironman-project/ironman/pkg/template"
 	"github.com/ironman-project/ironman/pkg/template/index"
 	"github.com/ironman-project/ironman/pkg/template/values"
+	yaml "gopkg.in/yaml.v2"
 
 	"github.com/ironman-project/ironman/pkg/template/validator"
 
@@ -27,6 +30,8 @@ const (
 	indexName          = "templates.index"
 	templatesDirectory = "templates"
 	generatorsPath     = "generators"
+	FormatYAML         = "yaml"
+	FormatJSON         = "json"
 )
 
 const validatoinTemplateText = ``
@@ -411,4 +416,66 @@ func EnsureIronmanHome(ironmanHome string) error {
 		}
 	}
 	return nil
+}
+
+//Describe writes some useful information about the resource in the io.Writer
+//a resource ID can be a <template-id> for a template or a <template-id>:generator-id for a generator
+func (i *Ironman) Describe(resourceID string, format string, writer io.Writer) error {
+
+	idTokens := strings.Split(resourceID, ":")
+	idTokensLen := len(idTokens)
+	if !(idTokensLen == 1 || idTokensLen == 2) {
+		return errors.Errorf("invalid number of tokens in id %s tokens:%d", resourceID, idTokens)
+	}
+
+	var templateID = idTokens[0]
+
+	template, err := i.index.FindTemplateByID(templateID)
+
+	if err != nil {
+		return errors.Errorf("failed to find template by with ID %s", templateID)
+	}
+
+	var resource interface{}
+
+	if idTokensLen == 2 { // it means it is requesting a generator resource describe
+		generatorID := idTokens[1]
+		if generator := template.Generator(generatorID); generator != nil {
+			resource = generator
+		} else {
+			return errors.Errorf("the generator %s was not found", resourceID)
+		}
+	} else if idTokensLen == 1 {
+		resource = template
+	}
+
+	switch format {
+	case FormatYAML:
+		return yamlMarshal(writer, resourceID, resource)
+	case FormatJSON:
+		return jsonMarshal(writer, resourceID, resource)
+	default:
+		return errors.Errorf("format %s not supported", format)
+	}
+}
+
+func yamlMarshal(writer io.Writer, resourceID string, resource interface{}) error {
+
+	d, err := yaml.Marshal(&resource)
+	if err != nil {
+		return errors.Errorf("failed to marshal resource %s %s ", resourceID, err)
+	}
+	writer.Write(d)
+	return nil
+}
+
+func jsonMarshal(writer io.Writer, resourceID string, resource interface{}) error {
+
+	d, err := json.MarshalIndent(&resource, "", " ")
+	if err != nil {
+		return errors.Errorf("failed to marshal resource %s %s ", resourceID, err)
+	}
+	writer.Write(d)
+	return nil
+
 }

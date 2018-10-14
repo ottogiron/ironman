@@ -29,7 +29,7 @@ func newCreateCmd(client *ironman.Ironman, out io.Writer) *cobra.Command {
 			}
 
 			if len(args) > 1 {
-				return errors.New("Invalid number of arguments")
+				return errors.New("invalid number of arguments")
 			}
 
 			return nil
