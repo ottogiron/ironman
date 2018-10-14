@@ -99,6 +99,10 @@ func (r *fsReader) Read(path string) (*Template, error) {
 				generatorModel.ID = generatorFile.Name()
 			}
 
+			if string(generatorModel.TType) == "" {
+				generatorModel.TType = GeneratorTypeDirectory
+			}
+
 			templateModel.Generators = append(templateModel.Generators, &generatorModel)
 		}
 	}

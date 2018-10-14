@@ -17,7 +17,10 @@ func setUpUpdateCmd(t *testing.T, client *ironman.Ironman, testCase testhelpers.
 	installCmd := newInstallCommand(client, ioutil.Discard)
 	//equivalent to "ironman install https://github.com/ironman-project/template-example.git"
 	args := []string{"https://github.com/ironman-project/template-example.git"}
-	testhelpers.RunTestCmd(installCmd, t, args, nil)
+	err := testhelpers.RunTestCmd(installCmd, args, nil)
+	if err != nil {
+		t.Fatalf("failed to setUp tests for Update %s", err)
+	}
 }
 
 func TestUpdateCmd(t *testing.T) {

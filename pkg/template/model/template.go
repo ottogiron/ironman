@@ -28,13 +28,13 @@ type Template struct {
 	Name          string       `json:"name" yaml:"name"`
 	Description   string       `json:"description" yaml:"description"`
 	Generators    []*Generator `json:"generators" yaml:"generators"`
-	DirectoryName string       `json:"directoryName,omitempty" yaml:"directoryName,omitempty"`
-	HomeURL       string       `json:"home" yaml:"home"`
-	Sources       []string     `json:"sources" yaml:"sources"`
-	Mantainers    []*Mantainer `json:"mantainers" yaml:"mantainers"`
-	AppVersion    string       `json:"appVersion" yaml:"appVersion"`
-	Deprecated    bool         `json:"deprecated" yaml:"deprecated"`
-	CreatedAt     time.Time    `json:"created_at" yaml:"created_at"`
+	DirectoryName string       `json:"-" yaml:"-"`
+	HomeURL       string       `json:"home,omitempty" yaml:"home,omitempty"`
+	Sources       []string     `json:"sources,omitempty" yaml:"sources,omitempty"`
+	Mantainers    []*Mantainer `json:"mantainers,omitempty" yaml:"mantainers,omitempty"`
+	AppVersion    string       `json:"appVersion,omitempty" yaml:"appVersion,omitempty"`
+	Deprecated    bool         `json:"deprecated,omitempty" yaml:"deprecated,omitempty"`
+	CreatedAt     time.Time    `json:"-" yaml:"-"`
 }
 
 //Type Simple type serialization for template model

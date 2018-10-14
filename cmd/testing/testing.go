@@ -70,7 +70,7 @@ func RunCmdTests(t *testing.T, tests []CmdTestCase, cmdFactory testCmdFactory, s
 			}
 
 			cmd := cmdFactory(client, &buf)
-			err := RunTestCmd(cmd, t, tt.Args, tt.Flags)
+			err := RunTestCmd(cmd, tt.Args, tt.Flags)
 
 			if (err != nil) != tt.Err {
 				t.Errorf("expected error, got '%v'", err)
@@ -94,7 +94,7 @@ func RunCmdTests(t *testing.T, tests []CmdTestCase, cmdFactory testCmdFactory, s
 }
 
 //RunTestCmd runs a test command
-func RunTestCmd(cmd *cobra.Command, t *testing.T, args []string, flags []string) error {
+func RunTestCmd(cmd *cobra.Command, args []string, flags []string) error {
 	err := cmd.ParseFlags(flags)
 	if err != nil {
 		return err

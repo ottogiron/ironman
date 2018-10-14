@@ -35,7 +35,7 @@ func Test_fsReader_Read(t *testing.T) {
 				Generators: []*Generator{
 					&Generator{
 						ID:            "generator",
-						TType:         "",
+						TType:         GeneratorTypeDirectory,
 						Name:          "Test Generator",
 						Description:   "This is a test generator",
 						DirectoryName: "generator",

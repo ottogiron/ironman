@@ -18,7 +18,10 @@ func setUpUnlinkCmd(t *testing.T, client *ironman.Ironman, testCase testhelpers.
 	linkCmd := newLinkCmd(client, ioutil.Discard)
 	//equivalent to "ironman install https://github.com/ironman-project/template-example.git"
 	args := []string{filepath.Join("testing", "templates", "linkable-template"), "linked-template"}
-	testhelpers.RunTestCmd(linkCmd, t, args, nil)
+	err := testhelpers.RunTestCmd(linkCmd, args, nil)
+	if err != nil {
+		t.Fatalf("failed to setUp link tests %s", err)
+	}
 }
 
 func TestUnlinkCmd(t *testing.T) {

@@ -17,7 +17,10 @@ func setUpListCmd(t *testing.T, client *ironman.Ironman, testCase testhelpers.Cm
 	installCmd := newInstallCommand(client, ioutil.Discard)
 	//equivalent to "ironman install https://github.com/ironman-project/template-example.git"
 	args := []string{"https://github.com/ironman-project/template-example.git"}
-	testhelpers.RunTestCmd(installCmd, t, args, nil)
+	err := testhelpers.RunTestCmd(installCmd, args, nil)
+	if err != nil {
+		t.Fatalf("failed to setUp list tests %s", err)
+	}
 }
 
 func TestListCmd(t *testing.T) {
