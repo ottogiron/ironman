@@ -1,0 +1,33 @@
+sourceType: URL
+id: template-example
+version: 1.0.0
+name: Template Example
+description: This is an example of a valid template.
+generators:
+- id: app
+  type: directory
+  name: ""
+  description: Application Generator
+- id: controller
+  type: file
+  name: Controller Generator
+  description: Generates a controller
+  fileTypeOptions:
+    defaultTemplateFile: controller.go
+- id: with_hooks
+  type: directory
+  name: ""
+  description: A generator showcasing the ironman hooks feature
+  hooks:
+    pre_generate:
+    - name: echo
+      args:
+      - -n
+      - |
+        Running pre-generate hook from test generator
+    post_generate:
+    - name: echo
+      args:
+      - -n
+      - |
+        Running post-generate hook from test generator
