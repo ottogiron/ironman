@@ -5,7 +5,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"sync"
 	"testing"
@@ -78,8 +77,8 @@ func RunCmdTests(t *testing.T, tests []CmdTestCase, cmdFactory testCmdFactory, s
 
 			//In case theres an error, the ouput of the error is expected to be something specific
 			if err != nil {
-				re := regexp.MustCompile(tt.Expected)
-				if !re.Match([]byte(err.Error())) {
+				got := err.Error()
+				if !strings.Contains(got, tt.Expected) {
 					t.Errorf("expected\n%q\ngot\n%q", tt.Expected, err)
 				}
 				return
