@@ -4,10 +4,6 @@ go:
 
 env:
   - GO111MODULE=on
-os:
-  - windows
-  - linux
-  - osx
 
 deploy:
   provider: releases
