@@ -33,6 +33,6 @@ func (g *Generator) Type() string {
 }
 
 type GeneratorHooks struct {
-	PreGenerate  []*Command `json:"postGenerate,omitempty" yaml:"pre_generate,omitempty"`
-	PostGenerate []*Command `json:"preGenerate,omitempty" yaml:"post_generate,omitempty"`
+	PreGenerate  []*Command `json:"preGenerate,omitempty" yaml:"preGenerate,omitempty"`
+	PostGenerate []*Command `json:"postGenerate,omitempty" yaml:"postGenerate,omitempty"`
 }

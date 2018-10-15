@@ -5,25 +5,22 @@ import (
 	"context"
 	"encoding/json"
 	"io"
-	"strings"
-
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	gtemplate "text/template"
 
 	"github.com/ironman-project/ironman/pkg/template"
 	"github.com/ironman-project/ironman/pkg/template/index"
-	"github.com/ironman-project/ironman/pkg/template/values"
-	yaml "gopkg.in/yaml.v2"
-
-	"github.com/ironman-project/ironman/pkg/template/validator"
-
 	"github.com/ironman-project/ironman/pkg/template/index/storm"
 	"github.com/ironman-project/ironman/pkg/template/manager"
 	"github.com/ironman-project/ironman/pkg/template/manager/git"
 	"github.com/ironman-project/ironman/pkg/template/model"
+	"github.com/ironman-project/ironman/pkg/template/validator"
+	"github.com/ironman-project/ironman/pkg/template/values"
 	"github.com/pkg/errors"
+	yaml "gopkg.in/yaml.v2"
 )
 
 const (
@@ -240,18 +237,42 @@ func (i *Ironman) Update(templateID string) error {
 		return errors.Errorf("template '%s' is not installed", templateID)
 	}
 
-	model, err := i.index.FindTemplateByID(templateID)
+	templateModel, err := i.index.FindTemplateByID(templateID)
 
 	if err != nil {
-		return errors.Wrapf(err, "failed to get template model %s", templateID)
+		return errors.Wrapf(err, "failed to get template templateModel %s", templateID)
 	}
 
-	err = i.manager.Update(model.DirectoryName)
+	if err = i.manager.Update(templateModel.DirectoryName); err != nil {
+		return err
+	}
 
 	if err != nil {
 		return err
 	}
 
+	if err = i.updateMetadata(templateModel.DirectoryName, templateID, model.SourceTypeURL); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (i *Ironman) updateMetadata(directoryName string, templateID string, sourceType model.SourceType) error {
+	//Update template metadata
+	templatePath := i.manager.TemplateLocation(directoryName)
+	newTemplateModel, err := i.modelReader.Read(templatePath)
+	if err != nil {
+		return errors.Wrapf(err, "failed to update metadata for template %s", templateID)
+	}
+	//reset the template ID  and SourceType since a linked template has a custom ID and SourceType are not the one defined in metadata
+	newTemplateModel.ID = templateID
+	newTemplateModel.SourceType = sourceType
+	err = i.index.Update(newTemplateModel)
+
+	if err != nil {
+		return errors.Wrapf(err, "Failed to update metadata for template %s", templateID)
+	}
 	return nil
 }
 
@@ -285,18 +306,9 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 
 	//Update metadata of the template automatically if the template type is a link
 	if templateModel.SourceType == model.SourceTypeLink {
-		templatePath := i.manager.TemplateLocation(templateModel.DirectoryName)
-		templateModel, err = i.modelReader.Read(templatePath)
+		err = i.updateMetadata(templateModel.DirectoryName, templateID, model.SourceTypeLink)
 		if err != nil {
-			return errors.Wrapf(err, "failed to update metadata for template %s", templateID)
-		}
-		//reset the template ID  and SourceType since a linked template has a custom ID and SourceType are not the one defined in metadata
-		templateModel.ID = templateID
-		templateModel.SourceType = model.SourceTypeLink
-		err = i.index.Update(templateModel)
-
-		if err != nil {
-			return errors.Wrapf(err, "Failed to update metadata for template %s", templateID)
+			return err
 		}
 	}
 

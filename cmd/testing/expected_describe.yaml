@@ -19,13 +19,13 @@ generators:
   name: ""
   description: A generator showcasing the ironman hooks feature
   hooks:
-    pre_generate:
+    preGenerate:
     - name: echo
       args:
       - -n
       - |
         Running pre-generate hook from test generator
-    post_generate:
+    postGenerate:
     - name: echo
       args:
       - -n
