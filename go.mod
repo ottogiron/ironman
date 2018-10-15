@@ -2,7 +2,6 @@ module github.com/ironman-project/ironman
 
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
-	github.com/DATA-DOG/godog v0.7.7
 	github.com/DataDog/zstd v1.3.4 // indirect
 	github.com/Masterminds/semver v1.4.2 // indirect
 	github.com/Masterminds/sprig v2.16.0+incompatible
@@ -32,7 +31,6 @@ require (
 	github.com/pelletier/go-buffruneio v0.2.0 // indirect
 	github.com/pkg/errors v0.8.0
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/rendon/testcli v0.0.0-20161027181003-6283090d169f
 	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.3 // indirect
