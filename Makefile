@@ -25,12 +25,6 @@ lint:
 test:  lint
 	 go test -v $(SOURCE_DIRS) -cover -bench . -race
 
-acceptance: binaries 
-	@command -v godog >/dev/null 2>&1 || go get github.com/DATA-DOG/godog/cmd/godog
-	godog acceptance/features
-
-
-
 cover: 
 	gocov test $(SOURCE_DIRS) | gocov-html > coverage.html && open coverage.html
 	
