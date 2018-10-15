@@ -6,7 +6,8 @@ environment:
   GOOS: windows 
   GOARCH: amd64
   CGO_ENABLED: 1
-
+  GO111MODULE: on
+  
 stack: go 1.11
 
 install:
