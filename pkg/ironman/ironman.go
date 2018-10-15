@@ -124,6 +124,7 @@ func (i *Ironman) Install(templateLocator string) error {
 
 	//Set the installation type
 	templateModel.SourceType = model.SourceTypeURL
+	templateModel.Source = templateLocator
 	_, err = i.index.Index(templateModel)
 
 	if err != nil {
@@ -153,6 +154,11 @@ func (i *Ironman) Link(templatePath, templateID string) error {
 
 	templateModel.ID = templateID
 	templateModel.SourceType = model.SourceTypeLink
+	templateModel.Source, err = filepath.Abs(templatePath)
+
+	if err != nil {
+		return errors.Errorf("failed to get template absolute path %s", err)
+	}
 	_, err = i.index.Index(templateModel)
 
 	if err != nil {
@@ -251,14 +257,14 @@ func (i *Ironman) Update(templateID string) error {
 		return err
 	}
 
-	if err = i.updateMetadata(templateModel.DirectoryName, templateID, model.SourceTypeURL); err != nil {
+	if err = i.updateMetadata(templateModel.DirectoryName, templateID, templateModel.Source, model.SourceTypeURL); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (i *Ironman) updateMetadata(directoryName string, templateID string, sourceType model.SourceType) error {
+func (i *Ironman) updateMetadata(directoryName string, templateID string, source string, sourceType model.SourceType) error {
 	//Update template metadata
 	templatePath := i.manager.TemplateLocation(directoryName)
 	newTemplateModel, err := i.modelReader.Read(templatePath)
@@ -266,7 +272,9 @@ func (i *Ironman) updateMetadata(directoryName string, templateID string, source
 		return errors.Wrapf(err, "failed to update metadata for template %s", templateID)
 	}
 	//reset the template ID  and SourceType since a linked template has a custom ID and SourceType are not the one defined in metadata
+
 	newTemplateModel.ID = templateID
+	newTemplateModel.Source = source
 	newTemplateModel.SourceType = sourceType
 	err = i.index.Update(newTemplateModel)
 
@@ -306,7 +314,7 @@ func (i *Ironman) Generate(context context.Context, templateID string, generator
 
 	//Update metadata of the template automatically if the template type is a link
 	if templateModel.SourceType == model.SourceTypeLink {
-		err = i.updateMetadata(templateModel.DirectoryName, templateID, model.SourceTypeLink)
+		err = i.updateMetadata(templateModel.DirectoryName, templateID, templateModel.Source, model.SourceTypeLink)
 		if err != nil {
 			return err
 		}

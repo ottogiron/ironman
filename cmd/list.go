@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/ironman-project/ironman/pkg/ironman"
-
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 )
@@ -29,12 +28,12 @@ func newListCmd(client *ironman.Ironman, out io.Writer) *cobra.Command {
 
 Example:
 ironman list
-
-+--------------------+--------------------+-------------+
-|         ID         |        NAME        | DESCRIPTION |
-+--------------------+--------------------+-------------+
-| template-example   | template-example   | TODO        |
-+--------------------+--------------------+-------------+
++------------------+------------------+--------------------------------+-------------+---------------------------------------------------------+
+|        ID        |       NAME       |          DESCRIPTION           | SOURCE TYPE |                         SOURCE                          |
++------------------+------------------+--------------------------------+-------------+---------------------------------------------------------+
+| template-example | Template Example | This is an example of a valid  | URL         | https://github.com/ironman-project/template-example.git |
+|                  |                  | template.                      |             |                                                         |
++------------------+------------------+--------------------------------+-------------+---------------------------------------------------------+
 `,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			list.client, list.out = ensureIronmanClientAndOutput(list.client, list.out)
@@ -59,11 +58,23 @@ func (l *listCmd) run() error {
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"ID", "Name", "Description", "Source Type"})
+	table.SetHeader([]string{"ID", "Name", "Description", "Source Type", "Source"})
 
 	for _, installed := range installedList {
-		table.Append([]string{installed.ID, installed.Name, installed.Description, string(installed.SourceType)})
+		source := truncateString(installed.Source, 50) //50 is an arbitrary size
+		table.Append([]string{installed.ID, installed.Name, installed.Description, string(installed.SourceType), source})
 	}
 	table.Render() // Send output
 	return nil
+}
+
+func truncateString(str string, num int) string {
+	bnoden := str
+	if len(str) > num {
+		if num > 3 {
+			num -= 3
+		}
+		bnoden = str[0:num] + "..."
+	}
+	return bnoden
 }

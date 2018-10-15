@@ -21,9 +21,9 @@ type Mantainer struct {
 
 //Template template metadata definition
 type Template struct {
-	SourceType SourceType `json:"sourceType,omitempty" yaml:"sourceType,omitempty"`
-	ID         string     `json:"id" yaml:"id" storm:"id"` //contains an special storm annotation
-
+	ID            string       `json:"id" yaml:"id" storm:"id"` //contains an special storm annotation
+	SourceType    SourceType   `json:"sourceType,omitempty" yaml:"sourceType,omitempty"`
+	Source        string       `json:"source,omitempty" yaml:"source,omitempty"`
 	Version       string       `json:"version" yaml:"version"`
 	Name          string       `json:"name" yaml:"name"`
 	Description   string       `json:"description" yaml:"description"`
